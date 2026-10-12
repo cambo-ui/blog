@@ -37,18 +37,28 @@
     <main id="main-content">
       {{ block "main" . }}{{ end }}
     </main>
-    <aside aria-label="Sidebar">
-      <section class="sidebar-panel">
-        <h2>Recent Posts</h2>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h3>{{ .Site.Title }}</h3>
+        <p>{{ .Site.Params.description }}</p>
+      </div>
+      <div class="footer-col">
+        <h3>Recent Posts</h3>
         <ul>
           {{ range first 5 (where .Site.RegularPages "Section" "posts") }}
           <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
           {{ end }}
         </ul>
-      </section>
-    </aside>
-  </div>
-  <footer class="site-footer"><p>&copy; {{ now.Year }} {{ .Site.Params.author }}</p></footer>
+      </div>
+      <div class="footer-col">
+        <h3>Browse by Tag</h3>
+        {{ partial "tag-cloud.html" . }}
+      </div>
+    </div>
+    <p class="footer-copy">&copy; {{ now.Year }} {{ .Site.Params.author }} · <a href="{{ "/index.xml" | relURL }}">RSS</a></p>
+  </footer>
   <script>
     document.getElementById('theme-toggle').addEventListener('click', () => {
       const cur = document.documentElement.getAttribute('data-theme') ??

@@ -1,0 +1,9 @@
+{{ $tags := .Site.Taxonomies.tags }}
+{{ if $tags }}
+<ul class="tag-cloud">
+  {{ range $tags.ByCount }}
+  {{ $size := "sm" }}{{ if ge .Count 4 }}{{ $size = "xl" }}{{ else if ge .Count 2 }}{{ $size = "md" }}{{ end }}
+  <li><a class="tag-link tag-{{ $size }}" href="{{ .Page.RelPermalink }}">{{ .Page.Title }}<span class="tag-count">{{ .Count }}</span></a></li>
+  {{ end }}
+</ul>
+{{ end }}
