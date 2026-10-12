@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRISC — 150 Practice Questions</title>
+<style>
+ body{font-family:Segoe UI,Arial,sans-serif;max-width:820px;margin:24px auto;padding:0 16px;background:#0f172a;color:#e2e8f0}
+ h1{color:#38bdf8}
+ .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:22px}
+ .meta{color:#94a3b8;margin:4px 0 14px}
+ .opt{display:block;background:#0b1324;border:1px solid #334155;border-radius:8px;padding:10px;margin:8px 0;cursor:pointer}
+ .opt:hover{border-color:#38bdf8}
+ .correct{background:#14532d!important;border-color:#22c55e!important}
+ .wrong{background:#7f1d1d!important;border-color:#ef4444!important}
+ .exp{background:#0b1324;border:1px solid #fbbf24;border-radius:8px;padding:12px;margin-top:12px;display:none}
+ button{background:#0ea5e9;border:none;color:#0f172a;font-weight:bold;padding:10px 18px;border-radius:8px;cursor:pointer;margin:14px 6px 0 0}
+ button:disabled{opacity:.4;cursor:not-allowed}
+</style>
+</head>
+<body>
+<h1>CRISC IT Risk Practice — 150 Questions</h1>
+<p>Select an option to reveal the explanation, then click <b>Next</b>.</p>
+<div class="card" id="card"></div>
+<button id="prev" onclick="nav(-1)">Prev</button>
+<button id="next" onclick="nav(1)" disabled>Next</button>
+<span id="pos" class="meta"></span>
+
+<script>
+const questions = [
+      {
+        category: "Business and IT Environment",
+        question: "Which activity provides the BEST foundation for identifying technology-related risks?",
+        options: [
+          "Reviewing the latest vulnerability scan only",
+          "Understanding business objectives, critical processes, systems, data flows, and dependencies",
+          "Interviewing only the information security team",
+          "Comparing the organization to competitors"
+        ],
+        correct: 1,
+        explanation: "IT risk must be evaluated in business context. Understanding business objectives, critical services, applications, infrastructure, data flows, people, and third parties provides the basis for meaningful risk identification."
+      },
+      {
+        category: "Business and IT Environment",
+        question: "Which artifact is MOST useful for identifying dependencies between business services and supporting technology?",
+        options: [
+          "Network diagram only",
+          "Business impact analysis and service dependency map",
+          "Password policy",
+          "Security-awareness attendance record"
+        ],
+        correct: 1,
+        explanation: "A business impact analysis identifies critical processes and impact tolerances. A dependency map connects those processes to applications, infrastructure, vendors, people, and facilities."
+      },
+      {
+        category: "Business and IT Environment",
+        question: "A core banking system is hosted by a third party, but customer authentication is managed internally. What is the MOST important initial risk-management action?",
+        options: [
+          "Transfer all risk to the vendor through a contract",
+          "Identify shared responsibilities and control ownership",
+          "Remove the internal authentication system",
+          "Perform a penetration test immediately"
+        ],
+        correct: 1,
+        explanation: "Outsourcing does not transfer organizational accountability. The organization must define shared responsibilities, risk ownership, control ownership, and assurance requirements."
+      },
+      {
+        category: "Business and IT Environment",
+        question: "Which action BEST demonstrates an understanding of the organizationâ€™s IT environment?",
+        options: [
+          "Listing all installed software packages",
+          "Identifying the relationship between business processes, applications, infrastructure, data, and third parties",
+          "Recording all firewall rules",
+          "Reviewing employee job descriptions"
+        ],
+        correct: 1,
+        explanation: "A complete IT-environment assessment maps technology to business services and identifies critical dependencies, data flows, third-party reliance, and operational exposure."
+      },
+      {
+        category: "Business and IT Environment",
+        question: "Several business units use separate customer databases. What is the MOST significant initial concern?",
+        options: [
+          "Storage cost",
+          "Data inconsistency and unclear ownership",
+          "Employee satisfaction",
+          "Hardware warranty expiration"
+        ],
+        correct: 1,
+        explanation: "Multiple customer databases may cause inconsistent records, weak data governance, privacy issues, duplicate access paths, and unclear accountability for data quality."
+      },
+      {
+        category: "Business and IT Environment",
+        question: "Who is MOST appropriate to confirm the business criticality of an online banking application?",
+        options: [
+          "Network administrator",
+          "Application developer",
+          "Business process owner",
+          "Internal auditor"
+        ],
+        correct: 2,
+        explanation: "The business process owner understands the business service, customer impact, financial impact, legal obligations, and operational dependency of the application."
+      },
+      {
+        category: "Business Impact",
+        question: "A mobile banking application becomes unavailable for four hours during payday. Which impact is MOST relevant?",
+        options: [
+          "Increased server utilization",
+          "Failure to achieve customer-service and transaction-revenue objectives",
+          "Increased help desk tickets only",
+          "Delayed software patching"
+        ],
+        correct: 1,
+        explanation: "The primary impact should be described in business terms, including customer disruption, lost transactions, reputational damage, potential regulatory impact, and operational inefficiency."
+      },
+      {
+        category: "Business Impact",
+        question: "Which is the BEST example of an IT risk impact statement?",
+        options: [
+          "The database server may fail.",
+          "The organization uses outdated servers.",
+          "Failure of the payment-processing database may prevent customer transactions and result in financial, regulatory, and reputational losses.",
+          "The IT team needs more budget."
+        ],
+        correct: 2,
+        explanation: "A high-quality impact statement links a technology event to a meaningful business consequence."
+      },
+      {
+        category: "Business Impact",
+        question: "A ransomware attack encrypts a shared file server. Which factor MOST influences the business impact?",
+        options: [
+          "The brand of endpoint protection software",
+          "The sensitivity and criticality of the affected data and processes",
+          "The number of IT administrators",
+          "The age of the affected server"
+        ],
+        correct: 1,
+        explanation: "Impact depends mainly on affected data, critical business processes, recovery capability, customer consequences, financial exposure, and legal or regulatory obligations."
+      },
+      {
+        category: "Business Impact",
+        question: "A risk scenario has low probability but could cause a prolonged outage of critical payment services. How should it be treated?",
+        options: [
+          "Ignore it because likelihood is low",
+          "Consider it based on potential impact and risk appetite",
+          "Automatically accept it",
+          "Classify it as an operational issue only"
+        ],
+        correct: 1,
+        explanation: "Risk assessment considers both likelihood and impact. A low-likelihood but severe scenario can exceed risk appetite and require treatment."
+      },
+      {
+        category: "Business Impact",
+        question: "Which impact category is MOST likely to concern a banking regulator after a significant data breach?",
+        options: [
+          "Office productivity",
+          "Regulatory compliance and customer data protection",
+          "Printing cost",
+          "Software licensing convenience"
+        ],
+        correct: 1,
+        explanation: "Regulators focus strongly on confidentiality, integrity, privacy, customer protection, resilience, governance, notification, and compliance obligations."
+      },
+      {
+        category: "Business Impact",
+        question: "Missed settlement deadlines resulting from an outage of a treasury system are BEST categorized as:",
+        options: [
+          "A technical vulnerability",
+          "A business impact",
+          "A security control",
+          "A key performance indicator"
+        ],
+        correct: 1,
+        explanation: "Missed settlement deadlines are business and operational consequences arising from technology failure."
+      },
+      {
+        category: "Threats and Vulnerabilities",
+        question: "Which statement BEST differentiates a threat from a vulnerability?",
+        options: [
+          "A threat is a weakness; a vulnerability is an attacker",
+          "A threat can exploit a vulnerability to cause harm",
+          "A vulnerability always results in an incident",
+          "Threats apply only to external attackers"
+        ],
+        correct: 1,
+        explanation: "A vulnerability is a weakness or exposure. A threat is a potential cause of an unwanted incident that may exploit that weakness."
+      },
+      {
+        category: "Threats and Vulnerabilities",
+        question: "An employee receives a fraudulent email requesting VPN credentials. The fraudulent email is a:",
+        options: [
+          "Vulnerability",
+          "Threat event",
+          "Compensating control",
+          "Risk response"
+        ],
+        correct: 1,
+        explanation: "Phishing is a threat event. Weak awareness, weak email filtering, and lack of multifactor authentication may be vulnerabilities."
+      },
+      {
+        category: "Threats and Vulnerabilities",
+        question: "Which is the BEST example of a people-related vulnerability?",
+        options: [
+          "Unpatched web server",
+          "Inadequate segregation of duties in payment approval",
+          "Employees unable to recognize phishing attempts",
+          "Lack of backup encryption"
+        ],
+        correct: 2,
+        explanation: "Insufficient awareness and unsafe employee behavior are people-related vulnerabilities that can increase social-engineering risk."
+      },
+      {
+        category: "Threats and Vulnerabilities",
+        question: "A privileged account is shared among system administrators. What is the PRIMARY risk?",
+        options: [
+          "Higher software cost",
+          "Inability to establish accountability for administrative actions",
+          "Reduced network bandwidth",
+          "Slower password changes"
+        ],
+        correct: 1,
+        explanation: "Shared accounts weaken accountability, logging, forensic investigation, access reviews, and nonrepudiation."
+      },
+      {
+        category: "Threats and Vulnerabilities",
+        question: "Which condition is MOST likely to increase the risk of unauthorized production changes?",
+        options: [
+          "Formal change approval and testing",
+          "Segregated developer and production access",
+          "Developers having direct production deployment rights",
+          "Automated audit logging"
+        ],
+        correct: 2,
+        explanation: "Direct production access can bypass independent approval, testing, segregation of duties, and change-control governance."
+      },
+      {
+        category: "Threats and Vulnerabilities",
+        question: "A critical application relies on one employee with unique technical knowledge and no documentation. This is primarily a:",
+        options: [
+          "Physical threat",
+          "Process and people vulnerability",
+          "Cryptographic weakness",
+          "Legal risk transfer mechanism"
+        ],
+        correct: 1,
+        explanation: "Key-person dependency is a people and process vulnerability that can affect resilience, availability, incident response, maintenance, and change management."
+      },
+      {
+        category: "Risk Scenarios",
+        question: "Which is the BEST-formulated risk scenario?",
+        options: [
+          "Cybersecurity risk is high.",
+          "Servers are outdated.",
+          "An external attacker may exploit an unpatched internet-facing application, resulting in unauthorized access to customer information and regulatory penalties.",
+          "The IT department needs more staff."
+        ],
+        correct: 2,
+        explanation: "A complete risk scenario identifies a threat, vulnerability, affected asset or process, and resulting business impact."
+      },
+      {
+        category: "Risk Scenarios",
+        question: "What is the MAIN purpose of defining risk scenarios?",
+        options: [
+          "To replace incident-response procedures",
+          "To create a structured basis for risk analysis and treatment decisions",
+          "To eliminate all technology risks",
+          "To measure employee performance only"
+        ],
+        correct: 1,
+        explanation: "Risk scenarios provide a structured and consistent basis for evaluating likelihood, impact, controls, ownership, and treatment options."
+      },
+      {
+        category: "Risk Scenarios",
+        question: "Which element should be included FIRST when developing a risk scenario?",
+        options: [
+          "Control testing result",
+          "Business objective or critical asset at risk",
+          "Audit report format",
+          "Budget request"
+        ],
+        correct: 1,
+        explanation: "Risk scenarios should begin with the business objective, critical service, asset, data set, or obligation that could be affected."
+      },
+      {
+        category: "Risk Scenarios",
+        question: "A scenario states: 'A cloud-service-provider outage could disrupt mobile banking services.' What is missing?",
+        options: [
+          "The company logo",
+          "The vulnerability or contributing condition",
+          "The business ownerâ€™s office location",
+          "The number of IT employees"
+        ],
+        correct: 1,
+        explanation: "The scenario should include contributing factors, such as inadequate redundancy, weak contractual commitments, insufficient disaster-recovery tests, or excessive provider concentration."
+      },
+      {
+        category: "Risk Scenarios",
+        question: "Which risk scenario is MOST likely to require cross-functional analysis?",
+        options: [
+          "Expired desktop wallpaper policy",
+          "Third-party compromise of a payment-processing provider",
+          "Replacement of printer toner",
+          "Routine antivirus signature update"
+        ],
+        correct: 1,
+        explanation: "Third-party compromise can affect IT, security, operations, compliance, legal, procurement, customer service, finance, and senior management."
+      },
+      {
+        category: "Risk Scenarios",
+        question: "A risk scenario should be considered credible when:",
+        options: [
+          "It has occurred in another organization only",
+          "It is technically possible regardless of context",
+          "There is a realistic combination of threat, vulnerability, and business exposure",
+          "It produces the highest possible financial loss"
+        ],
+        correct: 2,
+        explanation: "Credible scenarios are plausible in the organizationâ€™s specific environment and are supported by realistic threat, vulnerability, and exposure conditions."
+      },
+      {
+        category: "Risk Ownership",
+        question: "Who should normally own a business risk associated with failure of a customer onboarding process?",
+        options: [
+          "Information security analyst",
+          "Business process owner",
+          "External auditor",
+          "Help desk manager"
+        ],
+        correct: 1,
+        explanation: "The business process owner is accountable for managing risks that could prevent achievement of process objectives."
+      },
+      {
+        category: "Risk Ownership",
+        question: "Who is MOST appropriate to own a control requiring quarterly review of privileged-user access?",
+        options: [
+          "Business customer",
+          "Control operator or designated system/control owner",
+          "External auditor",
+          "Regulator"
+        ],
+        correct: 1,
+        explanation: "The control owner is responsible for operating, maintaining, evidencing, and improving the control."
+      },
+      {
+        category: "Risk Ownership",
+        question: "Which statement about risk ownership is CORRECT?",
+        options: [
+          "Risk ownership can always be fully transferred to IT",
+          "Risk owners should have authority to accept, treat, or escalate the risk",
+          "Risk owners should never be involved in treatment plans",
+          "Risk ownership is the same as control operation"
+        ],
+        correct: 1,
+        explanation: "Risk owners require sufficient authority and accountability to make or escalate risk decisions. Risk ownership and control ownership may be separate."
+      },
+      {
+        category: "Risk Ownership",
+        question: "A control owner reports that a security control is not operating effectively. What should occur NEXT?",
+        options: [
+          "Hide the issue until the next audit",
+          "The relevant risk owner should assess residual risk and approve treatment or escalation",
+          "The control owner should automatically accept the risk",
+          "Delete the risk register"
+        ],
+        correct: 1,
+        explanation: "Control deficiencies may increase residual risk. The risk owner must assess the exposure and determine or escalate the appropriate response."
+      },
+      {
+        category: "Risk Ownership",
+        question: "What is the GREATEST concern when no risk owner is assigned to a critical risk?",
+        options: [
+          "The risk may not have a unique identifier",
+          "Accountability for risk decisions and treatment may be absent",
+          "The risk register may have fewer entries",
+          "The control library may become too large"
+        ],
+        correct: 1,
+        explanation: "Without a named risk owner, the risk may not be assessed, accepted, treated, monitored, or escalated appropriately."
+      },
+      {
+        category: "Risk Ownership",
+        question: "The CISO manages a security-awareness program, but business leaders decide whether residual phishing risk is acceptable. Who owns the risk?",
+        options: [
+          "Security-awareness trainer",
+          "CISO only",
+          "Accountable business executive",
+          "External training provider"
+        ],
+        correct: 2,
+        explanation: "The accountable business executive owns the business risk because that role is accountable for accepting, treating, or escalating the residual exposure."
+      },
+      {
+        category: "Risk Register",
+        question: "Which item is MOST important in an IT risk register?",
+        options: [
+          "A list of every security tool",
+          "Risk description, owner, assessment, treatment status, and review date",
+          "Employee holiday schedules",
+          "Software source code"
+        ],
+        correct: 1,
+        explanation: "A risk register should contain enough information to support accountability, risk assessment, treatment tracking, monitoring, review, and reporting."
+      },
+      {
+        category: "Risk Register",
+        question: "What is the PRIMARY purpose of integrating the IT risk register into the enterprise risk profile?",
+        options: [
+          "To eliminate IT-specific reporting",
+          "To enable management to compare IT risks with other enterprise risks",
+          "To transfer all risks to the board",
+          "To reduce the number of controls"
+        ],
+        correct: 1,
+        explanation: "Enterprise integration enables prioritization, aggregation, governance, and decision-making across strategic, financial, operational, compliance, and IT risks."
+      },
+      {
+        category: "Risk Register",
+        question: "A risk is rated high by IT but medium in the enterprise risk report. What should the risk practitioner do FIRST?",
+        options: [
+          "Use the IT rating without question",
+          "Remove the risk from the enterprise report",
+          "Reconcile assessment criteria, assumptions, and rating methodology",
+          "Escalate immediately to the regulator"
+        ],
+        correct: 2,
+        explanation: "Differences may result from inconsistent rating scales, impact definitions, likelihood assumptions, time horizons, or assessment dates."
+      },
+      {
+        category: "Risk Register",
+        question: "Which risk-register field is MOST important for ensuring overdue remediation is visible?",
+        options: [
+          "Risk title",
+          "Treatment target date and action owner",
+          "Risk category color",
+          "Date the risk was first identified only"
+        ],
+        correct: 1,
+        explanation: "Action ownership and target dates allow management to track remediation progress, challenge delays, and escalate overdue actions."
+      },
+      {
+        category: "Risk Register",
+        question: "A risk register contains duplicate entries for 'cybersecurity risk.' What is the BEST action?",
+        options: [
+          "Keep all entries to demonstrate completeness",
+          "Consolidate related scenarios while retaining distinct causes, impacts, and owners where necessary",
+          "Delete all cybersecurity-related risks",
+          "Assign all entries to the CISO"
+        ],
+        correct: 1,
+        explanation: "The register should avoid duplication while preserving meaningful differences in affected services, causes, impacts, ownership, controls, and treatment."
+      },
+      {
+        category: "Risk Register",
+        question: "Which is the BEST indicator that a risk register is actively managed?",
+        options: [
+          "It has many risk entries",
+          "It is updated only before audits",
+          "Risks have current assessments, assigned owners, action plans, and documented review decisions",
+          "It is maintained only by internal audit"
+        ],
+        correct: 2,
+        explanation: "A risk register is a living governance tool. It must be regularly reviewed, updated, owned, and used for decision-making."
+      },
+      {
+        category: "Risk Appetite and Tolerance",
+        question: "Risk appetite is BEST defined as:",
+        options: [
+          "The number of risks identified during an audit",
+          "The amount and type of risk an organization is willing to pursue or retain in pursuit of objectives",
+          "The total amount of insurance coverage",
+          "The likelihood of an incident occurring"
+        ],
+        correct: 1,
+        explanation: "Risk appetite defines broad boundaries for acceptable risk-taking in support of business objectives."
+      },
+      {
+        category: "Risk Appetite and Tolerance",
+        question: "Risk tolerance is BEST described as:",
+        options: [
+          "Detailed acceptable variation around a risk appetite threshold",
+          "A replacement for risk appetite",
+          "A technical security standard",
+          "A list of all IT risks"
+        ],
+        correct: 0,
+        explanation: "Risk tolerance translates broad appetite into measurable limits, thresholds, and acceptable operational variation."
+      },
+      {
+        category: "Risk Appetite and Tolerance",
+        question: "A bank has zero tolerance for deliberate unauthorized disclosure of customer data. What does this MOST likely mean?",
+        options: [
+          "Every minor privacy incident must close the bank",
+          "Controls and escalation procedures should prevent, detect, and respond rapidly to such events",
+          "Customer data should never be used",
+          "The bank accepts no cybersecurity risk at all"
+        ],
+        correct: 1,
+        explanation: "Zero tolerance means the organization does not accept the behavior or exposure. It does not mean incidents can never occur."
+      },
+      {
+        category: "Risk Appetite and Tolerance",
+        question: "Which stakeholder should have the GREATEST role in approving enterprise risk appetite?",
+        options: [
+          "Junior system administrator",
+          "Board of directors and executive management",
+          "External penetration tester",
+          "Software vendor"
+        ],
+        correct: 1,
+        explanation: "Risk appetite is a strategic governance decision typically approved by the board and executive management."
+      },
+      {
+        category: "Risk Appetite and Tolerance",
+        question: "A key risk indicator exceeds its approved tolerance level. What should happen FIRST?",
+        options: [
+          "Ignore it because it is only an indicator",
+          "Assess the exposure and escalate according to governance procedures",
+          "Delete the KRI",
+          "Automatically terminate the related employee"
+        ],
+        correct: 1,
+        explanation: "Threshold breaches should trigger investigation, risk analysis, management attention, corrective action, and escalation as defined in governance processes."
+      },
+      {
+        category: "Risk Appetite and Tolerance",
+        question: "Which is the BEST example of an IT risk tolerance statement?",
+        options: [
+          "Cybersecurity is important.",
+          "No more than 2% of critical systems may remain overdue for high-severity patches beyond the approved timeframe.",
+          "The IT team should work hard.",
+          "All incidents are unacceptable."
+        ],
+        correct: 1,
+        explanation: "A tolerance statement should be measurable, actionable, time-bound, and linked to risk exposure."
+      },
+      {
+        category: "Security Awareness",
+        question: "What is the PRIMARY objective of a security-awareness program?",
+        options: [
+          "Ensure employees memorize all policies",
+          "Influence secure behavior and reduce human-related risk",
+          "Replace technical security controls",
+          "Assess employee productivity"
+        ],
+        correct: 1,
+        explanation: "Awareness should improve employee behavior and reduce exposure to phishing, social engineering, unsafe data handling, password risk, and policy violations."
+      },
+      {
+        category: "Security Awareness",
+        question: "Which metric BEST measures whether phishing-awareness training is effective?",
+        options: [
+          "Number of slides used in training",
+          "Percentage of employees completing the course only",
+          "Reduction in simulated phishing click or credential-submission rates over time",
+          "Number of emails sent by the security team"
+        ],
+        correct: 2,
+        explanation: "Completion measures participation. Reduced susceptibility and improved reporting behavior better demonstrate training effectiveness."
+      },
+      {
+        category: "Security Awareness",
+        question: "A department has high security-policy violations despite annual training. What is the BEST next step?",
+        options: [
+          "Repeat the same generic training",
+          "Analyze underlying behavior, process pressures, and control weaknesses",
+          "Stop conducting training",
+          "Immediately terminate all employees"
+        ],
+        correct: 1,
+        explanation: "Repeated violations may indicate ineffective role-based training, weak procedures, unrealistic processes, poor supervision, or cultural issues."
+      },
+      {
+        category: "Security Awareness",
+        question: "Which group requires the MOST specialized awareness training?",
+        options: [
+          "All employees receive identical training",
+          "Privileged administrators with access to critical infrastructure",
+          "Customers using online banking",
+          "Office visitors only"
+        ],
+        correct: 1,
+        explanation: "Privileged users require role-specific training on administrative access, secure configuration, incident reporting, credential protection, and change management."
+      },
+      {
+        category: "Security Awareness",
+        question: "A strong risk-aware culture is BEST demonstrated when:",
+        options: [
+          "Employees avoid reporting mistakes",
+          "Staff report suspicious activities promptly without fear of unfair retaliation",
+          "Only the security team discusses risk",
+          "Policies are stored on an intranet site"
+        ],
+        correct: 1,
+        explanation: "A mature culture promotes transparency, timely reporting, learning from incidents, and shared accountability."
+      },
+      {
+        category: "Security Awareness",
+        question: "Which approach is MOST effective for employees handling confidential banking data?",
+        options: [
+          "Sending one general email per year",
+          "Role-based, scenario-driven training reinforced through simulations and periodic communication",
+          "Providing training only after an incident",
+          "Limiting training to IT staff"
+        ],
+        correct: 1,
+        explanation: "Relevant, frequent, role-based, measurable training is more effective than generic annual communication."
+      },
+      {
+        category: "Risk Assessment",
+        question: "Inherent risk is the level of risk:",
+        options: [
+          "After all controls have been applied",
+          "Before considering existing controls",
+          "Accepted by the board",
+          "Transferred through insurance"
+        ],
+        correct: 1,
+        explanation: "Inherent risk represents exposure before the effect of controls and treatment measures is considered."
+      },
+      {
+        category: "Risk Assessment",
+        question: "Residual risk is the level of risk:",
+        options: [
+          "Before controls are assessed",
+          "Remaining after considering the effectiveness of existing controls",
+          "Eliminated by insurance",
+          "Equal to risk appetite in all cases"
+        ],
+        correct: 1,
+        explanation: "Residual risk is the remaining exposure after existing controls and other treatments are evaluated."
+      },
+      {
+        category: "Risk Assessment",
+        question: "A risk has high impact but low likelihood. What is the BEST assessment approach?",
+        options: [
+          "Rate it automatically as low",
+          "Evaluate it against risk appetite, scenario credibility, and potential severity",
+          "Ignore it until an incident occurs",
+          "Assess impact only"
+        ],
+        correct: 1,
+        explanation: "Severe events may require treatment even when unlikely. Both impact and likelihood must be assessed against risk appetite."
+      },
+      {
+        category: "Risk Assessment",
+        question: "Which factor MOST improves consistency of risk assessments across departments?",
+        options: [
+          "Allowing each department to use its own rating scale",
+          "Using a common risk taxonomy, rating methodology, and impact criteria",
+          "Rating all IT risks as high",
+          "Assessing risks only after incidents"
+        ],
+        correct: 1,
+        explanation: "A common methodology improves consistency, aggregation, comparison, reporting, and governance."
+      },
+      {
+        category: "Risk Assessment",
+        question: "Which source is MOST appropriate for estimating likelihood of account takeover?",
+        options: [
+          "Employee preferences",
+          "Threat intelligence, incident history, control effectiveness, and exposure data",
+          "Office seating plans",
+          "Marketing budget"
+        ],
+        correct: 1,
+        explanation: "Likelihood should be based on relevant evidence such as threat activity, incidents, vulnerabilities, exposure, control performance, and industry intelligence."
+      },
+      {
+        category: "Risk Assessment",
+        question: "A scenario is rated high because the assessor personally believes it is dangerous, but no evidence is available. What is the MAIN weakness?",
+        options: [
+          "Too much documentation",
+          "Lack of objective and supportable assessment criteria",
+          "The impact rating is automatically wrong",
+          "The risk cannot be recorded"
+        ],
+        correct: 1,
+        explanation: "Risk assessments should use evidence, defined criteria, documented assumptions, and consistent methodology."
+      },
+      {
+        category: "Control Effectiveness",
+        question: "A firewall exists but has not been reviewed for three years. How should its effectiveness be assessed?",
+        options: [
+          "It is effective because it exists",
+          "Evaluate design adequacy and operating effectiveness",
+          "Replace it without review",
+          "Remove it from the asset inventory"
+        ],
+        correct: 1,
+        explanation: "A control must be assessed for both design effectiveness and operating effectiveness. Existence alone does not demonstrate effectiveness."
+      },
+      {
+        category: "Control Effectiveness",
+        question: "A control is well designed but not consistently performed. It is BEST described as:",
+        options: [
+          "Design-effective but operating-ineffective",
+          "Operating-effective but design-ineffective",
+          "Fully mature",
+          "Risk-free"
+        ],
+        correct: 0,
+        explanation: "A properly designed control can still fail if it is not consistently executed, monitored, evidenced, or maintained."
+      },
+      {
+        category: "Control Effectiveness",
+        question: "Which evidence BEST demonstrates that quarterly access reviews are operating effectively?",
+        options: [
+          "The access-review policy",
+          "Completed review records showing approval, exceptions, and timely remediation",
+          "The identity-management software license",
+          "An email stating reviews are important"
+        ],
+        correct: 1,
+        explanation: "Operating effectiveness requires evidence that the control was performed, exceptions were identified, decisions were approved, and corrective actions occurred."
+      },
+      {
+        category: "Control Effectiveness",
+        question: "A control requires approval before production deployment. What type of control is this?",
+        options: [
+          "Preventive control",
+          "Detective control",
+          "Corrective control",
+          "Recovery control only"
+        ],
+        correct: 0,
+        explanation: "Pre-deployment approval is intended to prevent unauthorized, untested, or inappropriate changes from reaching production."
+      },
+      {
+        category: "Control Effectiveness",
+        question: "A SIEM identifies repeated failed logins and creates an alert. This is primarily a:",
+        options: [
+          "Preventive control",
+          "Detective control",
+          "Risk acceptance decision",
+          "Risk transfer method"
+        ],
+        correct: 1,
+        explanation: "Monitoring and alerting detect suspicious events or control failures while or after they occur."
+      },
+      {
+        category: "Control Effectiveness",
+        question: "When is a compensating control acceptable?",
+        options: [
+          "When it is cheaper than the primary control",
+          "When it provides equivalent or sufficient risk reduction where the primary control cannot be implemented",
+          "When it is preferred by the administrator",
+          "When it eliminates the need for risk assessment"
+        ],
+        correct: 1,
+        explanation: "A compensating control must adequately address the same risk objective and provide sufficient assurance."
+      },
+      {
+        category: "Gap Assessment",
+        question: "What is the PRIMARY purpose of a control gap analysis?",
+        options: [
+          "Identify differences between current controls and the desired state",
+          "Remove all existing controls",
+          "Determine employee salaries",
+          "Replace risk assessment"
+        ],
+        correct: 0,
+        explanation: "Gap analysis identifies where controls are missing, insufficient, incorrectly designed, ineffective, or below target maturity."
+      },
+      {
+        category: "Gap Assessment",
+        question: "A policy requires MFA for remote access, but legacy applications still use passwords only. This is a:",
+        options: [
+          "Risk transfer",
+          "Control gap",
+          "Fully effective control",
+          "Key performance indicator"
+        ],
+        correct: 1,
+        explanation: "The actual environment does not meet the required control objective, creating a control gap and potentially elevated residual risk."
+      },
+      {
+        category: "Gap Assessment",
+        question: "When prioritizing control gaps, what should be considered FIRST?",
+        options: [
+          "Which gap is easiest to close",
+          "Residual risk and business impact associated with the gap",
+          "Which team identified the gap",
+          "Audit report formatting"
+        ],
+        correct: 1,
+        explanation: "Remediation should be risk-based, focusing first on gaps that create the greatest exposure to critical business objectives and obligations."
+      },
+      {
+        category: "Gap Assessment",
+        question: "A control gap exists, but residual risk remains within approved tolerance. What is the BEST action?",
+        options: [
+          "Automatically remediate immediately",
+          "Document rationale, risk-owner decision, and monitoring requirements",
+          "Delete the gap from records",
+          "Escalate it automatically as a regulatory breach"
+        ],
+        correct: 1,
+        explanation: "A gap may be accepted when residual risk is within appetite and authorized. The decision must be documented and monitored."
+      },
+      {
+        category: "Gap Assessment",
+        question: "Which statement BEST reflects a mature gap-analysis process?",
+        options: [
+          "All control gaps are equally urgent",
+          "Gaps are linked to risks, owners, remediation actions, deadlines, and validation evidence",
+          "Gaps are recorded only after external audits",
+          "Gaps are managed only by IT"
+        ],
+        correct: 1,
+        explanation: "Mature gap management establishes clear risk linkage, accountability, treatment, due dates, validation, and escalation."
+      },
+      {
+        category: "Gap Assessment",
+        question: "A risk practitioner identifies a missing backup test for a critical system. Before recommending a solution, what should occur FIRST?",
+        options: [
+          "Buy a new backup tool",
+          "Determine recovery requirements, current backup design, and potential impact of failed restoration",
+          "Close the issue because backups exist",
+          "Transfer the risk to the help desk"
+        ],
+        correct: 1,
+        explanation: "The practitioner must first understand recovery objectives, actual backup capability, restoration evidence, system criticality, and potential business impact."
+      },
+      {
+        category: "Risk Response",
+        question: "Which is NOT a standard risk response?",
+        options: [
+          "Avoid",
+          "Mitigate",
+          "Transfer or share",
+          "Ignore without approval"
+        ],
+        correct: 3,
+        explanation: "Standard responses include avoidance, mitigation, transfer or sharing, and acceptance. Ignoring risk without analysis and approval is not valid."
+      },
+      {
+        category: "Risk Response",
+        question: "A bank stops offering a high-risk service because it cannot adequately protect customer data. This is:",
+        options: [
+          "Risk acceptance",
+          "Risk avoidance",
+          "Risk transfer",
+          "Control monitoring"
+        ],
+        correct: 1,
+        explanation: "Risk avoidance eliminates the activity, process, technology, or exposure that gives rise to the risk."
+      },
+      {
+        category: "Risk Response",
+        question: "Purchasing cyber insurance is BEST categorized as:",
+        options: [
+          "Risk avoidance",
+          "Risk transfer or sharing",
+          "Risk elimination",
+          "Preventive control"
+        ],
+        correct: 1,
+        explanation: "Insurance can transfer or share some financial consequences, but it does not eliminate operational, regulatory, legal, or reputational consequences."
+      },
+      {
+        category: "Risk Response",
+        question: "Which factor is MOST important when selecting a risk response?",
+        options: [
+          "Personal preference of the risk practitioner",
+          "Alignment with risk appetite, cost-benefit, legal obligations, and business objectives",
+          "Newest available technology",
+          "Number of controls already in place"
+        ],
+        correct: 1,
+        explanation: "Responses should be business-driven, proportionate, compliant, feasible, and aligned with approved risk appetite."
+      },
+      {
+        category: "Risk Response",
+        question: "A risk owner accepts a high residual risk without documenting rationale. What is the MAIN concern?",
+        options: [
+          "The register becomes shorter",
+          "The acceptance may be unauthorized, uninformed, or outside risk appetite",
+          "The control environment becomes mature",
+          "The risk is automatically transferred"
+        ],
+        correct: 1,
+        explanation: "Risk acceptance requires documented rationale, appropriate authority, understanding of consequences, and escalation if appetite is exceeded."
+      },
+      {
+        category: "Risk Response",
+        question: "A proposed control costs more than the maximum plausible loss from a risk scenario. What should management consider?",
+        options: [
+          "Implement automatically because more control is always better",
+          "Evaluate alternatives, proportionality, residual risk, and risk appetite",
+          "Eliminate all controls",
+          "Ignore the risk assessment"
+        ],
+        correct: 1,
+        explanation: "Treatment decisions should be proportionate and consider effectiveness, cost, obligations, alternatives, and residual-risk acceptability."
+      },
+      {
+        category: "Risk Treatment Plans",
+        question: "Which item is ESSENTIAL in a risk treatment plan?",
+        options: [
+          "A statement that security will improve",
+          "Defined actions, owners, resources, milestones, and target dates",
+          "A list of all employees",
+          "Organization chart only"
+        ],
+        correct: 1,
+        explanation: "Treatment plans must be actionable, owned, measurable, time-bound, and adequately resourced."
+      },
+      {
+        category: "Risk Treatment Plans",
+        question: "Who should approve a risk treatment plan for a business-critical risk?",
+        options: [
+          "Risk owner with appropriate governance oversight",
+          "Any employee in IT",
+          "Vendor only",
+          "Internal auditor only"
+        ],
+        correct: 0,
+        explanation: "The risk owner is accountable for the risk and should approve treatment plans, subject to applicable governance and funding authority."
+      },
+      {
+        category: "Risk Treatment Plans",
+        question: "A remediation action is overdue because required budget has not been approved. What should occur?",
+        options: [
+          "Close the risk automatically",
+          "Update status, reassess residual risk if necessary, and escalate through governance channels",
+          "Delete the treatment plan",
+          "Change the date without informing anyone"
+        ],
+        correct: 1,
+        explanation: "Delayed remediation can increase exposure. The issue must be transparent, reassessed, owned, and escalated appropriately."
+      },
+      {
+        category: "Risk Treatment Plans",
+        question: "Which is the BEST measure of a successful risk treatment plan?",
+        options: [
+          "The plan was documented",
+          "All meetings were completed",
+          "Controls were implemented and residual risk was reduced to an acceptable level",
+          "The plan had many action items"
+        ],
+        correct: 2,
+        explanation: "Success is determined by validated risk reduction and acceptable residual risk, not by project administration alone."
+      },
+      {
+        category: "Risk Treatment Plans",
+        question: "A treatment plan relies on a vendor to implement encryption. What remains the organizationâ€™s responsibility?",
+        options: [
+          "None because the vendor owns the technology",
+          "Validate contractual requirements, monitor implementation, and retain accountability for risk",
+          "Close the risk immediately",
+          "Remove the vendor from risk reports"
+        ],
+        correct: 1,
+        explanation: "Third-party reliance does not remove organizational accountability for customer data, services, regulatory duties, or residual risk."
+      },
+      {
+        category: "Risk Treatment Plans",
+        question: "Which condition MOST likely causes risk treatment plans to fail?",
+        options: [
+          "Clear ownership and realistic milestones",
+          "Lack of executive sponsorship and insufficient resources",
+          "Periodic progress reporting",
+          "Defined success criteria"
+        ],
+        correct: 1,
+        explanation: "Without authority, sponsorship, staffing, budget, and governance, remediation actions are commonly delayed or ineffective."
+      },
+      {
+        category: "Control Design",
+        question: "When designing a control, what should be considered FIRST?",
+        options: [
+          "Tool vendorâ€™s preferred configuration",
+          "Risk and control objective to be addressed",
+          "Number of audit findings",
+          "Color of the dashboard"
+        ],
+        correct: 1,
+        explanation: "Controls must be designed to address a defined risk scenario and achieve a specific control objective."
+      },
+      {
+        category: "Control Design",
+        question: "Which is the BEST example of segregation of duties?",
+        options: [
+          "One administrator requests, approves, and implements own access",
+          "A developer writes, tests, and deploys code without review",
+          "One employee initiates a payment while another independently approves it",
+          "A user resets own password"
+        ],
+        correct: 2,
+        explanation: "Segregation of duties reduces the risk of fraud, unauthorized actions, mistakes, concealment, and conflict of interest."
+      },
+      {
+        category: "Control Design",
+        question: "A control requires management approval for every low-risk system change. What is the MAIN potential issue?",
+        options: [
+          "The control may be overly burdensome and encourage bypassing",
+          "The control is automatically ineffective",
+          "The control eliminates all change risk",
+          "The control becomes detective"
+        ],
+        correct: 0,
+        explanation: "Controls should be proportionate. Excessive approvals can create delay, inefficiency, and unmanaged workarounds."
+      },
+      {
+        category: "Control Design",
+        question: "Which control-design characteristic MOST supports auditability?",
+        options: [
+          "Verbal approvals without records",
+          "Automated logging and retention of control evidence",
+          "Shared administrative accounts",
+          "Informal procedures"
+        ],
+        correct: 1,
+        explanation: "Reliable logs, approvals, records, and evidence demonstrate that controls were performed and can be independently verified."
+      },
+      {
+        category: "Control Design",
+        question: "A business unit wants to use a new cloud application. Which control should be implemented BEFORE sensitive data is uploaded?",
+        options: [
+          "Post-incident review",
+          "Security and privacy assessment including vendor due diligence",
+          "Annual employee survey",
+          "Hardware inventory reconciliation"
+        ],
+        correct: 1,
+        explanation: "Before use, the organization should assess data handling, security architecture, privacy, contractual safeguards, resilience, compliance, and shared responsibilities."
+      },
+      {
+        category: "Control Design",
+        question: "What is the BEST approach when implementing a control that affects multiple business units?",
+        options: [
+          "Allow unrelated controls in every unit",
+          "Define a common control objective while allowing documented risk-based variations",
+          "Implement the control in one unit only",
+          "Delegate all design decisions to a vendor"
+        ],
+        correct: 1,
+        explanation: "Standardized objectives support consistency while controlled variations can address valid operational differences."
+      },
+      {
+        category: "Risk Response Validation",
+        question: "A treatment plan states that MFA has been deployed. What should be validated BEFORE closing the action?",
+        options: [
+          "Project team says deployment is complete",
+          "Control is configured, applies to the required scope, operates effectively, and reduces risk as intended",
+          "Software invoice has been paid",
+          "Vendor brochure has been received"
+        ],
+        correct: 1,
+        explanation: "Implementation alone is insufficient. Validation must confirm design, coverage, operation, evidence, and residual-risk reduction."
+      },
+      {
+        category: "Risk Response Validation",
+        question: "Which evidence BEST validates that a vulnerability-management treatment has been executed?",
+        options: [
+          "A policy requiring patching",
+          "Scan reports, remediation records, exception approvals, and testing results",
+          "List of all employees",
+          "Unapproved project plan"
+        ],
+        correct: 1,
+        explanation: "Objective evidence should demonstrate that vulnerabilities were identified, prioritized, remediated, verified, and governed through exceptions."
+      },
+      {
+        category: "Risk Response Validation",
+        question: "A control is implemented, but risk remains above tolerance because of an unaddressed third-party dependency. What should occur?",
+        options: [
+          "Close the plan because the control was implemented",
+          "Reassess residual risk and define additional treatment or escalation",
+          "Change rating to low",
+          "Remove third party from the scenario"
+        ],
+        correct: 1,
+        explanation: "Risk treatment is only complete when residual risk is acceptable or appropriately approved, monitored, and escalated."
+      },
+      {
+        category: "Risk Response Validation",
+        question: "Who should validate closure of a significant risk treatment action?",
+        options: [
+          "Action owner alone",
+          "Appropriate independent reviewer, control owner, risk owner, or assurance function",
+          "Any employee",
+          "Vendor only"
+        ],
+        correct: 1,
+        explanation: "Important remediation should receive appropriate independent challenge to avoid self-certification bias."
+      },
+      {
+        category: "Risk Response Validation",
+        question: "A risk response was completed six months ago, but no evidence exists that it is still operating. What is the MAIN concern?",
+        options: [
+          "Treatment may not be sustainable",
+          "Risk is automatically eliminated",
+          "Control is necessarily preventive",
+          "Risk register can be archived"
+        ],
+        correct: 0,
+        explanation: "Controls require ongoing operation, monitoring, maintenance, ownership, and periodic effectiveness validation."
+      },
+      {
+        category: "Risk Response Validation",
+        question: "What is the BEST reason to perform post-implementation reviews of major treatments?",
+        options: [
+          "Assign blame",
+          "Confirm expected risk reduction, control performance, and business outcomes",
+          "Increase paperwork",
+          "Replace future assessments"
+        ],
+        correct: 1,
+        explanation: "Post-implementation review confirms whether the treatment achieved intended objectives and identifies remaining gaps or lessons learned."
+      },
+      {
+        category: "Key Risk Indicators",
+        question: "A key risk indicator is BEST described as:",
+        options: [
+          "A metric providing early warning of increasing risk exposure",
+          "A measure of employee happiness only",
+          "A complete replacement for risk assessment",
+          "A record of past audit findings only"
+        ],
+        correct: 0,
+        explanation: "KRIs indicate changes in exposure, threats, vulnerabilities, or conditions that could lead to adverse events."
+      },
+      {
+        category: "Key Risk Indicators",
+        question: "Which metric is the BEST KRI for phishing risk?",
+        options: [
+          "Number of training sessions delivered",
+          "Percentage of employees submitting credentials during phishing simulations",
+          "Number of IT employees",
+          "Number of laptops purchased"
+        ],
+        correct: 1,
+        explanation: "Credential-submission rates directly indicate human susceptibility to phishing-related compromise."
+      },
+      {
+        category: "Key Risk Indicators",
+        question: "Which characteristic is MOST important for a useful KRI?",
+        options: [
+          "It is easy to calculate",
+          "It is linked to a defined risk scenario and meaningful thresholds",
+          "It always remains below target",
+          "It is reported every five years"
+        ],
+        correct: 1,
+        explanation: "A useful KRI must be relevant, measurable, timely, linked to risk exposure, and supported by thresholds that trigger action."
+      },
+      {
+        category: "Key Risk Indicators",
+        question: "The number of overdue critical vulnerabilities is increasing. This MOST likely indicates:",
+        options: [
+          "Improved risk posture",
+          "Increasing exposure to exploitation risk",
+          "Reduced need for patching",
+          "Maximum control maturity"
+        ],
+        correct: 1,
+        explanation: "An increase in overdue critical vulnerabilities suggests weaknesses in vulnerability remediation and increased exposure to threat exploitation."
+      },
+      {
+        category: "Key Risk Indicators",
+        question: "A KRI threshold is breached for the first time. What is the BEST immediate response?",
+        options: [
+          "Change the threshold",
+          "Investigate cause, assess exposure, and initiate escalation or remediation",
+          "Stop collecting the metric",
+          "Assume an incident occurred"
+        ],
+        correct: 1,
+        explanation: "Threshold breaches should trigger defined analysis, management attention, action, and escalation rather than metric manipulation."
+      },
+      {
+        category: "Key Risk Indicators",
+        question: "Which is the LEAST useful KRI?",
+        options: [
+          "Percentage of critical systems without tested backups",
+          "Number of high-risk vendors without current security assessments",
+          "Number of pages in the security policy",
+          "Percentage of privileged accounts not reviewed on time"
+        ],
+        correct: 2,
+        explanation: "Policy length does not meaningfully indicate actual risk exposure, control performance, or adverse-event likelihood."
+      },
+      {
+        category: "KRI Monitoring",
+        question: "A KRI remains below tolerance for several quarters, but a major incident occurs. What is the BEST conclusion?",
+        options: [
+          "KRIs are useless",
+          "The KRI set may not capture relevant risk drivers and should be reviewed",
+          "The incident was impossible",
+          "Risk should not have been assessed"
+        ],
+        correct: 1,
+        explanation: "Indicators must be periodically validated for relevance, predictive value, completeness, and alignment with changing risk conditions."
+      },
+      {
+        category: "KRI Monitoring",
+        question: "Why is trend analysis important for KRIs?",
+        options: [
+          "One measurement is always sufficient",
+          "Trends can reveal deteriorating or improving conditions before thresholds are breached",
+          "Trends eliminate management judgment",
+          "Trends apply only to finance"
+        ],
+        correct: 1,
+        explanation: "Trend analysis supports early warning and helps management detect deterioration before risk exposure becomes unacceptable."
+      },
+      {
+        category: "KRI Monitoring",
+        question: "A KRI remains above tolerance, but management does not act. What is the GREATEST concern?",
+        options: [
+          "The KRI may be too colorful",
+          "Risk governance and escalation processes may be ineffective",
+          "The KRI should be deleted",
+          "The risk no longer needs ownership"
+        ],
+        correct: 1,
+        explanation: "Indicators without action have limited value and may indicate weak accountability, poor culture, or ineffective governance."
+      },
+      {
+        category: "KRI Monitoring",
+        question: "Which approach BEST prevents misleading KRI interpretation?",
+        options: [
+          "Report the metric without context",
+          "Combine trend data, thresholds, root-cause analysis, and business context",
+          "Use only red/amber/green colors",
+          "Measure one risk area only"
+        ],
+        correct: 1,
+        explanation: "Management needs context to understand why a metric changed, whether it is material, and what action is required."
+      },
+      {
+        category: "KRI Monitoring",
+        question: "A KRI shows an increase in failed backup jobs. What should be assessed FIRST?",
+        options: [
+          "Whether failures affect critical systems and recovery capability",
+          "Number of help desk staff",
+          "Report design",
+          "Annual training budget"
+        ],
+        correct: 0,
+        explanation: "The primary question is whether failure affects critical systems, data recovery, recovery objectives, and business continuity."
+      },
+      {
+        category: "KRI Monitoring",
+        question: "A KRI is manually prepared and frequently contains errors. What is the BEST improvement?",
+        options: [
+          "Stop reporting the KRI",
+          "Establish data ownership, validation procedures, and automation where feasible",
+          "Increase risk tolerance",
+          "Replace the risk owner"
+        ],
+        correct: 1,
+        explanation: "Reliable data requires clear ownership, quality checks, controlled calculations, traceability, and automated collection where practical."
+      },
+      {
+        category: "KPIs and KCIs",
+        question: "A key performance indicator is primarily used to measure:",
+        options: [
+          "Risk exposure only",
+          "Performance against an operational or strategic objective",
+          "Threat actor capability",
+          "Regulatory penalties only"
+        ],
+        correct: 1,
+        explanation: "KPIs measure progress, achievement, efficiency, or effectiveness against organizational or operational objectives."
+      },
+      {
+        category: "KPIs and KCIs",
+        question: "A key control indicator is primarily used to measure:",
+        options: [
+          "Whether a key control is operating as expected",
+          "Employee satisfaction only",
+          "Revenue growth",
+          "External threats globally"
+        ],
+        correct: 0,
+        explanation: "KCIs measure whether key controls are executed, sufficiently covered, timely, and performing as intended."
+      },
+      {
+        category: "KPIs and KCIs",
+        question: "Which is the BEST example of a KCI for privileged-access management?",
+        options: [
+          "Number of privileged accounts reviewed and recertified within the required period",
+          "Annual profit growth",
+          "Number of customer complaints",
+          "Number of training rooms"
+        ],
+        correct: 0,
+        explanation: "Timely privileged-access review and recertification directly measures operation of a key access-governance control."
+      },
+      {
+        category: "KPIs and KCIs",
+        question: "Which metric is MOST likely a KPI rather than a KRI?",
+        options: [
+          "Percentage of critical incidents exceeding recovery objectives",
+          "Number of days to complete customer onboarding",
+          "Number of unpatched critical vulnerabilities",
+          "Percentage of privileged access reviews overdue"
+        ],
+        correct: 1,
+        explanation: "Customer onboarding turnaround time measures process performance. The other options indicate risk exposure or control weakness."
+      },
+      {
+        category: "KPIs and KCIs",
+        question: "Which combination is MOST useful for patch-management measurement?",
+        options: [
+          "KCI: percentage patched within policy timeframe; KRI: number of overdue critical vulnerabilities",
+          "KCI: number of printers; KRI: employee attendance",
+          "KCI: annual revenue; KRI: office rent",
+          "KCI: number of policies; KRI: number of servers"
+        ],
+        correct: 0,
+        explanation: "The KCI measures control execution, while the KRI indicates residual risk exposure arising from overdue remediation."
+      },
+      {
+        category: "KPIs and KCIs",
+        question: "Why should KPIs, KCIs, and KRIs be used together?",
+        options: [
+          "They are identical measures",
+          "They provide complementary views of performance, control effectiveness, and risk exposure",
+          "They eliminate need for risk owners",
+          "They are used only for audit reporting"
+        ],
+        correct: 1,
+        explanation: "Together, these indicators help management understand whether objectives are met, controls function, and risk stays within tolerance."
+      },
+      {
+        category: "KPI and KCI Monitoring",
+        question: "A KCI indicates access reviews are completed on time, but unauthorized-access incidents increase. What is the BEST conclusion?",
+        options: [
+          "The access-review control is definitely effective",
+          "The control may be insufficient in scope or design, and related controls should be assessed",
+          "The incidents are unrelated to access management",
+          "The KCI should be ignored"
+        ],
+        correct: 1,
+        explanation: "Timely completion does not guarantee effectiveness. Reviews may be incomplete, superficial, incorrectly scoped, or not linked to remediation."
+      },
+      {
+        category: "KPI and KCI Monitoring",
+        question: "Which is the BEST action when a key control indicator deteriorates?",
+        options: [
+          "Assess the cause, impact on risk exposure, and required corrective actions",
+          "Reclassify the KCI as a KPI",
+          "Stop reporting it",
+          "Wait for the annual audit"
+        ],
+        correct: 0,
+        explanation: "Deterioration may indicate a control failure and should trigger timely root-cause analysis, remediation, and escalation where needed."
+      },
+      {
+        category: "KPI and KCI Monitoring",
+        question: "A KCI measures the percentage of firewall rule changes approved. Why may this be insufficient?",
+        options: [
+          "Approval is irrelevant",
+          "It may not measure whether rules are secure, necessary, or correctly implemented",
+          "It is a KRI rather than KCI",
+          "Firewall rules do not require management"
+        ],
+        correct: 1,
+        explanation: "A meaningful indicator must assess whether the control achieves its objective, not merely whether an administrative step was completed."
+      },
+      {
+        category: "KPI and KCI Monitoring",
+        question: "A KPI shows average incident-closure time improves while customer impact worsens. What should management do?",
+        options: [
+          "Conclude incident response is fully effective",
+          "Review whether the KPI encourages premature closure or misses containment and business-impact measures",
+          "Stop measuring incidents",
+          "Increase closure target only"
+        ],
+        correct: 1,
+        explanation: "Poorly designed metrics may create unintended behavior. KPIs should be balanced with quality, containment, service restoration, and business-impact measures."
+      },
+      {
+        category: "KPI and KCI Monitoring",
+        question: "Which metric is MOST useful to assess backup-control operation?",
+        options: [
+          "Percentage of successful backup jobs and successful restoration tests",
+          "Number of backup policies",
+          "Number of servers",
+          "Number of IT operations employees"
+        ],
+        correct: 0,
+        explanation: "Successful backups alone are insufficient. Restoration testing confirms recoverability and supports confidence in resilience."
+      },
+      {
+        category: "KPI and KCI Monitoring",
+        question: "Control indicators should be reported MOST frequently when:",
+        options: [
+          "The control supports a high-risk, rapidly changing, or critical business process",
+          "The report is difficult to create",
+          "The owner prefers fewer meetings",
+          "The control has no relationship to risk"
+        ],
+        correct: 0,
+        explanation: "Frequency should reflect risk criticality, volatility, business dependency, regulatory expectations, and management decision needs."
+      },
+      {
+        category: "Control Maturity",
+        question: "A control is documented but performed differently by each team with limited evidence. What is its likely maturity level?",
+        options: [
+          "Optimized",
+          "Managed and measurable",
+          "Ad hoc or repeatable but inconsistent",
+          "Fully automated"
+        ],
+        correct: 2,
+        explanation: "Inconsistent execution, weak evidence, and local variation indicate low-to-moderate control maturity."
+      },
+      {
+        category: "Control Maturity",
+        question: "Which characteristic BEST indicates a mature control environment?",
+        options: [
+          "Controls depend on individual knowledge only",
+          "Controls are standardized, measured, monitored, and continually improved",
+          "Controls are undocumented but widely understood",
+          "Controls exist only during audits"
+        ],
+        correct: 1,
+        explanation: "Mature controls are defined, repeatable, owned, measured, evidenced, monitored, and improved over time."
+      },
+      {
+        category: "Control Maturity",
+        question: "A control is automated but never configured correctly. What is the BEST assessment?",
+        options: [
+          "It is mature because it is automated",
+          "Automation alone does not establish design or operating effectiveness",
+          "It is automatically preventive",
+          "It does not need monitoring"
+        ],
+        correct: 1,
+        explanation: "Automation does not ensure effectiveness. Controls must still be properly designed, configured, maintained, monitored, and tested."
+      },
+      {
+        category: "Control Maturity",
+        question: "What is the PRIMARY benefit of assessing control maturity in addition to control effectiveness?",
+        options: [
+          "It identifies sustainability, consistency, measurement, and improvement opportunities",
+          "It removes the need for testing",
+          "It proves incidents cannot occur",
+          "It replaces the risk register"
+        ],
+        correct: 0,
+        explanation: "Effectiveness assesses whether a control works now; maturity assesses whether it is sustainable, repeatable, measurable, and continuously improved."
+      },
+      {
+        category: "Control Maturity",
+        question: "Which situation MOST likely indicates a control-design deficiency?",
+        options: [
+          "A monthly review was skipped once",
+          "A control does not address the relevant risk scenario at all",
+          "Evidence was filed late",
+          "Control owner changed roles"
+        ],
+        correct: 1,
+        explanation: "A design deficiency exists when a control cannot reasonably prevent, detect, correct, or mitigate the relevant risk."
+      },
+      {
+        category: "Control Maturity",
+        question: "Which situation MOST likely indicates an operating-effectiveness deficiency?",
+        options: [
+          "A security policy lacks required approval",
+          "A properly designed quarterly control was not performed for two quarters",
+          "A risk scenario is poorly documented",
+          "A KRI threshold is not defined"
+        ],
+        correct: 1,
+        explanation: "Failure to perform an otherwise properly designed control consistently is an operating-effectiveness deficiency."
+      },
+      {
+        category: "Risk Data Aggregation",
+        question: "Why is risk-data aggregation important for senior management?",
+        options: [
+          "It removes the need for risk owners",
+          "It reveals enterprise-level concentrations, trends, and interdependencies",
+          "It eliminates detailed assessments",
+          "It is only for marketing"
+        ],
+        correct: 1,
+        explanation: "Aggregation provides a consolidated view of exposures, concentrations, systemic dependencies, and emerging trends across the enterprise."
+      },
+      {
+        category: "Risk Data Aggregation",
+        question: "Several high-risk applications rely on the same identity provider. What is the MOST important aggregation insight?",
+        options: [
+          "There may be a concentrated single point of failure",
+          "Each application should be managed independently only",
+          "Identity management is no longer important",
+          "Applications must be deleted"
+        ],
+        correct: 0,
+        explanation: "Shared dependencies can create correlated or systemic risk, where a single failure affects multiple critical services."
+      },
+      {
+        category: "Risk Data Aggregation",
+        question: "What is the GREATEST challenge when aggregating risk data from several business units?",
+        options: [
+          "Risk data is always identical",
+          "Inconsistent taxonomies, rating scales, definitions, and data quality",
+          "Too many dashboards",
+          "Risk owners always agree"
+        ],
+        correct: 1,
+        explanation: "Common methodologies, definitions, and data governance are essential for meaningful risk aggregation."
+      },
+      {
+        category: "Risk Data Aggregation",
+        question: "A dashboard shows fewer high-rated risks but increasing overdue treatment actions. What should management infer?",
+        options: [
+          "Risk posture is necessarily improving",
+          "Ratings may not reflect true remediation status; further analysis is needed",
+          "Overdue actions are irrelevant",
+          "Only high-rated risks should be reported"
+        ],
+        correct: 1,
+        explanation: "Reduced ratings may mask exposure if remediation is incomplete. Risk ratings, overdue actions, control deficiencies, and residual risk must be assessed together."
+      },
+      {
+        category: "Risk Data Aggregation",
+        question: "Which data-quality attribute is MOST important for board-level risk reporting?",
+        options: [
+          "Decorative formatting",
+          "Accuracy, timeliness, consistency, and relevance",
+          "Maximum number of pages",
+          "Technical jargon"
+        ],
+        correct: 1,
+        explanation: "Board reporting must be reliable, current, comparable, material, and directly relevant to governance and decision-making."
+      },
+      {
+        category: "Risk Data Aggregation",
+        question: "Control-test results are incomplete for a critical system. What should occur FIRST?",
+        options: [
+          "Assume controls are effective",
+          "Validate the data, identify why it is incomplete, and assess uncertainty",
+          "Exclude the system from reporting",
+          "Lower the risk rating automatically"
+        ],
+        correct: 1,
+        explanation: "Incomplete evidence may indicate a governance issue and creates uncertainty. It should be investigated, documented, and reflected in risk assessment."
+      },
+      {
+        category: "Risk Reporting",
+        question: "What is the MOST important characteristic of risk reporting to senior executives?",
+        options: [
+          "Technical detail on every vulnerability",
+          "Clear reporting of material risks, trends, business implications, and decisions required",
+          "Long lists of raw log events",
+          "One report per year only"
+        ],
+        correct: 1,
+        explanation: "Executives need concise, business-focused information that supports prioritization, oversight, investment, escalation, and risk decisions."
+      },
+      {
+        category: "Risk Reporting",
+        question: "Which audience MOST likely needs detailed technical control deficiencies?",
+        options: [
+          "Board only",
+          "Control owners and IT management",
+          "Customers",
+          "Marketing only"
+        ],
+        correct: 1,
+        explanation: "Control owners and IT management require detailed findings and evidence to design and execute remediation."
+      },
+      {
+        category: "Risk Reporting",
+        question: "A board report says only 'Cyber risk is high.' What is the MOST important improvement?",
+        options: [
+          "Add technical acronyms",
+          "Explain material scenarios, trends, business impact, treatment status, and decisions required",
+          "Remove all risk ratings",
+          "Include firewall logs"
+        ],
+        correct: 1,
+        explanation: "Board reporting should be actionable and connect risk to business objectives, impact, ownership, treatment, and required decisions."
+      },
+      {
+        category: "Risk Reporting",
+        question: "When reporting a risk accepted above normal tolerance, what should be included?",
+        options: [
+          "Only the risk title",
+          "Rationale, approving authority, duration, residual exposure, compensating controls, and review date",
+          "Employee attendance list",
+          "Vendor marketing materials"
+        ],
+        correct: 1,
+        explanation: "Elevated risk acceptance requires transparent governance, explicit authority, documented conditions, monitoring, and scheduled review."
+      },
+      {
+        category: "Risk Reporting",
+        question: "Which reporting practice MOST supports risk-based decision-making?",
+        options: [
+          "Identical reports for all stakeholders",
+          "Tailoring detail, context, and timing to stakeholder responsibilities",
+          "Reporting only positive control results",
+          "Reporting only after incidents"
+        ],
+        correct: 1,
+        explanation: "Boards, executives, risk owners, control owners, operational teams, and auditors need different levels of detail and context."
+      },
+      {
+        category: "Risk Reporting",
+        question: "A report shows a critical risk has no assigned owner. What is the BEST action?",
+        options: [
+          "Present the information without comment",
+          "Escalate the accountability gap and require ownership assignment",
+          "Delete the risk",
+          "Assign it automatically to internal audit"
+        ],
+        correct: 1,
+        explanation: "An unassigned material risk is a governance weakness. Appropriate management must assign accountability promptly."
+      },
+      {
+        category: "Emerging Technology",
+        question: "Before adopting generative AI for customer-service operations, what should be assessed FIRST?",
+        options: [
+          "Whether competitors use it",
+          "Business use case, data classification, privacy, security, legal, model-risk, and resilience implications",
+          "Color of the user interface",
+          "Whether staff like the tool"
+        ],
+        correct: 1,
+        explanation: "Emerging technology adoption must consider business purpose, customer-data handling, access, legal requirements, model behavior, vendor dependency, and operational risk."
+      },
+      {
+        category: "Emerging Technology",
+        question: "A bank plans to migrate a critical workload to cloud infrastructure. Which risk requires special attention?",
+        options: [
+          "Shared-responsibility ambiguity between the bank and cloud provider",
+          "Number of desks in office",
+          "Employee parking availability",
+          "Font used in documentation"
+        ],
+        correct: 0,
+        explanation: "Cloud adoption requires clear understanding of provider versus customer responsibilities for configuration, identity, logging, encryption, resilience, monitoring, and compliance."
+      },
+      {
+        category: "Emerging Technology",
+        question: "Which is the BEST example of an environmental change requiring reassessment of IT risk?",
+        options: [
+          "New regulatory requirement affecting customer-data retention",
+          "Employee lunch survey",
+          "Office wall color change",
+          "Routine printer-paper order"
+        ],
+        correct: 0,
+        explanation: "Regulatory changes can affect systems, data retention, privacy, controls, reporting, processes, contracts, and compliance exposure."
+      },
+      {
+        category: "Emerging Technology",
+        question: "Threat intelligence identifies active exploitation of a vulnerability in software used by the organization. What should happen FIRST?",
+        options: [
+          "Wait for annual risk assessment",
+          "Determine exposure, affected assets, existing controls, and remediation urgency",
+          "Remove software inventory record",
+          "Assume the organization is unaffected"
+        ],
+        correct: 1,
+        explanation: "Active exploitation changes likelihood and urgency. The organization should rapidly identify exposure and assess containment, patching, and escalation needs."
+      },
+      {
+        category: "Emerging Technology",
+        question: "What is the PRIMARY benefit of horizon scanning?",
+        options: [
+          "Guarantees prediction of every incident",
+          "Enables early identification of emerging threats, technologies, regulations, and business changes",
+          "Replaces vulnerability management",
+          "Reduces executive oversight"
+        ],
+        correct: 1,
+        explanation: "Horizon scanning supports proactive updates to risk scenarios, controls, KRIs, treatment plans, and strategic decisions."
+      },
+      {
+        category: "Emerging Technology",
+        question: "A legacy system cannot support modern encryption standards but remains business-critical. What is the BEST response?",
+        options: [
+          "Ignore the issue because the system is old",
+          "Assess exposure and implement compensating controls, treatment plan, and retirement or modernization strategy",
+          "Immediately shut it down without business consultation",
+          "Lower encryption requirements"
+        ],
+        correct: 1,
+        explanation: "Legacy constraints require documented risk assessment, compensating controls, monitoring, risk acceptance if appropriate, and a realistic modernization roadmap."
+      },
+      {
+        category: "Framework Alignment",
+        question: "What is the PRIMARY purpose of aligning risk management practices with recognized frameworks and standards?",
+        options: [
+          "Guarantee immunity from cyber incidents",
+          "Provide structured, consistent, and defensible risk-management practices",
+          "Eliminate management judgment",
+          "Avoid documenting controls"
+        ],
+        correct: 1,
+        explanation: "Frameworks provide common principles, language, practices, and benchmarks. They support consistency but do not eliminate risk or accountability."
+      },
+      {
+        category: "Framework Alignment",
+        question: "An organization adopts a risk framework, but business units use different control definitions. What is the MAIN concern?",
+        options: [
+          "The organization is more flexible",
+          "Risk and control reporting may be inconsistent and difficult to aggregate",
+          "The framework is automatically effective",
+          "The organization has fewer risks"
+        ],
+        correct: 1,
+        explanation: "Different definitions and taxonomies reduce comparability, weaken aggregation, and can impair enterprise-level decision-making."
+      },
+      {
+        category: "Framework Alignment",
+        question: "Which statement BEST reflects effective framework adoption?",
+        options: [
+          "Copy every control from a standard without context",
+          "Tailor framework principles and controls to objectives, obligations, and risk profile",
+          "Apply a framework only before audits",
+          "Assign ownership only to external consultants"
+        ],
+        correct: 1,
+        explanation: "Frameworks should be adapted to the organizationâ€™s services, complexity, obligations, risk appetite, resources, and operating environment."
+      },
+      {
+        category: "Framework Alignment",
+        question: "A control complies with internal policy but does not address a major emerging threat. What should management do?",
+        options: [
+          "Assume control is adequate because policy compliance exists",
+          "Reassess policy, scenario, and control design against current threats and business needs",
+          "Remove the control",
+          "Ignore the threat"
+        ],
+        correct: 1,
+        explanation: "Compliance is not enough if controls are no longer relevant. Policies and controls must evolve with the threat and business environment."
+      },
+      {
+        category: "Framework Alignment",
+        question: "Which activity BEST demonstrates alignment between business practices and security standards?",
+        options: [
+          "Mapping critical business processes and controls to relevant requirements, then testing implementation",
+          "Purchasing a framework document",
+          "Asking IT to self-certify without evidence",
+          "Maintaining policies without review"
+        ],
+        correct: 0,
+        explanation: "Alignment requires practical mapping, implementation, ownership, evidence, testing, and continual improvement."
+      },
+      {
+        category: "Framework Alignment",
+        question: "A gap assessment against a security standard identifies 20 missing controls. What should happen NEXT?",
+        options: [
+          "Implement all controls immediately in numerical order",
+          "Prioritize gaps by risk, regulatory requirements, business impact, and compensating controls",
+          "Ignore gaps until next audit",
+          "Remove the standard"
+        ],
+        correct: 1,
+        explanation: "Control implementation should be risk-based and proportionate, while addressing mandatory legal, regulatory, and contractual requirements."
+      },
+      {
+        category: "Integrated Risk Scenario",
+        question: "Online banking depends on a cloud provider, telecommunications provider, internal identity platform, and payment gateway. A regional cloud outage occurs. What is the BEST initial action?",
+        options: [
+          "Blame the provider and close the incident",
+          "Assess business-service impact, invoke incident and continuity processes, and identify dependency failures",
+          "Update the register only after restoration",
+          "Disable all customer accounts"
+        ],
+        correct: 1,
+        explanation: "The first priority is understanding impact, activating response and continuity processes, restoring critical services, and managing affected dependencies."
+      },
+      {
+        category: "Integrated Risk Scenario",
+        question: "Three critical services depend on one provider, and no tested exit plan exists. Third-party concentration risk is rated medium. What is the BEST assessment?",
+        options: [
+          "Medium is automatically correct because documented",
+          "Risk may be underestimated because of concentration and recovery concerns",
+          "Provider relationship eliminates risk",
+          "Risk belongs only to procurement"
+        ],
+        correct: 1,
+        explanation: "Provider concentration, lack of alternatives, absence of exit planning, and untested continuity arrangements can create systemic risk."
+      },
+      {
+        category: "Integrated Risk Scenario",
+        question: "A control owner reports 100% completion of vulnerability scans, yet critical vulnerabilities remain unresolved for 120 days. What is the BEST conclusion?",
+        options: [
+          "Vulnerability management is fully effective",
+          "Scanning may operate effectively, but remediation controls or governance are ineffective",
+          "Risk is low because scans occurred",
+          "No further analysis is required"
+        ],
+        correct: 1,
+        explanation: "Scanning identifies exposure; remediation, exception governance, escalation, and verification determine whether vulnerability management reduces risk."
+      },
+      {
+        category: "Integrated Risk Scenario",
+        question: "An executive wants to accept delayed patching for a critical internet-facing system because remediation is expensive. What should the risk practitioner do?",
+        options: [
+          "Accept without documentation",
+          "Present residual risk, threat exposure, compensating controls, alternatives, appetite implications, and required approval level",
+          "Remove the system from reporting",
+          "Reduce the vulnerability severity rating"
+        ],
+        correct: 1,
+        explanation: "Risk acceptance must be informed, authorized, documented, aligned with appetite, and supported by transparent risk analysis."
+      },
+      {
+        category: "Integrated Risk Scenario",
+        question: "Phishing incidents continue despite awareness training, email filtering, and MFA. What is the BEST next step?",
+        options: [
+          "Conclude controls failed completely",
+          "Analyze incident patterns, affected groups, attack methods, control gaps, and residual risk",
+          "Stop awareness training",
+          "Remove MFA"
+        ],
+        correct: 1,
+        explanation: "Repeated incidents require root-cause analysis and risk-based refinement. Controls may reduce impact even if they do not prevent every attack."
+      },
+      {
+        category: "Integrated Risk Scenario",
+        question: "Which sequence BEST represents a mature IT risk-management lifecycle?",
+        options: [
+          "Report risk, identify assets, ignore controls, close findings",
+          "Identify context, define scenarios, assess risk, evaluate controls, select treatment, assign owners, monitor, report, improve",
+          "Purchase tools, conduct audit, accept all risks, delete register",
+          "Perform penetration test, implement firewall, complete training, stop monitoring"
+        ],
+        correct: 1,
+        explanation: "Mature IT risk management is continuous and business-aligned: context, scenarios, assessment, controls, treatment, accountability, monitoring, reporting, and improvement."
+      }
+    ];
+
+let i=0, answered=false;
+function render(){
+  const q=questions[i]; answered=false;
+  document.getElementById('next').disabled=true;
+  document.getElementById('pos').textContent='Question '+(i+1)+' of '+questions.length+' — '+q.category;
+  let html='<div class="meta">'+q.category+'</div>';
+  html+='<h3>'+q.question+'</h3>';
+  q.options.forEach(function(opt,idx){ html+='<label class="opt" id="opt'+idx+'"><input type="radio" name="a" onchange="reveal('+idx+')"> '+String.fromCharCode(65+idx)+'. '+opt+'</label>'; });
+  html+='<div class="exp" id="exp"><b>Answer: '+String.fromCharCode(65+q.correct)+'.</b> '+q.explanation+'</div>';
+  document.getElementById('card').innerHTML=html;
+  document.getElementById('prev').disabled = (i===0);
+}
+function reveal(idx){
+  answered=true;
+  const q=questions[i];
+  document.querySelectorAll('.opt').forEach(function(el,k){
+    el.classList.remove('correct','wrong');
+    if(k===q.correct) el.classList.add('correct');
+    if(k===idx && idx!==q.correct) el.classList.add('wrong');
+  });
+  document.getElementById('exp').style.display='block';
+  document.getElementById('next').disabled=false;
+}
+function nav(dir){
+  i+=dir; if(i<0)i=0; if(i>=questions.length)i=questions.length-1;
+  render(); window.scrollTo(0,0);
+}
+render();
+</script>
+</body>
+</html>

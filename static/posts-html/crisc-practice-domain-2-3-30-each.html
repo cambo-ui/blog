@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRISC — Domain 2 &amp; Domain 3 (30 each)</title>
+<style>
+ body{font-family:Segoe UI,Arial,sans-serif;max-width:820px;margin:24px auto;padding:0 16px;background:#0f172a;color:#e2e8f0}
+ h1{color:#38bdf8} 
+ .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:22px}
+ .meta{color:#94a3b8;margin:4px 0 14px}
+ .opt{display:block;background:#0b1324;border:1px solid #334155;border-radius:8px;padding:10px;margin:8px 0;cursor:pointer}
+ .opt:hover{border-color:#38bdf8}
+ .correct{background:#14532d!important;border-color:#22c55e!important}
+ .wrong{background:#7f1d1d!important;border-color:#ef4444!important}
+ .exp{background:#0b1324;border:1px solid #fbbf24;border-radius:8px;padding:12px;margin-top:12px;display:none}
+ button{background:#0ea5e9;border:none;color:#0f172a;font-weight:bold;padding:10px 18px;border-radius:8px;cursor:pointer;margin:14px 6px 0 0}
+ button:disabled{opacity:.4;cursor:not-allowed}
+</style>
+</head>
+<body>
+<h1>CRISC Practice — Domain 2 &amp; Domain 3</h1>
+<p>Select an option to reveal the explanation, then click <b>Next</b>.</p>
+<div class="card" id="card"></div>
+<button id="prev" onclick="nav(-1)">Prev</button>
+<button id="next" onclick="nav(1)" disabled>Next</button>
+<span id="pos" class="meta"></span>
+
+<script>
+// domain: "D2" or "D3"
+const Q=[
+/* ============ DOMAIN 2 (30) ============ */
+{d:"D2",q:"An internet-facing app has a critical vulnerability taking 6 months to fix. Document the risk as:",o:["High, CVSS 9.8","A risk statement linking threat, vulnerability, business impact","Low, no active exploit","Medium, pending review"],a:1,e:"CRISC records risk as a statement/scenario; CVSS is a technical severity, not business risk. No exploit ≠ low impact."},
+{d:"D2",q:"Register shows inherent High; owners say it is lower; auditor says control tests were internal only. Next?",o:["Downgrade to Low on attestation","Remove the entry","Obtain independent validation of control effectiveness","Keep High until full reassessment"],a:2,e:"Residual rating needs evidence of control effectiveness; attestation is not assurance. Validate independently first."},
+{d:"D2",q:"LEAST important when prioritizing IT risks for treatment?",o:["Inherent business impact","Likelihood","Control effectiveness/residual risk","The vendor's logo on the system"],a:3,e:"Prioritize by residual risk (impact×likelihood×controls). A vendor brand has no risk weight."},
+{d:"D2",q:"First step when a business unit asks to assess a new cloud service?",o:["Rate vendor pricing","Define scope, objectives, context, criteria","Interview only IT security","Immediately run CVSS"],a:1,e:"Assessments start with scoping: context, owner, objectives, assumptions, and rating criteria."},
+{d:"D2",q:"Why does inherent vs residual risk matter most?",o:["Build org chart","To see if controls meet risk appetite","Choose project name","Select backup software"],a:1,e:"Residual = inherent reduced by controls. Compare residual to appetite to justify more treatment."},
+{d:"D2",q:"An asset owner demands a Low rating due to budget pressure. You should:",o:["Set Low to keep stakeholders happy","Rate per agreed criteria; escalate disagreements","Delete the assessment","Rate High to punish the owner"],a:1,e:"Ratings stay objective. Document the disagreement and escalate the decision, not the rating."},
+{d:"D2",q:"Risk tolerance is best described as:",o:["Exact risk the org must take","Acceptable variation around risk appetite","Total security budget","Incidents per year"],a:1,e:"Appetite = broad willingness to take risk; tolerance = acceptable deviation around it."},
+{d:"D2",q:"A pen test finishes. For the risk assessment output you should:",o:["Treat findings as final ratings","Integrate into risk register and translate to business impact","List only CVSS scores","Hide low-severity items"],a:1,e:"Findings feed the risk register as business risk statements, not automatic ratings."},
+{d:"D2",q:"Which is a QUALITATIVE risk measure?",o:["ALE in dollars","'High likelihood / Medium impact' heatmap","SLE = Asset × Exposure","Single annual cost"],a:1,e:"Qualitative uses scales/descriptions (low/med/high); quantitative uses numbers (ALE,SLE)."},
+{d:"D2",q:"You cannot determine likelihood for a rare event. Do what?",o:["Set likelihood to zero","Use conservative estimates and document assumptions/uncertainty","Ignore the scenario","Assume likelihood = impact"],a:1,e:"Use defensible ranges, document assumptions, and revisit with better data."},
+{d:"D2",q:"Which output belongs to a proper IT risk assessment?",o:["List of usernames","Risk register with owners, rating, treatment options","Cable diagrams only","Firewall config file"],a:1,e:"Core deliverable: a risk register capturing owners, ratings, controls, and response plans."},
+{d:"D2",q:"Same vulnerability in three systems, but one processes payments. This affects:",o:["Only likelihood","Business impact/rating of downstream risk for the payment system","Nothing","The CVSS score"],a:1,e:"Asset context changes business impact → risk rating, even with identical technical severity."},
+{d:"D2",q:"To keep ratings consistent across the enterprise, use:",o:["Each department’s own scale","A common approved risk-rating methodology/matrix","Only monetary values","No ratings"],a:1,e:"A common methodology makes risks comparable and reportable."},
+{d:"D2",q:"Risk assessment differs from vulnerability assessment because risk assessment:",o:["Only finds technical flaws","Considers business context, impact, likelihood, response — not just vulnerabilities","Needs no ownership","Is automated only"],a:1,e:"Vulnerability assessment finds flaws; risk assessment adds impact, likelihood, context, and management decisions."},
+{d:"D2",q:"A good risk-assessment review concludes that:",o:["All vulnerabilities are patched","Results are objective, criteria-based, current, and communicated to owners/management","Risk is zero","No documentation is needed"],a:1,e:"Good assessment = defensible, consistent, documented, owned, and reported."},
+{d:"D2",q:"When assessing third-party risk before onboarding, you should FIRST:",o:["Sign the contract","Perform due diligence on security/compliance and criticality","Ignore controls","Buy insurance only"],a:1,e:"Vendor due diligence at onboarding ensures security, compliance, and fit before commitment."},
+{d:"D2",q:"Which risk is HIGHLY relevant to likelihood?",o:["Threat intelligence shows active exploitation of the component","Asset is labeled 'confidential'","Cost of control","Backup location"],a:0,e:"Active exploitation raises likelihood; the other items are asset/context/control attributes."},
+{d:"D2",q:"Risk aggregation is used to:",o:["Count vulnerabilities","Roll individual risks into a rolled-up view for governance oversight","Replace individual ratings","Hide risks"],a:1,e:"Aggregation rolls up risks for governance while retaining their detail."},
+{d:"D2",q:"The MOST reliable input to validate risk ratings across business units is:",o:["Vendor marketing","A common risk matrix plus consistent evidence/data","Personal opinion","Staff tenure"],a:1,e:"Consistency needs a common scale and comparable evidence."},
+{d:"D2",q:"You are assessing a risk and the data is stale. You should:",o:["Trust it","Refresh/obtain current data or note the limitation and document it","Delete the record","Assume it is current"],a:1,e:"Stale data undermines validity; refresh or document the limitation."},
+{d:"D2",q:"Risk criteria should be defined BEFORE doing what?",o:["The assessment itself","Purchasing hardware","Holding the kickoff","Any other order"],a:0,e:"Criteria (impact/likelihood scales, thresholds) must exist before scoring to be consistent."},
+{d:"D2",q:"A finding has high impact but only from a very specific exploit path. Likelihood should be:",o:["High","Very high","Reflected as low given the limited path, but impact remains high","Zero"],a:2,e:"Impact stays high; likelihood accounts for the narrow path — don't conflate the two."},
+{d:"D2",q:"Which BEST supports objective reporting of risk to executives?",o:["Verbal assurance","A documented register with criteria, evidence, and owners","Friendly tone","Only totals"],a:1,e:"Executives need evidence-backed, criteria-based, owned reporting."},
+{d:"D2",q:"Scenario: an e-commerce outage is estimated at $100k/hour and the app is down 10 h/year expected. The annual risk exposure is closest to:",o:["$10k","$1M","$100k","$10M"],a:1,e:"Expected annual impact ≈ impact/hr × expected hours = 100k×10 = $1M."},
+{d:"D2",q:"When you cannot get precise quantitative data, the preferred approach is:",o:["Force false precision","Use qualitative ranges with assumptions and escalate data gaps","Drop the risk","Copy another firm's figures"],a:1,e:"Use transparent qualitative estimates, document assumptions, and seek better data."},
+{d:"D2",q:"A risk owner refuses to accept identified findings. You should:",o:["Delete the findings","Document the risk, evidence, and escalate to appropriate governance","End the engagement","Loosen the rating"],a:1,e:"Your duty is to document facts and escalate, not to capitulate or soften."},
+{d:"D2",q:"Risk reporting should include which minimum set?",o:["Only totals","Inherent vs residual, risks above appetite, KRIs/trends, decisions needed","Only incidents","Only vulnerabilities"],a:1,e:"Effective reporting includes inherent/residual, appetite exceptions, trends/KRIs, and asks."},
+{d:"D2",q:"When does the risk rating change after an incident?",o:["Never","After reassessing likelihood/impact and control effectiveness based on lessons learned","Only after one year","Only if email sent"],a:1,e:"Incidents inform the assessment; update ratings when evidence changes likelihood/impact/controls."},
+{d:"D2",q:"A system has strong compensating controls but the primary control failed. The residual risk should:",o:["Automatically be High","Reflect that compensating controls reduce it, but note the failed primary control as a weakness","Be set to Zero","Be ignored"],a:1,e:"Compensating controls reduce residual risk, but the primary control failure is a gap to track."},
+{d:"D2",q:"An assessment shows a concern about 'risk of losing customer data.' Re-write as a proper risk statement:",o:["Data may be lost","An attacker exploits a web input flaw to exfiltrate customer records, causing regulatory fines and reputational harm","We care about customers","Database is risky"],a:1,e:"A good statement ties threat→vulnerability→business consequence."},
+
+/* ============ DOMAIN 3 (30) ============ */
+{d:"D3",q:"High likelihood, very low impact ($500/mo), $50,000 fix. Best response?",o:["Mitigate now","Accept, documented with management approval","Avoid — retire the system","Transfer to insurance"],a:1,e:"When treatment cost far exceeds low impact, accept formally with sign-off."},
+{d:"D3",q:"Risk from an unavoidable third-party service is BEST handled by:",o:["One strategy only","A combination: contractual transfer + mitigate + accept residual","Stop the service immediately","Wait for the vendor"],a:1,e:"Responses are usually a portfolio: transfer (SLA/indemnity), mitigate controls, accept residual within appetite."},
+{d:"D3",q:"Management accepts a finding above appetite. You should:",o:["Lower the rating to fit appetite","Escalate/record the exception and document the decision","Ignore it","Report to regulators immediately"],a:1,e:"Document and escalate so appropriate authority owns acceptance of out-of-appetite risk."},
+{d:"D3",q:"'Eliminating the activity that creates the risk' is which response?",o:["Transfer","Mitigate","Avoid","Accept"],a:2,e:"Avoid stops/halts the activity, removing the exposure."},
+{d:"D3",q:"Cyber insurance is an example of:",o:["Avoid","Transfer/share","Accept","Mitigate control"],a:1,e:"Insurance shifts financial impact to a third party — transfer/share."},
+{d:"D3",q:"Adding a firewall + IDS is which response?",o:["Accept","Mitigate","Transfer","Avoid"],a:1,e:"Mitigate reduces likelihood/impact via controls; the risk remains but is reduced."},
+{d:"D3",q:"Risk owner chooses 'accept' but never documented it. The failure is:",o:["No budget","Decisions lack traceability/approval — weak governance","Too much logging","Incorrect encryption"],a:1,e:"Acceptance must be documented, approved, and reviewed to be auditable."},
+{d:"D3",q:"Setting RTO=4h, RPO=1h for a critical DB is mainly part of:",o:["Transfer","Risk treatment/continuity planning tied to impact tolerance","Avoidance","Asset valuation only"],a:1,e:"RTO/RPO operationalize impact tolerance and inform recovery/mitigation."},
+{d:"D3",q:"Board-level risk reporting should emphasize:",o:["Every CVSS score","Business impact, residual vs appetite, decisions needed","Hostnames","Vendor marketing"],a:1,e:"Boards need business impact, appetite alignment, trends, and asks."},
+{d:"D3",q:"Residual risk after mitigation is STILL above appetite. Next?",o:["Lower the rating","Apply further treatment or escalate for formal acceptance/appetite decision","Remove from register","Restart assessment"],a:1,e:"If residual stays above appetite, treat more or elevate the decision — never silently change rating."},
+{d:"D3",q:"TRUE about the Risk Register?",o:["It’s static","Living, owned, reviewed, linked to response plans","Only lists vulnerabilities","Replaces treatment"],a:1,e:"A risk register is a living, owned, reviewed document tied to responses."},
+{d:"D3",q:"Key risk indicators (KRIs) are used to:",o:["Set firewall rules","Monitor changes in risk exposure over time","Replace the register","Set salaries"],a:1,e:"KRIs give ongoing signals of risk movement to trigger action."},
+{d:"D3",q:"Correct ownership of a risk means:",o:["IT security owns all risk","The business owner/executive owns the decision and accountability","The vendor owns it","Internal audit owns decisions"],a:1,e:"Business owners own risk decisions; security supports; audit provides assurance."},
+{d:"D3",q:"A control is not reducing risk as expected. Response?",o:["Ignore it","Reassess that risk, identify the ineffective control, and re-plan/escalate","Increase the risk rating only","Delete the finding"],a:1,e:"Ineffective controls invalidate the residual rating; re-baseline and adjust treatment."},
+{d:"D3",q:"BEST characteristic of a good risk response decision?",o:["Technically fancy","Aligned to business objectives, documented, approved, monitored","Uses one strategy only","Avoids management"],a:1,e:"Effective responses are risk-informed, approved by owners, documented, and monitored."},
+{d:"D3",q:"Transferring risk to a managed security provider with SLA is:",o:["Avoidance","Transfer/share combined with monitoring","Acceptance","Nothing"],a:1,e:"It shifts operational responsibility/financial exposure while the org must monitor the SLA."},
+{d:"D3",q:"Risk appetite statement should be:",o:["Technical only","Approved by governance and linked to decisions","Set by audit","Changed daily"],a:1,e:"Appetite is a governance-approved directive that guides treatment decisions."},
+{d:"D3",q:"A decision to 'accept' an audit finding should be approved by:",o:["Auditor","The risk owner most affected / appropriate authority","Procurement","The intern"],a:1,e:"Acceptance is a business decision by the accountable risk owner/authority."},
+{d:"D3",q:"Using segregation of duties is a form of which response?",o:["Transfer","Mitigate","Avoid","Accept"],a:1,e:"SoD reduces likelihood/impact of fraud/error — a mitigation control."},
+{d:"D3",q:"You move risky work to a managed service, but remain accountable for breach notification. This is mainly:",o:["Outsourcing of IT operations with risk transferred to a provider; accountability of oversight retained","Full transfer","Full avoidance","Full acceptance"],a:0,e:"Operational impact transfers; accountability for oversight/notifications remains with the org."},
+{d:"D3",q:"Risk monitoring is required because:",o:["Assessments are once only","Risks, threats, and controls change; monitoring ensures residual risk stays within appetite","For fun","To satisfy the printer"],a:1,e:"Continuous monitoring keeps the risk picture current and triggers reassessment."},
+{d:"D3",q:"An exception to policy is approved. Risk response is:",o:["No response","Documented acceptance of risk with compensating controls and a review date","Transfer","Avoid"],a:1,e:"Policy exceptions are formal risk acceptance: documented, compensated, reviewed."},
+{d:"D3",q:"Which response is MOST appropriate for a rare, catastrophic yet hedgeable risk?",o:["Avoidance","Transfer (insurance) or a combination","Accept only","Ignore"],a:1,e:"High-impact, infrequent, insurable risk is often shared/transferred."},
+{d:"D3",q:"A business will shut a risky service. This is:",o:["Mitigate","Avoid","Transfer","Accept"],a:1,e:"Decommissioning the risky service removes the exposure — avoidance."},
+{d:"D3",q:"Risk tolerance limits are crossed even though appetite is below. You should treat it as:",o:["Acceptable","An exception/tolerance breach to escalate and address","Normal","No action"],a:1,e:"Exceeding tolerance triggers escalation even if you think the appetite is fine."},
+{d:"D3",q:"Best way to ensure response plans are effective?",o:["File them","Test/review them and verify outcomes reduce risk to acceptable levels","Only write once","Keep secret"],a:1,e:"Effectiveness requires testing/review and evidence the risk is at an acceptable level."},
+{d:"D3",q:"A high-risk issue has no owner and no response plan. Fix by:",o:["Deleting it","Assigning an accountable owner and defining the response plan with timeline","Hiding it","Delaying forever"],a:1,e:"Every risk needs an accountable owner and an agreed response plan/timeline."},
+{d:"D3",q:"Risk communication should be:",o:["Hidden from executives","Tailored, timely, and actionable to the audience","Only during crises","Only technical"],a:1,e:"Effective communication is audience-appropriate, timely, and actionable."},
+{d:"D3",q:"Why track risk CER?",o:["To count devices","To confirm controls perform and risks remain at acceptable levels","For travel","For decor"],a:1,e:"Continuous effectiveness review confirms controls work and the residual risk is acceptable."},
+{d:"D3",q:"When deciding between mitigation and acceptance for a cost-limited fix, you should prioritize treatment based on:",o:["Lowest effort","Risk reduction per cost and alignment to appetite","Pleasing the team","Random choice"],a:1,e:"Choose responses that give the best risk reduction relative to cost and keep you within appetite."},
+];
+
+let i=0, answered=false;
+function render(){
+  const q=Q[i]; answered=false;
+  document.getElementById('next').disabled=true;
+  document.getElementById('pos').textContent=`Question ${i+1} of ${Q.length} — ${q.d==='D2'?'Domain 2':'Domain 3'}`;
+  let html=`<div class="meta">${q.d==='D2'?'🟡 Domain 2 — IT Risk Assessment':'🔵 Domain 3 — Risk Response & Reporting'}</div>`;
+  html+=`<h3>${q.q}</h3>`;
+  q.o.forEach((opt,idx)=>{ html+=`<label class="opt" id="opt${idx}"><input type="radio" name="a" onchange="reveal(${idx})"> ${String.fromCharCode(65+idx)}. ${opt}</label>`; });
+  html+=`<div class="exp" id="exp"><b>Answer: ${String.fromCharCode(65+q.a)}.</b> ${q.e}</div>`;
+  document.getElementById('card').innerHTML=html;
+  document.getElementById('prev').disabled = (i===0);
+}
+function reveal(idx){
+  answered=true;
+  const q=Q[i];
+  // mark correct/wrong
+  document.querySelectorAll('.opt').forEach((el,k)=>{
+    el.classList.remove('correct','wrong');
+    if(k===q.a) el.classList.add('correct');
+    if(k===idx && idx!==q.a) el.classList.add('wrong');
+  });
+  document.getElementById('exp').style.display='block';
+  document.getElementById('next').disabled=false;
+}
+function nav(dir){
+  i+=dir;
+  if(i<0)i=0; if(i>=Q.length)i=Q.length-1;
+  render(); window.scrollTo(0,0);
+}
+document.getElementById('prev').disabled = true;
+render();
+</script>
+</body>
+</html>

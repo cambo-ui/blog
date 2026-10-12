@@ -1,0 +1,27 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+  <div class="post-meta">
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 02, 2006" }}</time>
+    {{ with .Params.tags }}<ul>
+      {{ range . }}<li><a href="{{ "/tags/" | relURL }}{{ . | urlize }}/">{{ . }}</a></li>{{ end }}
+    </ul>{{ end }}
+  </div>
+  {{ .Content }}
+</article>
+<script>
+document.querySelectorAll('iframe').forEach(f => {
+  const resize = () => {
+    try { f.style.height = f.contentDocument.documentElement.scrollHeight + 'px'; } catch (e) {}
+  };
+  f.addEventListener('load', () => {
+    resize();
+    try {
+      f.contentDocument.addEventListener('click', () => setTimeout(resize, 150));
+      new ResizeObserver(resize).observe(f.contentDocument.body);
+    } catch (e) {}
+  });
+  setInterval(resize, 1500);
+});
+</script>
+{{ end }}

@@ -1,0 +1,20 @@
+baseURL = 'https://pushthescript.vercel.app/'
+
+title = 'Push The Script'
+theme = ''
+enableRobotsTXT = true
+
+[params]
+  description = 'Notes on software, AI, and tooling.'
+  author = 'Push The Script'
+
+[taxonomies]
+  tag = 'tags'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ['HTML', 'RSS']

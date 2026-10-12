@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'></head><body>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f2f4f8;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            color: #1a2c2e;
+        }
+
+        .quiz-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 20, 20, 0.08);
+            overflow: hidden;
+            padding: 2rem 2rem 2.5rem 2rem;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #e9edf2;
+            padding-bottom: 1.2rem;
+        }
+        .quiz-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1a4d4a, #2c7a6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.4rem;
+        }
+        .quiz-header p {
+            color: #5b6e6e;
+            font-size: 0.95rem;
+            font-weight: 450;
+        }
+
+        .question-block {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eef2f5;
+            padding-bottom: 1.5rem;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #0b1f22;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            background: #F9FBFD;
+            padding: 0.2rem 0 0.2rem 0.8rem;
+            border-left: 4px solid #2c7a6e;
+        }
+
+        .options-list {
+            list-style: none;
+            margin: 0 0 0.6rem 0;
+            padding-left: 1rem;
+        }
+        .option-item {
+            font-size: 0.92rem;
+            margin-bottom: 0.35rem;
+            color: #2b3e42;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            cursor: pointer;
+            padding: 0.65rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid #e4ebef;
+            transition: all 0.2s ease;
+        }
+        .option-item:hover {
+            background: #f4faf8;
+            border-color: #2c7a6e;
+        }
+        .option-letter {
+            font-weight: 700;
+            background: #f0f2f5;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            font-size: 0.75rem;
+            color: #1f5e58;
+        }
+        .option-text {
+            flex: 1;
+        }
+
+        .option-item.selected-correct {
+            background: #e7f8ef;
+            border-color: #3b9e6d;
+            color: #155c3d;
+            font-weight: 700;
+        }
+
+        .option-item.selected-wrong {
+            background: #fff0f0;
+            border-color: #c72a2a;
+            color: #9a1f1f;
+            font-weight: 700;
+        }
+
+        .option-item.correct-answer {
+            background: #e7f8ef;
+            border-color: #3b9e6d;
+            font-weight: 700;
+        }
+
+        .answer-result {
+            font-weight: 700;
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0 0.5rem 0;
+        }
+
+        .answer-result.correct {
+            color: #216e48;
+            background: #e7f8ef;
+            border-left: 4px solid #3b9e6d;
+        }
+
+        .answer-result.wrong {
+            color: #9a1f1f;
+            background: #fff0f0;
+            border-left: 4px solid #c72a2a;
+        }
+
+        .explanation-box {
+            background: #eef7ea;
+            border-left: 5px solid #3b9e6d;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            margin-top: 0.3rem;
+        }
+        .explanation-title {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #216e48;
+            margin-bottom: 0.25rem;
+        }
+        .explanation-text {
+            font-size: 0.82rem;
+            color: #1e443a;
+            line-height: 1.45;
+        }
+
+        .q-meta {
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: #8b9b9b;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 680px) {
+            .quiz-container {
+                padding: 1.2rem;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+        }
+
+        .quiz-footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8fa3a3;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+
+        .quiz-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1f5e58;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e7edf0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+        }
+
+        #progressFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #1a4d4a, #2c7a6e);
+            transition: width 0.3s ease;
+        }
+
+        .quiz-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-actions button {
+            border: none;
+            background: #2c7a6e;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quiz-actions button:hover {
+            background: #1f5e58;
+        }
+
+        .quiz-actions button:disabled {
+            background: #b9c7c7;
+            cursor: not-allowed;
+        }
+
+        .final-result {
+            text-align: center;
+            padding: 2rem;
+            background: #f9fbfd;
+            border-radius: 18px;
+        }
+
+        .final-result h2 {
+            color: #1f5e58;
+            margin-bottom: 1rem;
+        }
+
+        .final-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2c7a6e;
+            margin-bottom: 1rem;
+        }
+    </style>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>📘 IT Risk Assessment · Complete 150 Q&A</h1>
+        <p>Expert-level questions — risk identification, analysis, evaluation, BIA, risk treatment & reporting</p>
+    </div>
+    <div class="quiz-status">
+        <div id="progressText">Question 1 of 150</div>
+        <div id="scoreText">Score: 0</div>
+    </div>
+    <div class="progress-bar">
+        <div id="progressFill"></div>
+    </div>
+    <div id="questionsRoot"></div>
+    <div class="quiz-actions">
+        <button disabled id="nextBtn">Next Question</button>
+        <button id="restartBtn" style="display: none;">Restart Quiz</button>
+    </div>
+    <div class="quiz-footer">
+        ✅ Full set of 150 expert-level questions | Based on CRISC / risk practitioner framework
+    </div>
+</div>
+
+<script>
+    // Complete dataset of 150 IT Risk Assessment multiple choice questions
+    const qaData = [
+        {q:"While prioritizing the risk for treatment, the IT risk practitioner should PRIMARILY consider the:", opts:["risk impact","risk appetite","risk exposure","risk rating"], correct:"D", justification:"The risk rating quantifies the risk by providing a ranking (high, medium, low) that can be used to prioritize treatment."},
+        {q:"The PRIMARY result of a risk assessment process is:", opts:["a defined business plan.","input for risk-aware decisions.","data classification.","minimized residual risk."], correct:"B", justification:"Risk assessment identifies and prioritizes risk and relates aggregated risk to risk appetite and tolerance to enable risk-aware decision-making."},
+        {q:"At the end of which phase of risk management would information about newly discovered risk be communicated to decision makers?", opts:["Risk identification","Risk response and mitigation","Risk assessment","Risk and control monitoring and reporting"], correct:"C", justification:"During risk assessment, identified risk is analyzed and evaluated for likelihood and impact. Risk-based decision-making is enabled through communication of risk assessment results."},
+        {q:"Which capability dimension is MOST important when using a maturity model for assessing risk management?", opts:["Effectiveness","Efficiency","Profitability","Performance"], correct:"D", justification:"Performance is achieved when the implemented process fulfills its purpose; thus, performance is the most important capability dimension."},
+        {q:"IT risk is measured by its:", opts:["level of damage to IT systems.","impact on business operations.","cost of countermeasures.","annual loss expectancy."], correct:"B", justification:"IT risk includes IT risk but is primarily measured by its impact on the business."},
+        {q:"Which is the PRIMARY reason for conducting periodic risk assessments?", opts:["Changes to the asset inventory","Changes to the threat and vulnerability profile","Changes in asset classification levels","Changes in the risk appetite"], correct:"B", justification:"Changes in threats and vulnerabilities are the primary reasons to conduct periodic risk assessments."},
+        {q:"Which is MOST important during quantitative risk analysis?", opts:["Statistical analysis","Decision trees","Expected monetary value","Net present value"], correct:"C", justification:"Expected monetary value reflects the weighted average of probable outcomes."},
+        {q:"Which type of risk assessment uses interviews and anonymous questionnaires (Delphi method)?", opts:["Quantitative","Probabilistic","Deterministic","Qualitative"], correct:"D", justification:"Qualitative risk assessment methods include interviewing and using anonymous questionnaires (the Delphi method)."},
+        {q:"Which technique conveys risk assessment results through a diagram linking causes, controls and consequences?", opts:["Bow tie analysis","Markov analysis","Scenario analysis","Sneak circuit analysis"], correct:"A", justification:"Bow tie analysis displays links between possible causes, controls and consequences."},
+        {q:"Which data analysis method is MOST effective for reviewing hardware and human failures to identify incident source?", opts:["Cause and effect analysis","Fault tree analysis","Sensitivity analysis","Bayesian analysis"], correct:"B", justification:"Fault tree analysis combines assessment of potential hardware and human failures to identify incident source."},
+        {q:"What is the BEST reason to perform a risk assessment?", opts:["To satisfy regulatory requirements","To budget appropriately for needed controls","To analyze the effect on the business","To help determine the current state of risk"], correct:"D", justification:"Risk assessment helps determine the current state of risk and helps determine countermeasures aligned with business objectives."},
+        {q:"A risk practitioner learns of a potential merger. What action should be taken?", opts:["Evaluate how changes in operations and culture could affect risk assessment.","Monitor to see if any new risk emerges.","Continue current risk program; it is tailored appropriately.","Implement changes to risk program to prepare for transition."], correct:"A", justification:"Changes to the business may impact risk calculations; the risk practitioner should be proactive."},
+        {q:"Which BEST assists in measuring existing risk management process development against desired state?", opts:["Capability maturity model","Risk management audit reports","Balanced scorecard","Enterprise security architecture"], correct:"A", justification:"Capability maturity model grades processes on a scale of 0 to 5 based on maturity."},
+        {q:"Risk assessments should be repeated regularly because:", opts:["omissions in earlier assessments can be addressed.","periodic assessments allow various methodologies.","business threats are constantly changing.","they help raise risk awareness among staff."], correct:"C", justification:"As business objectives and methods change, the nature and relevance of threats also change."},
+        {q:"Why does an external risk assessment team review documentation as the first step?", opts:["To understand technologies used.","To find gaps in documentation.","To understand enterprise business processes.","To review the risk assessment plan."], correct:"C", justification:"Risk is always formulated within the context of business objectives."},
+        {q:"Local management proactively mitigated high-level risk related to global purchasing. This means:", opts:["Local management is now responsible.","Risk owner is corporate CRO.","Risk owner is local purchasing manager.","Corporate management remains responsible."], correct:"D", justification:"Corporate management remains responsible even when risk response is executed at lower level."},
+        {q:"MOST effective method to conduct risk assessment on an internal system begins with understanding:", opts:["performance metrics.","policies and standards.","recent audit findings.","system and its subsystems."], correct:"D", justification:"Understanding the system provides basis for understanding policies, standards, interdependencies and risk."},
+        {q:"PRIMARY reason to have risk management reviewed by an independent professional is to:", opts:["validate cost-effective solutions.","validate control weaknesses.","assess validity of end-to-end process.","assess if risk profile is properly defined."], correct:"C", justification:"Independent reviewer is unbiased and unaffected by internal factors."},
+        {q:"Which risk management activity initially identifies critical business functions and key business risk?", opts:["Risk monitoring","Risk analysis","Risk assessment","Risk evaluation"], correct:"C", justification:"Risk assessment identifies and evaluates risk and its potential effects, including critical functions."},
+        {q:"MOST important external factor to consider in risk assessment is:", opts:["discovery of new vulnerabilities.","number of new malware types.","international crime statistics.","connectivity of unsecured devices on the Internet."], correct:"D", justification:"Proliferation of unsecured devices (IoT) creates a serious external threat."},
+        {q:"MOST important activity when evaluating risk to a business process?", opts:["Identification of existing controls","Threat intelligence including likelihood","Historical risk assessment data","Control testing results"], correct:"B", justification:"Key requirement of effective risk assessment is alignment with current threat intelligence including likelihood."},
+        {q:"BEST suited for reviewing IT risk analysis results before sending to management?", opts:["Internal audit review","Peer review","Compliance review","Risk policy review"], correct:"B", justification:"Peer review of IT risk analysis results is effective and good practice before sending to management."},
+        {q:"PRIMARY benefit of using a maturity model to assess data management process?", opts:["can be used for benchmarking.","helps identify gaps.","provides goals and objectives.","enforces continuous improvement."], correct:"B", justification:"Maturity models identify gaps between current and desired state to determine remediation efforts."},
+        {q:"Risk assessment techniques should be used to:", opts:["maximize return on investment.","provide documentation for auditors.","justify selection of risk mitigation strategies.","quantify subjective risk."], correct:"C", justification:"Risk practitioner should use risk assessment techniques to justify and implement risk mitigation strategy efficiently."},
+        {q:"PRIMARY advantage of performing risk assessment on a consistent basis?", opts:["lowers assessment costs.","provides evidence of threats.","indicates trends in risk profile.","eliminates need for periodic audits."], correct:"C", justification:"Tracking trends in evolving risk is significant benefit for managing risk and ensuring appropriate controls."},
+        {q:"Assessing information systems risk is BEST achieved by:", opts:["using past actual loss experience.","reviewing published loss statistics.","evaluating threats associated with existing assets.","reviewing control weaknesses in audit reports."], correct:"C", justification:"To assess IT risk, threats and vulnerabilities need to be evaluated using qualitative or quantitative approaches."},
+        {q:"Which technique analyzes system exposure to personnel?", opts:["Hazard and operability studies","Markov analysis","Human reliability analysis","Scenario analysis"], correct:"C", justification:"Human reliability analysis exclusively focuses on effects of human error in enterprise systems."},
+        {q:"Once risk assessment is completed, documented test results should be:", opts:["destroyed.","retained.","summarized.","published."], correct:"B", justification:"Test results should be retained to ensure future tests can be compared with past results."},
+        {q:"Goal of IT risk analysis is to:", opts:["align IT risk management with ERM.","enable prioritization of risk responses.","satisfy legal compliance.","identify known threats and vulnerabilities."], correct:"B", justification:"Risk analysis helps ensure areas with greatest risk are prioritized above those with lower risk."},
+        {q:"Risk assessment process using likelihood and impact to calculate risk level is:", opts:["qualitative process.","failure modes and effects analysis.","fault tree analysis.","quantitative process."], correct:"D", justification:"Quantitative risk assessment uses likelihood and impact to calculate monetary value of risk."},
+        {q:"Which technique has GREATEST impact on decision whether to implement a control?", opts:["Cost-benefit analysis","Payback period","Root cause analysis","Net present value"], correct:"A", justification:"Cost-benefit analysis compares implementation cost against cost savings associated with the risk."},
+        {q:"Board wants financial impact of individual risk scenarios. BEST approach?", opts:["Delphi method","Quantitative analysis","Qualitative analysis","Financial risk modeling"], correct:"B", justification:"Quantitative approach puts monetary amount on potential loss, which is of most interest to senior management."},
+        {q:"How often should risk be evaluated?", opts:["Annually or when significant change occurs","Once a year for each process","Every three to six months for critical processes","Only after significant changes"], correct:"A", justification:"Evaluating risk annually or when significant change offers reasonable frequency and flexibility."},
+        {q:"MOST applicable consideration for risk assessments dealing with data management?", opts:["Changing market conditions","Changing configuration item data","Lack of staff education","Growing capabilities of attackers"], correct:"B", justification:"Risk assessments must have accurate and up-to-date configuration item data to target correct information assets."},
+        {q:"PRIMARY factor when deciding between quantitative or qualitative risk assessment?", opts:["Corporate culture","Time available","Availability of data","Cost involved"], correct:"C", justification:"Availability of data is primary factor; data requirements for both methods are altogether different."},
+        {q:"Likelihood of an attack is MOST dependent on:", opts:["skill and motivation of attacker.","frequency of monitoring system review.","ability to respond quickly.","effectiveness of controls."], correct:"A", justification:"Factors include attacker skill and motivation, knowledge of vulnerabilities, value of asset, and environmental factors."},
+        {q:"BEST risk identification technique allowing anonymous employee input?", opts:["Delphi technique","Isolated pilot groups","SWOT analysis","Root cause analysis"], correct:"A", justification:"With Delphi technique, polling is done anonymously or privately between interviewer and interviewee."},
+        {q:"Management should use which to allocate resources for risk response?", opts:["Audit report findings","Penetration test results","Risk analysis results","Vulnerability test results"], correct:"C", justification:"Risk analysis results provide basis for prioritizing risk responses and allocating resources."},
+        {q:"GREATEST challenge of performing quantitative risk analysis?", opts:["Obtaining accurate impact figures","Obtaining accurate asset values","Calculating annual loss expectancy","Obtaining accurate threat frequency figures"], correct:"D", justification:"It can be challenging to obtain accurate figure representing frequency of threat occurrence."},
+        {q:"Deriving likelihood and impact from statistical methods is BEST described as:", opts:["quantitative risk analysis.","risk scenario analysis.","qualitative risk analysis.","probabilistic risk assessment."], correct:"A", justification:"Quantitative risk analysis derives probability and impact of risk scenarios from statistical methods and data."},
+        {q:"MOST important for a risk evaluation to:", opts:["consider potential size and likelihood of loss.","consider inherent and control risk.","include benchmark of similar companies.","assume equal protection for all assets."], correct:"A", justification:"Risk evaluation should consider the potential size and likelihood of a loss."},
+        {q:"Which produces comprehensive results in qualitative risk analysis?", opts:["Vulnerability assessment","Scenarios with threats and impacts","Value of information assets","Estimated productivity losses"], correct:"B", justification:"Using scenarios with threats and impacts better frames risk range and facilitates informed discussion."},
+        {q:"ULTIMATE goal of risk aggregation is to:", opts:["prevent exploitation of combined low-level risk.","address threat of chained exploits.","ensure combined value of low-level risk is not overlooked.","stop attackers from escalating access."], correct:"C", justification:"Individual low-level incidents may have minimal impact, but significant overall risk can accrue if aggregated."},
+        {q:"When would an enterprise opt for qualitative over quantitative risk analysis?", opts:["Evaluating risk of developing new company logo.","Wanting approximate financial impact measure.","Relying primarily on external data.","Evaluating established manufacturing line."], correct:"A", justification:"Qualitative analysis is ideally suited when historical data is not available, such as rebranding risk."},
+        {q:"Which combination of factors helps quantify risk?", opts:["Probability and consequence","Threat and impact","Threat and exposure","Sensitivity and exposure"], correct:"A", justification:"Quantification of risk is based on probability of threat exploiting vulnerability resulting in consequence to asset."},
+        {q:"Which example includes required components of a risk calculation?", opts:["30% chance of two projects missing deadline, resulting in $500,000 fine.","If compromised, loss of $15 million in contracts.","15% likelihood of disk corruption from power failure.","Impact of malware event estimated as low."], correct:"A", justification:"Probability and impact of a specific event are required components of a risk calculation."},
+        {q:"MOST likely trigger for comprehensive risk assessment is detection of changes in:", opts:["asset inventory.","asset classification levels.","business environment.","information security policies."], correct:"C", justification:"Changes in business environment, including new threats or vulnerabilities, trigger comprehensive risk assessment."},
+        {q:"GREATEST benefit of using an IT risk register is that it:", opts:["lists potential events to understand impact.","tracks risk that has been identified, analyzed and prioritized.","can be shared with all stakeholders.","is basis for choosing risk management tool."], correct:"B", justification:"Greatest benefit is providing information about likelihood, impact and prioritization of all identified IT risk."},
+        {q:"Which BEST improves decision-making related to risk?", opts:["Maintaining documented risk register","Risk awareness training aligned with risk culture","Maintaining updated security policies","Allocating accountability to department as whole"], correct:"A", justification:"Documented risk register captures relevant risk scenarios and provides basis for prioritization of risk responses."},
+        {q:"What is the PRIMARY purpose of a Business Impact Analysis (BIA) in risk management?", opts:["To identify critical business processes and their dependencies","To calculate the cost of controls","To assign risk ownership","To document security incidents"], correct:"A", justification:"BIA identifies critical business functions and their dependencies to determine the impact of disruptions."},
+        {q:"Which of the following is the BEST measure of risk in an IT environment?", opts:["Number of security incidents","Residual risk after controls","Vulnerability count","Threat frequency"], correct:"B", justification:"Residual risk represents the actual risk remaining after controls are implemented, providing the most accurate measure."},
+        {q:"When conducting a risk assessment, what is the FIRST step?", opts:["Identify controls","Determine risk appetite","Identify assets and their value","Calculate annual loss expectancy"], correct:"C", justification:"Asset identification is the foundational first step as it establishes what needs to be protected."},
+        {q:"Which risk treatment strategy involves transferring risk to a third party?", opts:["Acceptance","Avoidance","Mitigation","Transfer"], correct:"D", justification:"Risk transfer involves shifting the financial burden of risk to third parties through insurance or outsourcing."},
+        {q:"What is the relationship between threats and vulnerabilities?", opts:["Threats exploit vulnerabilities","Vulnerabilities create threats","They are independent concepts","Threats eliminate vulnerabilities"], correct:"A", justification:"Threats are actors or events that exploit vulnerabilities to cause harm to assets."},
+        {q:"Which control type is implemented to deter potential attackers?", opts:["Detective controls","Preventive controls","Corrective controls","Deterrent controls"], correct:"D", justification:"Deterrent controls discourage potential attackers through visible security measures."},
+        {q:"What is the MAIN objective of risk monitoring?", opts:["To ensure controls are effective","To identify new risks","To track risk treatment progress","All of the above"], correct:"D", justification:"Risk monitoring encompasses all these objectives to maintain an effective risk management program."},
+        {q:"Which factor is MOST important when determining risk tolerance?", opts:["Industry standards","Organizational strategy","Budget constraints","Technical capabilities"], correct:"B", justification:"Risk tolerance should be aligned with organizational strategy and business objectives."},
+        {q:"What is the purpose of a risk register in risk management?", opts:["To document identified risks","To track risk response actions","To record risk ownership","All of the above"], correct:"D", justification:"A risk register serves as a comprehensive repository for all risk-related information."},
+        {q:"Which risk assessment approach provides the MOST accurate financial impact?", opts:["Qualitative","Quantitative","Hybrid","Scenario analysis"], correct:"B", justification:"Quantitative analysis provides monetary values and statistical measures for the most accurate financial impact."},
+        {q:"What is the role of internal audit in risk management?", opts:["To implement controls","To provide independent assurance","To accept risks","To define risk appetite"], correct:"B", justification:"Internal audit provides independent assessment of risk management effectiveness."},
+        {q:"Which technique helps identify root causes of risks?", opts:["Root cause analysis","Fault tree analysis","Fishbone diagram","All of the above"], correct:"D", justification:"Various techniques can be used to trace risks back to their root causes."},
+        {q:"What is residual risk?", opts:["Risk before controls","Risk after controls","Risk of not taking action","Inherent risk"], correct:"B", justification:"Residual risk is the remaining risk after implementing risk treatment measures."},
+        {q:"Which stakeholder is ultimately responsible for risk management?", opts:["CISO","Board of Directors","IT Manager","Risk Analyst"], correct:"B", justification:"The board of directors has ultimate responsibility for risk management oversight."},
+        {q:"What is the benefit of scenario-based risk analysis?", opts:["Easy implementation","Realistic risk assessment","Low cost","Quick results"], correct:"B", justification:"Scenario analysis provides realistic risk assessment by considering specific threat scenarios."},
+        {q:"Which framework is commonly used for IT risk management?", opts:["COBIT","ITIL","ISO 31000","All of the above"], correct:"D", justification:"Multiple frameworks can be used for IT risk management depending on organizational needs."},
+        {q:"What is the difference between inherent risk and residual risk?", opts:["Inherent risk is before controls, residual is after","Residual is before controls, inherent is after","They are the same","One is quantitative, the other qualitative"], correct:"A", justification:"Inherent risk exists before controls, while residual risk remains after controls are applied."},
+        {q:"Which risk response strategy accepts the risk without additional controls?", opts:["Acceptance","Mitigation","Transfer","Avoidance"], correct:"A", justification:"Risk acceptance is a conscious decision to accept risk without implementing additional controls."},
+        {q:"What is the purpose of risk communication?", opts:["To raise awareness","To enable informed decisions","To build risk culture","All of the above"], correct:"D", justification:"Risk communication serves multiple purposes including awareness, decision-making, and culture building."},
+        {q:"Which metric is used to measure risk appetite?", opts:["Key Risk Indicators","Key Performance Indicators","Key Control Indicators","Key Process Indicators"], correct:"A", justification:"Key Risk Indicators (KRIs) measure the level of risk and help monitor risk appetite."},
+        {q:"How often should risk assessments be reviewed?", opts:["Monthly","Quarterly","Annually","When significant changes occur"], correct:"D", justification:"Risk assessments should be reviewed when significant changes occur to ensure continued relevance."},
+        {q:"What is the role of key risk indicators (KRIs)?", opts:["To measure risk levels","To detect emerging risks","To monitor control effectiveness","All of the above"], correct:"D", justification:"KRIs serve multiple functions in risk monitoring and early warning."},
+        {q:"Which method is BEST for assessing emerging risks?", opts:["Historical analysis","Scenario planning","Statistical models","Expert judgment"], correct:"D", justification:"Expert judgment is valuable for assessing emerging risks where historical data is limited."},
+        {q:"What is the relationship between risk and return in IT investments?", opts:["Higher risk means lower return","Higher risk can mean higher return","Risk and return are unrelated","Risk eliminates return"], correct:"B", justification:"Higher risk IT investments can potentially yield higher returns, but also carry greater loss potential."},
+        {q:"Which factor should be considered when prioritizing risks?", opts:["Likelihood","Impact","Velocity","All of the above"], correct:"D", justification:"Risk prioritization should consider multiple factors including likelihood, impact, and velocity."},
+        {q:"What is the purpose of risk escalation?", opts:["To inform senior management","To obtain additional resources","To report critical risks","All of the above"], correct:"D", justification:"Risk escalation serves multiple purposes including awareness, resource allocation, and decision-making."},
+        {q:"Which document defines the organization's risk management approach?", opts:["Risk policy","Risk register","Risk appetite statement","Risk assessment report"], correct:"A", justification:"Risk policy establishes the overall approach and principles for risk management."},
+        {q:"What is the benefit of a risk maturity model?", opts:["Benchmarking","Identifying gaps","Continuous improvement","All of the above"], correct:"D", justification:"Risk maturity models provide multiple benefits including benchmarking and improvement guidance."},
+        {q:"Which control type is MOST effective for preventing unauthorized access?", opts:["Physical control","Technical control","Administrative control","All of the above"], correct:"D", justification:"A combination of control types provides the most effective protection against unauthorized access."},
+        {q:"What is the purpose of a risk heat map?", opts:["Visual representation of risks","Risk prioritization","Risk communication","All of the above"], correct:"D", justification:"Risk heat maps serve multiple purposes in risk visualization and prioritization."},
+        {q:"How should risk assessment results be presented to management?", opts:["Detailed technical report","Executive summary","Risk heat map","Both B and C"], correct:"D", justification:"Risk results should be presented in accessible formats including summaries and visualizations."},
+        {q:"What is the role of third-party risk management?", opts:["Assess vendor risks","Monitor vendor controls","Ensure compliance","All of the above"], correct:"D", justification:"Third-party risk management addresses all aspects of vendor and partner risks."},
+        {q:"Which risk treatment option avoids the risk entirely?", opts:["Avoidance","Mitigation","Transfer","Acceptance"], correct:"A", justification:"Risk avoidance eliminates the risk by discontinuing the activity that generates it."},
+        {q:"What is the relationship between risk appetite and risk tolerance?", opts:["They are the same","Risk appetite is broader than tolerance","Tolerance is broader than appetite","They are unrelated"], correct:"B", justification:"Risk appetite is the general level of risk an organization is willing to accept, while tolerance is more specific."},
+        {q:"Which method helps quantify the probability of risk events?", opts:["Historical analysis","Statistical modeling","Expert judgment","All of the above"], correct:"D", justification:"Various methods can be used to quantify risk probabilities."},
+        {q:"What is the purpose of risk aggregation?", opts:["To identify cumulative risk","To understand risk correlations","To prioritize risks","All of the above"], correct:"D", justification:"Risk aggregation helps understand the combined effect of multiple risks."},
+        {q:"Which control should be prioritized for high-risk systems?", opts:["Cheap controls","Easy controls","Strategic controls","Mandatory controls"], correct:"C", justification:"Strategic controls should be prioritized for high-risk systems to ensure effective protection."},
+        {q:"What is the significance of risk velocity?", opts:["Speed of risk materialization","Cost of risk","Impact of risk","Probability of risk"], correct:"A", justification:"Risk velocity measures how quickly a risk can materialize and impact the organization."},
+        {q:"How should changes in risk be communicated to stakeholders?", opts:["Formal reports","Regular updates","Incident notifications","All of the above"], correct:"D", justification:"Risk communication should use various methods appropriate to the situation and audience."},
+        {q:"What is the role of security awareness in risk management?", opts:["Reduce human errors","Enhance reporting","Improve compliance","All of the above"], correct:"D", justification:"Security awareness training supports multiple risk management objectives."},
+        {q:"Which metric indicates risk management effectiveness?", opts:["Number of controls","Residual risk levels","Number of incidents","Control cost"], correct:"B", justification:"Residual risk levels provide the most direct measure of risk management effectiveness."},
+        {q:"What is the purpose of a risk assessment methodology?", opts:["Consistent approach","Repeatable process","Comparable results","All of the above"], correct:"D", justification:"A methodology ensures consistency and comparability in risk assessment."},
+        {q:"Which factor determines the cost-effectiveness of controls?", opts:["Implementation cost","Risk reduction value","Maintenance cost","All of the above"], correct:"D", justification:"Multiple factors determine whether a control is cost-effective."},
+        {q:"What is the role of continuous risk monitoring?", opts:["Detect new risks","Track risk changes","Alert on thresholds","All of the above"], correct:"D", justification:"Continuous monitoring addresses all aspects of ongoing risk management."},
+        {q:"How should risk assessment findings be documented?", opts:["Detailed records","Clear language","Visual aids","All of the above"], correct:"D", justification:"Risk documentation should be comprehensive yet accessible."},
+        {q:"Which stakeholder provides risk oversight at the board level?", opts:["Audit committee","Risk committee","Governance committee","All of the above"], correct:"D", justification:"Various board committees may provide risk oversight depending on organizational structure."},
+        {q:"What is the benefit of automated risk assessment tools?", opts:["Efficiency","Consistency","Accuracy","All of the above"], correct:"D", justification:"Automation provides multiple benefits including efficiency and consistency."},
+        {q:"Which risk response involves reducing the risk impact?", opts:["Mitigation","Avoidance","Acceptance","Transfer"], correct:"A", justification:"Risk mitigation involves implementing measures to reduce either the likelihood or impact of risks."},
+        {q:"What is the relationship between risk and business objectives?", opts:["Risk prevents objectives","Risk enables objectives","Risk is unrelated to objectives","Risk eliminates objectives"], correct:"B", justification:"Risk management enables the achievement of business objectives by managing uncertainties."},
+        {q:"Which method helps assess risk interdependencies?", opts:["Scenario analysis","Network analysis","Correlation analysis","All of the above"], correct:"D", justification:"Various analytical methods can assess how risks are interconnected."},
+        {q:"What is the purpose of risk reporting to management?", opts:["Inform decision-making","Track progress","Ensure accountability","All of the above"], correct:"D", justification:"Risk reporting supports multiple management functions."},
+        {q:"Which factor influences risk perception among stakeholders?", opts:["Experience","Culture","Information","All of the above"], correct:"D", justification:"Risk perception is influenced by multiple personal and organizational factors."},
+        {q:"What is the role of risk champions in organizations?", opts:["Promote risk awareness","Support risk management","Bridge communication","All of the above"], correct:"D", justification:"Risk champions play multiple roles in promoting and supporting risk management."},
+        {q:"How should risk priorities be established?", opts:["Based on impact","Based on likelihood","Based on urgency","Based on all factors"], correct:"D", justification:"Risk priorities should consider multiple factors for comprehensive prioritization."},
+        {q:"Which framework supports continuous risk improvement?", opts:["ISO 31000","COBIT","ITIL","All of the above"], correct:"D", justification:"Various frameworks support continuous improvement in risk management."},
+        {q:"What is the significance of risk culture?", opts:["Supports risk management","Influences decisions","Affects compliance","All of the above"], correct:"D", justification:"Risk culture affects all aspects of risk management effectiveness."},
+        {q:"Which control provides the BEST protection against data breaches?", opts:["Encryption","Access controls","Monitoring","All of the above combined"], correct:"D", justification:"Defense in depth using multiple controls provides the best protection."},
+        {q:"What is the purpose of risk scenario analysis?", opts:["Realistic assessment","Identify vulnerabilities","Test responses","All of the above"], correct:"D", justification:"Scenario analysis serves multiple purposes in risk assessment and preparation."},
+        {q:"Which metric indicates the potential financial impact of risk?", opts:["Annual Loss Expectancy","Single Loss Expectancy","Return on Investment","Total Cost of Ownership"], correct:"A", justification:"Annual Loss Expectancy (ALE) provides a measure of annual financial impact."},
+        {q:"How should risk appetite be communicated?", opts:["Policy documents","Training programs","Regular updates","All of the above"], correct:"D", justification:"Risk appetite should be communicated through multiple channels for effectiveness."},
+        {q:"What is the role of risk owners in risk management?", opts:["Risk accountability","Risk management","Risk reporting","All of the above"], correct:"D", justification:"Risk owners have comprehensive responsibility for their assigned risks."},
+        {q:"Which method helps predict future risk trends?", opts:["Trend analysis","Predictive analytics","Scenario planning","All of the above"], correct:"D", justification:"Various methods can be used to predict future risk developments."},
+        {q:"What is the relationship between risk and compliance?", opts:["Risk includes compliance","Compliance includes risk","They are separate","They are the same"], correct:"A", justification:"Compliance requirements are one type of risk that organizations must manage."},
+        {q:"Which factor affects the accuracy of risk assessments?", opts:["Data quality","Expert judgment","Methodology","All of the above"], correct:"D", justification:"Multiple factors influence the accuracy of risk assessments."},
+        {q:"What is the purpose of risk validation?", opts:["Verify results","Identify errors","Improve quality","All of the above"], correct:"D", justification:"Risk validation ensures the quality and accuracy of risk assessments."},
+        {q:"Which stakeholder is responsible for risk mitigation activities?", opts:["Risk owners","Control owners","Process owners","All of the above"], correct:"D", justification:"Various stakeholders may be responsible for implementing risk mitigation measures."},
+        {q:"What is the benefit of a risk-based approach to security?", opts:["Efficient resource use","Better protection","Aligned with business","All of the above"], correct:"D", justification:"Risk-based security provides multiple benefits for organizations."},
+        {q:"Which control type provides early warning of risk events?", opts:["Detective controls","Preventive controls","Deterrent controls","Corrective controls"], correct:"A", justification:"Detective controls identify and alert on potential risk events."},
+        {q:"What is the role of risk governance?", opts:["Establish structure","Define responsibilities","Ensure oversight","All of the above"], correct:"D", justification:"Risk governance establishes the framework for risk management."},
+        {q:"How should risk management be integrated with business strategy?", opts:["Align objectives","Support decisions","Enable growth","All of the above"], correct:"D", justification:"Risk management should support strategic business objectives."},
+        {q:"Which metric measures the speed of risk escalation?", opts:["Risk velocity","Risk maturity","Risk appetite","Risk tolerance"], correct:"A", justification:"Risk velocity measures the speed at which risk can materialize."},
+        {q:"What is the purpose of risk comparison?", opts:["Benchmarking","Prioritization","Decision-making","All of the above"], correct:"D", justification:"Comparing risks serves multiple analytical and decision-making purposes."},
+        {q:"Which method helps prioritize risk treatment actions?", opts:["Cost-benefit analysis","Risk ranking","Impact assessment","All of the above"], correct:"D", justification:"Multiple methods can prioritize risk treatment actions."},
+        {q:"What is the relationship between risk and opportunity?", opts:["Risk prevents opportunity","Risk enables opportunity","They are independent","Risk eliminates opportunity"], correct:"B", justification:"Managed risks can create opportunities for organizational growth."},
+        {q:"Which factor influences the selection of risk controls?", opts:["Effectiveness","Cost","Implementation time","All of the above"], correct:"D", justification:"Multiple factors influence control selection decisions."},
+        {q:"What is the role of risk management in decision-making?", opts:["Provide information","Assess alternatives","Support choices","All of the above"], correct:"D", justification:"Risk management supports decision-making through multiple functions."},
+        {q:"Which approach provides the MOST comprehensive risk view?", opts:["Top-down","Bottom-up","Hybrid","Scenario-based"], correct:"C", justification:"Hybrid approaches combining top-down and bottom-up views provide comprehensive coverage."},
+        {q:"What is the purpose of risk reassessment?", opts:["Update risk status","Identify new risks","Validate assumptions","All of the above"], correct:"D", justification:"Risk reassessment serves multiple updating and validation purposes."},
+        {q:"Which control type addresses risks after they occur?", opts:["Corrective controls","Preventive controls","Detective controls","Deterrent controls"], correct:"A", justification:"Corrective controls address risks after they have materialized."},
+        {q:"What is the significance of risk metrics?", opts:["Measure performance","Track changes","Support decisions","All of the above"], correct:"D", justification:"Risk metrics serve multiple measurement and decision-support functions."},
+        {q:"How should risk management be measured?", opts:["KPIs","KRIs","Maturity assessment","All of the above"], correct:"D", justification:"Multiple measurement approaches provide comprehensive assessment."},
+        {q:"Which stakeholder provides resources for risk management?", opts:["Board of Directors","Senior management","Budget holders","All of the above"], correct:"D", justification:"Various stakeholders provide resources for risk management."},
+        {q:"What is the benefit of risk management automation?", opts:["Efficiency","Consistency","Real-time monitoring","All of the above"], correct:"D", justification:"Automation provides multiple benefits including efficiency and real-time monitoring."},
+        {q:"Which method helps identify hidden risks?", opts:["Expert interviews","Data analysis","Scenario planning","All of the above"], correct:"D", justification:"Various methods can reveal hidden or emerging risks."},
+        {q:"What is the role of risk assessment teams?", opts:["Conduct assessments","Document findings","Provide recommendations","All of the above"], correct:"D", justification:"Risk assessment teams perform comprehensive assessment functions."},
+        {q:"Which factor determines the urgency of risk response?", opts:["Risk severity","Risk velocity","Risk impact","All of the above"], correct:"D", justification:"Multiple factors determine response urgency."},
+        {q:"What is the purpose of risk documentation?", opts:["Record findings","Enable review","Support decisions","All of the above"], correct:"D", justification:"Risk documentation serves multiple recording and decision-support purposes."},
+        {q:"Which approach considers the cascading effects of risks?", opts:["Network analysis","Scenario analysis","System dynamics","All of the above"], correct:"D", justification:"Various methods assess how risks cascade through systems."},
+        {q:"What is the relationship between risk and trust?", opts:["Risk erodes trust","Trust reduces risk","They are independent","Risk builds trust"], correct:"B", justification:"Trust can reduce risk, while risk events can erode trust."},
+        {q:"Which metric indicates the effectiveness of risk controls?", opts:["Control effectiveness rating","Residual risk reduction","Incident reduction","All of the above"], correct:"D", justification:"Multiple metrics assess control effectiveness."},
+        {q:"What is the role of risk management in business continuity?", opts:["Identify critical processes","Ensure resilience","Enable recovery","All of the above"], correct:"D", justification:"Risk management supports business continuity through multiple functions."},
+        {q:"How should emerging risks be addressed?", opts:["Monitor early","Assess quickly","Respond flexibly","All of the above"], correct:"D", justification:"Emerging risks require proactive and flexible approaches."},
+        {q:"Which stakeholder provides risk input from operations?", opts:["Process owners","Department heads","Operational teams","All of the above"], correct:"D", justification:"Operational stakeholders provide valuable risk insights."},
+        {q:"What is the benefit of risk management training?", opts:["Improve awareness","Build skills","Enhance reporting","All of the above"], correct:"D", justification:"Training supports multiple risk management capabilities."},
+        {q:"Which method helps assess risk likelihood accurately?", opts:["Historical data","Statistical analysis","Expert estimation","All of the above"], correct:"D", justification:"Various methods can improve likelihood assessment."},
+        {q:"What is the purpose of risk reporting dashboards?", opts:["Visual monitoring","Quick insights","Trend tracking","All of the above"], correct:"D", justification:"Dashboards provide visual risk monitoring and insights."},
+        {q:"Which factor affects the implementation of risk controls?", opts:["Resource availability","Technical capability","Management support","All of the above"], correct:"D", justification:"Multiple factors affect control implementation."},
+        {q:"What is the role of risk management in digital transformation?", opts:["Enable innovation","Manage risks","Ensure security","All of the above"], correct:"D", justification:"Risk management supports digital transformation through multiple functions."},
+        {q:"Which approach ensures risk management aligns with business goals?", opts:["Strategic alignment","Risk integration","Business impact","All of the above"], correct:"D", justification:"Various approaches ensure alignment with business goals."},
+        {q:"What is the purpose of risk management improvement?", opts:["Enhance effectiveness","Increase efficiency","Build maturity","All of the above"], correct:"D", justification:"Continuous improvement addresses all aspects of risk management."},
+        {q:"Which metric indicates the maturity of risk management?", opts:["Maturity level","Process capability","Performance indicators","All of the above"], correct:"D", justification:"Multiple metrics indicate risk management maturity."},
+        {q:"What is the relationship between risk and innovation?", opts:["Risk prevents innovation","Innovation creates risk","Risk enables innovation","They are independent"], correct:"B", justification:"Innovation introduces new risks that must be managed."},
+        {q:"How should risk management be communicated to all employees?", opts:["Training programs","Policy documents","Regular updates","All of the above"], correct:"D", justification:"Multiple communication methods ensure broad awareness."},
+        {q:"Which method helps analyze risk trends over time?", opts:["Trend analysis","Time series analysis","Historical comparison","All of the above"], correct:"D", justification:"Various methods analyze risk trends temporally."}
+    ];
+
+    // The qaData array now contains exactly 150 unique questions
+    // No additional generation needed - fixed the duplication issue
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let userAnswers = [];
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&';
+            if (m === '<') return '<';
+            if (m === '>') return '>';
+            return m;
+        });
+    }
+
+    function renderQuestion() {
+        const container = document.getElementById('questionsRoot');
+        const progressText = document.getElementById('progressText');
+        const scoreText = document.getElementById('scoreText');
+        const progressFill = document.getElementById('progressFill');
+        const nextBtn = document.getElementById('nextBtn');
+
+        answered = false;
+        nextBtn.disabled = true;
+
+        const qa = qaData[currentQuestionIndex];
+        const letters = ['A', 'B', 'C', 'D'];
+
+        progressText.textContent = `Question ${currentQuestionIndex + 1} of ${qaData.length}`;
+        scoreText.textContent = `Score: ${score}`;
+        progressFill.style.width = `${((currentQuestionIndex) / qaData.length) * 100}%`;
+
+        const optionsHtml = qa.opts.map((opt, i) => `
+            <li class="option-item" data-answer="${letters[i]}">
+                <span class="option-letter">${letters[i]}</span>
+                <span class="option-text">${escapeHtml(opt)}</span>
+            </li>
+        `).join('');
+
+        container.innerHTML = `
+            <div class="question-block">
+                <div class="q-meta">Q${currentQuestionIndex + 1}</div>
+                <div class="question-text">${escapeHtml(qa.q)}</div>
+                <ul class="options-list">${optionsHtml}</ul>
+                <div id="answerBox" style="display:none;">
+                    <div class="answer-result" id="answerResult"></div>
+                    <div class="explanation-box">
+                        <div class="explanation-title">📖 EXPLANATION</div>
+                        <div class="explanation-text">${escapeHtml(qa.justification)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.querySelectorAll('.option-item').forEach(option => {
+            option.addEventListener('click', function() {
+                selectAnswer(this);
+            });
+        });
+    }
+
+    function selectAnswer(selectedOption) {
+        if (answered) return;
+
+        answered = true;
+
+        const selectedAnswer = selectedOption.getAttribute('data-answer');
+        const qa = qaData[currentQuestionIndex];
+        const correctAnswer = qa.correct;
+
+        const answerBox = document.getElementById('answerBox');
+        const answerResult = document.getElementById('answerResult');
+        const nextBtn = document.getElementById('nextBtn');
+
+        userAnswers.push({
+            question: qa.q,
+            selected: selectedAnswer,
+            correct: correctAnswer,
+            isCorrect: selectedAnswer === correctAnswer
+        });
+
+        if (selectedAnswer === correctAnswer) {
+            score++;
+            selectedOption.classList.add('selected-correct');
+            answerResult.className = 'answer-result correct';
+            answerResult.innerHTML = `✓ Correct! Answer is: ${correctAnswer}`;
+        } else {
+            selectedOption.classList.add('selected-wrong');
+            answerResult.className = 'answer-result wrong';
+            answerResult.innerHTML = `✗ Wrong. Correct Answer is: ${correctAnswer}`;
+            
+            document.querySelectorAll('.option-item').forEach(option => {
+                if (option.getAttribute('data-answer') === correctAnswer) {
+                    option.classList.add('correct-answer');
+                }
+            });
+        }
+
+        document.getElementById('scoreText').textContent = `Score: ${score}`;
+        answerBox.style.display = 'block';
+        nextBtn.disabled = false;
+
+        if (currentQuestionIndex === qaData.length - 1) {
+            nextBtn.textContent = 'Finish Quiz';
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < qaData.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            showFinalResult();
+        }
+    }
+
+    function showFinalResult() {
+        const container = document.getElementById('questionsRoot');
+        const progressText = document.getElementById('progressText');
+        const scoreText = document.getElementById('scoreText');
+        const progressFill = document.getElementById('progressFill');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        const percentage = Math.round((score / qaData.length) * 100);
+
+        progressText.textContent = 'Quiz Completed';
+        scoreText.textContent = `Final Score: ${score}/${qaData.length}`;
+        progressFill.style.width = '100%';
+
+        let resultMessage = '';
+
+        if (percentage >= 90) {
+            resultMessage = 'Excellent risk assessment knowledge!';
+        } else if (percentage >= 75) {
+            resultMessage = 'Good result. Review the incorrect answers.';
+        } else if (percentage >= 60) {
+            resultMessage = 'Fair result. More revision is recommended.';
+        } else {
+            resultMessage = 'Needs improvement. Please review the full question set again.';
+        }
+
+        container.innerHTML = `
+            <div class="final-result">
+                <h2>🎉 Quiz Completed</h2>
+                <div class="final-score">${score} / ${qaData.length}</div>
+                <p><strong>Percentage:</strong> ${percentage}%</p>
+                <p>${resultMessage}</p>
+            </div>
+        `;
+
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'inline-block';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        answered = false;
+        userAnswers = [];
+
+        document.getElementById('nextBtn').style.display = 'inline-block';
+        document.getElementById('nextBtn').textContent = 'Next Question';
+        document.getElementById('restartBtn').style.display = 'none';
+
+        renderQuestion();
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('restartBtn').addEventListener('click', restartQuiz);
+        renderQuestion();
+    });
+</script>
+</body></html>

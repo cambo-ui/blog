@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta property="og:title" content="{{ with .Params.title }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
+  <meta property="og:description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
+  {{ with .Site.Home.OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }} (RSS)" href="{{ .Permalink }}">{{ end }}
+  <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+  <script>
+    const s = localStorage.getItem('theme');
+    if (s === 'light' || s === 'dark') document.documentElement.setAttribute('data-theme', s);
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header>
+    <nav class="site-nav layout-container">
+      <a class="site-title" href="{{ "/" | relURL }}">{{ .Site.Title }}</a>
+      <ul class="site-nav-links">
+        <li><a href="{{ "/" | relURL }}">home</a></li>
+        <li><a href="{{ "/archive/" | relURL }}">archive</a></li>
+        <li><a href="{{ "/tags/" | relURL }}">tags</a></li>
+        <li><a href="{{ "/about/" | relURL }}">about</a></li>
+        <li><a href="{{ "/index.xml" | relURL }}">rss</a></li>
+        <li><button id="theme-toggle" type="button" aria-label="Toggle dark mode">◐</button></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="site-content layout-container">
+    <main id="main-content">
+      {{ block "main" . }}{{ end }}
+    </main>
+    <aside aria-label="Sidebar">
+      <section class="sidebar-panel">
+        <h2>Recent Posts</h2>
+        <ul>
+          {{ range first 5 (where .Site.RegularPages "Section" "posts") }}
+          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+          {{ end }}
+        </ul>
+      </section>
+    </aside>
+  </div>
+  <footer class="site-footer"><p>&copy; {{ now.Year }} {{ .Site.Params.author }}</p></footer>
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') ??
+        (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  </script>
+</body>
+</html>

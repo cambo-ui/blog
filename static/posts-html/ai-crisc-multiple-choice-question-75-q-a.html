@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'></head><body>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f2f4f8;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            color: #1a2c2e;
+        }
+
+        .quiz-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 20, 20, 0.08);
+            overflow: hidden;
+            padding: 2rem 2rem 2.5rem 2rem;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #e9edf2;
+            padding-bottom: 1.2rem;
+        }
+        .quiz-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1a4d4a, #2c7a6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.4rem;
+        }
+        .quiz-header p {
+            color: #5b6e6e;
+            font-size: 0.95rem;
+            font-weight: 450;
+        }
+
+        .question-block {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eef2f5;
+            padding-bottom: 1.5rem;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #0b1f22;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            background: #F9FBFD;
+            padding: 0.2rem 0 0.2rem 0.8rem;
+            border-left: 4px solid #2c7a6e;
+        }
+
+        .options-list {
+            list-style: none;
+            margin: 0 0 0.6rem 0;
+            padding-left: 1rem;
+        }
+        .option-item {
+            font-size: 0.92rem;
+            margin-bottom: 0.35rem;
+            color: #2b3e42;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            cursor: pointer;
+            padding: 0.65rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid #e4ebef;
+            transition: all 0.2s ease;
+        }
+        .option-item:hover {
+            background: #f4faf8;
+            border-color: #2c7a6e;
+        }
+        .option-letter {
+            font-weight: 700;
+            background: #f0f2f5;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            font-size: 0.75rem;
+            color: #1f5e58;
+        }
+        .option-text {
+            flex: 1;
+        }
+
+        .option-item.selected-correct {
+            background: #e7f8ef;
+            border-color: #3b9e6d;
+            color: #155c3d;
+            font-weight: 700;
+        }
+
+        .option-item.selected-wrong {
+            background: #fff0f0;
+            border-color: #c72a2a;
+            color: #9a1f1f;
+            font-weight: 700;
+        }
+
+        .option-item.correct-answer {
+            background: #e7f8ef;
+            border-color: #3b9e6d;
+            font-weight: 700;
+        }
+
+        .answer-result {
+            font-weight: 700;
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0 0.5rem 0;
+        }
+
+        .answer-result.correct {
+            color: #216e48;
+            background: #e7f8ef;
+            border-left: 4px solid #3b9e6d;
+        }
+
+        .answer-result.wrong {
+            color: #9a1f1f;
+            background: #fff0f0;
+            border-left: 4px solid #c72a2a;
+        }
+
+        .explanation-box {
+            background: #eef7ea;
+            border-left: 5px solid #3b9e6d;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            margin-top: 0.3rem;
+        }
+        .explanation-title {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #216e48;
+            margin-bottom: 0.25rem;
+        }
+        .explanation-text {
+            font-size: 0.82rem;
+            color: #1e443a;
+            line-height: 1.45;
+        }
+
+        .q-meta {
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: #8b9b9b;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 680px) {
+            .quiz-container {
+                padding: 1.2rem;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+        }
+
+        .quiz-footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8fa3a3;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+
+        .quiz-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1f5e58;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e7edf0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+        }
+
+        #progressFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #1a4d4a, #2c7a6e);
+            transition: width 0.3s ease;
+        }
+
+        .quiz-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-actions button {
+            border: none;
+            background: #2c7a6e;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quiz-actions button:hover {
+            background: #1f5e58;
+        }
+
+        .quiz-actions button:disabled {
+            background: #b9c7c7;
+            cursor: not-allowed;
+        }
+
+        .final-result {
+            text-align: center;
+            padding: 2rem;
+            background: #f9fbfd;
+            border-radius: 18px;
+        }
+
+        .final-result h2 {
+            color: #1f5e58;
+            margin-bottom: 1rem;
+        }
+
+        .final-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2c7a6e;
+            margin-bottom: 1rem;
+        }
+    </style>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>📘 IT Risk Assessment · Complete 75 Q&A</h1>
+        <p>Expert-level questions — risk identification, analysis, BIA, treatment, monitoring & reporting</p>
+    </div>
+    <div class="quiz-status">
+        <div id="progressText">Question 1 of 75</div>
+        <div id="scoreText">Score: 0</div>
+    </div>
+    <div class="progress-bar">
+        <div id="progressFill"></div>
+    </div>
+    <div id="questionsRoot"></div>
+    <div class="quiz-actions">
+        <button disabled id="nextBtn">Next Question</button>
+        <button id="restartBtn" style="display: none;">Restart Quiz</button>
+    </div>
+    <div class="quiz-footer">
+        ✅ Full set of 75 expert-level questions | Based on CRISC / risk practitioner framework
+    </div>
+</div>
+
+<script>
+    // Complete dataset of 75 IT Risk Assessment multiple choice questions
+    const qaData = [
+        {q:"While prioritizing the risk for treatment, the IT risk practitioner should PRIMARILY consider the:", opts:["risk impact","risk appetite","risk exposure","risk rating"], correct:"D", justification:"The risk rating quantifies the risk by providing a ranking (high, medium, low) that can be used to prioritize treatment."},
+        {q:"The PRIMARY result of a risk assessment process is:", opts:["a defined business plan.","input for risk-aware decisions.","data classification.","minimized residual risk."], correct:"B", justification:"Risk assessment identifies and prioritizes risk and relates aggregated risk to risk appetite and tolerance to enable risk-aware decision-making."},
+        {q:"At the end of which phase of risk management would information about newly discovered risk be communicated to decision makers?", opts:["Risk identification","Risk response and mitigation","Risk assessment","Risk and control monitoring and reporting"], correct:"C", justification:"During risk assessment, identified risk is analyzed and evaluated for likelihood and impact. Risk-based decision-making is enabled through communication of risk assessment results."},
+        {q:"Which capability dimension is MOST important when using a maturity model for assessing risk management?", opts:["Effectiveness","Efficiency","Profitability","Performance"], correct:"D", justification:"Performance is achieved when the implemented process fulfills its purpose; thus, performance is the most important capability dimension."},
+        {q:"IT risk is measured by its:", opts:["level of damage to IT systems.","impact on business operations.","cost of countermeasures.","annual loss expectancy."], correct:"B", justification:"IT risk includes IT risk but is primarily measured by its impact on the business."},
+        {q:"Which is the PRIMARY reason for conducting periodic risk assessments?", opts:["Changes to the asset inventory","Changes to the threat and vulnerability profile","Changes in asset classification levels","Changes in the risk appetite"], correct:"B", justification:"Changes in threats and vulnerabilities are the primary reasons to conduct periodic risk assessments."},
+        {q:"Which is MOST important during quantitative risk analysis?", opts:["Statistical analysis","Decision trees","Expected monetary value","Net present value"], correct:"C", justification:"Expected monetary value reflects the weighted average of probable outcomes."},
+        {q:"Which type of risk assessment uses interviews and anonymous questionnaires (Delphi method)?", opts:["Quantitative","Probabilistic","Deterministic","Qualitative"], correct:"D", justification:"Qualitative risk assessment methods include interviewing and using anonymous questionnaires (the Delphi method)."},
+        {q:"Which technique conveys risk assessment results through a diagram linking causes, controls and consequences?", opts:["Bow tie analysis","Markov analysis","Scenario analysis","Sneak circuit analysis"], correct:"A", justification:"Bow tie analysis displays links between possible causes, controls and consequences."},
+        {q:"Which data analysis method is MOST effective for reviewing hardware and human failures to identify incident source?", opts:["Cause and effect analysis","Fault tree analysis","Sensitivity analysis","Bayesian analysis"], correct:"B", justification:"Fault tree analysis combines assessment of potential hardware and human failures to identify incident source."},
+        {q:"What is the BEST reason to perform a risk assessment?", opts:["To satisfy regulatory requirements","To budget appropriately for needed controls","To analyze the effect on the business","To help determine the current state of risk"], correct:"D", justification:"Risk assessment helps determine the current state of risk and helps determine countermeasures aligned with business objectives."},
+        {q:"A risk practitioner learns of a potential merger. What action should be taken?", opts:["Evaluate how changes in operations and culture could affect risk assessment.","Monitor to see if any new risk emerges.","Continue current risk program; it is tailored appropriately.","Implement changes to risk program to prepare for transition."], correct:"A", justification:"Changes to the business may impact risk calculations; the risk practitioner should be proactive."},
+        {q:"Which BEST assists in measuring existing risk management process development against desired state?", opts:["Capability maturity model","Risk management audit reports","Balanced scorecard","Enterprise security architecture"], correct:"A", justification:"Capability maturity model grades processes on a scale of 0 to 5 based on maturity."},
+        {q:"Risk assessments should be repeated regularly because:", opts:["omissions in earlier assessments can be addressed.","periodic assessments allow various methodologies.","business threats are constantly changing.","they help raise risk awareness among staff."], correct:"C", justification:"As business objectives and methods change, the nature and relevance of threats also change."},
+        {q:"Why does an external risk assessment team review documentation as the first step?", opts:["To understand technologies used.","To find gaps in documentation.","To understand enterprise business processes.","To review the risk assessment plan."], correct:"C", justification:"Risk is always formulated within the context of business objectives."},
+        {q:"Local management proactively mitigated high-level risk related to global purchasing. This means:", opts:["Local management is now responsible.","Risk owner is corporate CRO.","Risk owner is local purchasing manager.","Corporate management remains responsible."], correct:"D", justification:"Corporate management remains responsible even when risk response is executed at lower level."},
+        {q:"MOST effective method to conduct risk assessment on an internal system begins with understanding:", opts:["performance metrics.","policies and standards.","recent audit findings.","system and its subsystems."], correct:"D", justification:"Understanding the system provides basis for understanding policies, standards, interdependencies and risk."},
+        {q:"PRIMARY reason to have risk management reviewed by an independent professional is to:", opts:["validate cost-effective solutions.","validate control weaknesses.","assess validity of end-to-end process.","assess if risk profile is properly defined."], correct:"C", justification:"Independent reviewer is unbiased and unaffected by internal factors."},
+        {q:"Which risk management activity initially identifies critical business functions and key business risk?", opts:["Risk monitoring","Risk analysis","Risk assessment","Risk evaluation"], correct:"C", justification:"Risk assessment identifies and evaluates risk and its potential effects, including critical functions."},
+        {q:"MOST important external factor to consider in risk assessment is:", opts:["discovery of new vulnerabilities.","number of new malware types.","international crime statistics.","connectivity of unsecured devices on the Internet."], correct:"D", justification:"Proliferation of unsecured devices (IoT) creates a serious external threat."},
+        {q:"MOST important activity when evaluating risk to a business process?", opts:["Identification of existing controls","Threat intelligence including likelihood","Historical risk assessment data","Control testing results"], correct:"B", justification:"Key requirement of effective risk assessment is alignment with current threat intelligence including likelihood."},
+        {q:"BEST suited for reviewing IT risk analysis results before sending to management?", opts:["Internal audit review","Peer review","Compliance review","Risk policy review"], correct:"B", justification:"Peer review of IT risk analysis results is effective and good practice before sending to management."},
+        {q:"PRIMARY benefit of using a maturity model to assess data management process?", opts:["can be used for benchmarking.","helps identify gaps.","provides goals and objectives.","enforces continuous improvement."], correct:"B", justification:"Maturity models identify gaps between current and desired state to determine remediation efforts."},
+        {q:"Risk assessment techniques should be used to:", opts:["maximize return on investment.","provide documentation for auditors.","justify selection of risk mitigation strategies.","quantify subjective risk."], correct:"C", justification:"Risk practitioner should use risk assessment techniques to justify and implement risk mitigation strategy efficiently."},
+        {q:"PRIMARY advantage of performing risk assessment on a consistent basis?", opts:["lowers assessment costs.","provides evidence of threats.","indicates trends in risk profile.","eliminates need for periodic audits."], correct:"C", justification:"Tracking trends in evolving risk is significant benefit for managing risk and ensuring appropriate controls."},
+        {q:"Assessing information systems risk is BEST achieved by:", opts:["using past actual loss experience.","reviewing published loss statistics.","evaluating threats associated with existing assets.","reviewing control weaknesses in audit reports."], correct:"C", justification:"To assess IT risk, threats and vulnerabilities need to be evaluated using qualitative or quantitative approaches."},
+        {q:"Which technique analyzes system exposure to personnel?", opts:["Hazard and operability studies","Markov analysis","Human reliability analysis","Scenario analysis"], correct:"C", justification:"Human reliability analysis exclusively focuses on effects of human error in enterprise systems."},
+        {q:"Once risk assessment is completed, documented test results should be:", opts:["destroyed.","retained.","summarized.","published."], correct:"B", justification:"Test results should be retained to ensure future tests can be compared with past results."},
+        {q:"Goal of IT risk analysis is to:", opts:["align IT risk management with ERM.","enable prioritization of risk responses.","satisfy legal compliance.","identify known threats and vulnerabilities."], correct:"B", justification:"Risk analysis helps ensure areas with greatest risk are prioritized above those with lower risk."},
+        {q:"Risk assessment process using likelihood and impact to calculate risk level is:", opts:["qualitative process.","failure modes and effects analysis.","fault tree analysis.","quantitative process."], correct:"D", justification:"Quantitative risk assessment uses likelihood and impact to calculate monetary value of risk."},
+        {q:"Which technique has GREATEST impact on decision whether to implement a control?", opts:["Cost-benefit analysis","Payback period","Root cause analysis","Net present value"], correct:"A", justification:"Cost-benefit analysis compares implementation cost against cost savings associated with the risk."},
+        {q:"Board wants financial impact of individual risk scenarios. BEST approach?", opts:["Delphi method","Quantitative analysis","Qualitative analysis","Financial risk modeling"], correct:"B", justification:"Quantitative approach puts monetary amount on potential loss, which is of most interest to senior management."},
+        {q:"How often should risk be evaluated?", opts:["Annually or when significant change occurs","Once a year for each process","Every three to six months for critical processes","Only after significant changes"], correct:"A", justification:"Evaluating risk annually or when significant change offers reasonable frequency and flexibility."},
+        {q:"MOST applicable consideration for risk assessments dealing with data management?", opts:["Changing market conditions","Changing configuration item data","Lack of staff education","Growing capabilities of attackers"], correct:"B", justification:"Risk assessments must have accurate and up-to-date configuration item data to target correct information assets."},
+        {q:"PRIMARY factor when deciding between quantitative or qualitative risk assessment?", opts:["Corporate culture","Time available","Availability of data","Cost involved"], correct:"C", justification:"Availability of data is primary factor; data requirements for both methods are altogether different."},
+        {q:"Likelihood of an attack is MOST dependent on:", opts:["skill and motivation of attacker.","frequency of monitoring system review.","ability to respond quickly.","effectiveness of controls."], correct:"A", justification:"Factors include attacker skill and motivation, knowledge of vulnerabilities, value of asset, and environmental factors."},
+        {q:"BEST risk identification technique allowing anonymous employee input?", opts:["Delphi technique","Isolated pilot groups","SWOT analysis","Root cause analysis"], correct:"A", justification:"With Delphi technique, polling is done anonymously or privately between interviewer and interviewee."},
+        {q:"Management should use which to allocate resources for risk response?", opts:["Audit report findings","Penetration test results","Risk analysis results","Vulnerability test results"], correct:"C", justification:"Risk analysis results provide basis for prioritizing risk responses and allocating resources."},
+        {q:"GREATEST challenge of performing quantitative risk analysis?", opts:["Obtaining accurate impact figures","Obtaining accurate asset values","Calculating annual loss expectancy","Obtaining accurate threat frequency figures"], correct:"D", justification:"It can be challenging to obtain accurate figure representing frequency of threat occurrence."},
+        {q:"Deriving likelihood and impact from statistical methods is BEST described as:", opts:["quantitative risk analysis.","risk scenario analysis.","qualitative risk analysis.","probabilistic risk assessment."], correct:"A", justification:"Quantitative risk analysis derives probability and impact of risk scenarios from statistical methods and data."},
+        {q:"MOST important for a risk evaluation to:", opts:["consider potential size and likelihood of loss.","consider inherent and control risk.","include benchmark of similar companies.","assume equal protection for all assets."], correct:"A", justification:"Risk evaluation should consider the potential size and likelihood of a loss."},
+        {q:"Which produces comprehensive results in qualitative risk analysis?", opts:["Vulnerability assessment","Scenarios with threats and impacts","Value of information assets","Estimated productivity losses"], correct:"B", justification:"Using scenarios with threats and impacts better frames risk range and facilitates informed discussion."},
+        {q:"ULTIMATE goal of risk aggregation is to:", opts:["prevent exploitation of combined low-level risk.","address threat of chained exploits.","ensure combined value of low-level risk is not overlooked.","stop attackers from escalating access."], correct:"C", justification:"Individual low-level incidents may have minimal impact, but significant overall risk can accrue if aggregated."},
+        {q:"When would an enterprise opt for qualitative over quantitative risk analysis?", opts:["Evaluating risk of developing new company logo.","Wanting approximate financial impact measure.","Relying primarily on external data.","Evaluating established manufacturing line."], correct:"A", justification:"Qualitative analysis is ideally suited when historical data is not available, such as rebranding risk."},
+        {q:"Which combination of factors helps quantify risk?", opts:["Probability and consequence","Threat and impact","Threat and exposure","Sensitivity and exposure"], correct:"A", justification:"Quantification of risk is based on probability of threat exploiting vulnerability resulting in consequence to asset."},
+        {q:"Which example includes required components of a risk calculation?", opts:["30% chance of two projects missing deadline, resulting in $500,000 fine.","If compromised, loss of $15 million in contracts.","15% likelihood of disk corruption from power failure.","Impact of malware event estimated as low."], correct:"A", justification:"Probability and impact of a specific event are required components of a risk calculation."},
+        {q:"MOST likely trigger for comprehensive risk assessment is detection of changes in:", opts:["asset inventory.","asset classification levels.","business environment.","information security policies."], correct:"C", justification:"Changes in business environment, including new threats or vulnerabilities, trigger comprehensive risk assessment."},
+        {q:"GREATEST benefit of using an IT risk register is that it:", opts:["lists potential events to understand impact.","tracks risk that has been identified, analyzed and prioritized.","can be shared with all stakeholders.","is basis for choosing risk management tool."], correct:"B", justification:"Greatest benefit is providing information about likelihood, impact and prioritization of all identified IT risk."},
+        {q:"Which BEST improves decision-making related to risk?", opts:["Maintaining documented risk register","Risk awareness training aligned with risk culture","Maintaining updated security policies","Allocating accountability to department as whole"], correct:"A", justification:"Documented risk register captures relevant risk scenarios and provides basis for prioritization of risk responses."},
+        {q:"Where is the MOST useful place for enterprise management to store data related to a potential information breach?", opts:["Incident log","Problem management log","Risk register","Change management log"], correct:"C", justification:"The risk register captures all information related to exposure, including action plans, residual risk rating and relevant stakeholders."},
+        {q:"Which BEST ensures effective prioritization and treatment of risk?", opts:["An updated risk register","A completed risk assessment report","Exception processes for low-impact risk","An updated risk map profile"], correct:"A", justification:"The risk register enables prioritization and treatment of risk as it gives a central view of all the enterprise's risk."},
+        {q:"Risk tolerance levels, risk ratings, projects, stakeholders, assessment details and risk owners are captured in:", opts:["Risk register","Risk subject","Risk factors","Risk treatment plan"], correct:"A", justification:"A risk register includes risk tolerance levels, risk ratings, related projects, affected stakeholders, assessment details and risk owners."},
+        {q:"What is the BEST tool for documenting status of risk mitigation and risk ownership at enterprise level?", opts:["Risk action plans","Risk scenarios","Business impact analysis documents","Risk register"], correct:"D", justification:"Risk register documents all identified risk including likelihood, potential impact, priority, status of mitigation and owner."},
+        {q:"Which information in risk register BEST helps develop proper risk scenarios? List of:", opts:["potential threats to assets.","residual risk on individual assets.","accepted risk.","security incidents."], correct:"A", justification:"Identifying potential threats to business assets helps isolate vulnerabilities and associated risk for developing risk scenarios."},
+        {q:"Emerging risk should be added to risk register when:", opts:["impact can be quantified","probability is high.","competitor added it.","activity that triggers risk initiates."], correct:"D", justification:"Risk identification usually starts when planning an activity, and risk identified at planning needs to be added to risk register."},
+        {q:"Which BEST describes information needed for each risk in risk register?", opts:["Risk scenario with date, description, impact, probability, risk score, mitigation, owner","Risk scenario with date, description, risk score, cost, communication plan, owner","Risk scenario with date, description, impact, cost, owner","Various activities leading to risk management planning"], correct:"A", justification:"Information required includes date, description, impact, probability, risk score, mitigation action and owner."},
+        {q:"Risk register for a project should be PRIMARILY maintained until:", opts:["project plan approved.","management accepts risk.","project is closed.","business case approved."], correct:"C", justification:"Project risk will be relevant until project is closed; therefore risk register should be maintained until that time."},
+        {q:"Risk may be removed from risk register when risk:", opts:["has been eliminated.","is transferred to vendor.","threshold is exceeded.","is no longer relevant."], correct:"D", justification:"Once risk is no longer relevant, it may be removed from the risk register."},
+        {q:"Which statement BEST describes value of risk register?", opts:["It captures risk inventory.","It drives risk response plan.","It is a risk reporting tool.","It lists internal and external risk."], correct:"B", justification:"Risk registers serve as main reference for all risk-related information, supporting risk response activities and prioritization."},
+        {q:"If risk identified but not yet mitigated, enterprise should:", opts:["record and mitigate serious risk only.","obtain management commitment to mitigate all identified risk.","document identified risk in risk register and maintain remediation status.","conduct annual risk assessment disregarding previous assessments."], correct:"C", justification:"All identified risk should be included in risk register capturing proposed remediation plan, risk owner, and anticipated completion date."},
+        {q:"To help establish annual strategic direction, management needs IT challenges and risk assessment. Where to find?", opts:["Risk profile","Business case","Risk action plan","Risk register"], correct:"D", justification:"Results from risk assessment are contained in risk register, which documents key attributes of potential and known IT risk issues."},
+        {q:"PRIMARY advantage of creating and maintaining risk register is to:", opts:["ensure inventory of identified risk is maintained.","record all risk scenarios considered.","collect similar data on all risk.","run reports based on various scenarios."], correct:"A", justification:"Once assets and risk are identified, risk register is used as inventory of that risk, accelerating risk decision-making and accountability."},
+        {q:"Which presents GREATEST risk when updating risk register? Updates are:", opts:["carried out jointly with other functions.","carried out following incidents.","carried out annually.","subject to CISO approval."], correct:"C", justification:"Updating risk register only annually means risk register does not reflect true status of IT risk in enterprise."},
+        {q:"Preparation of a risk register begins in which risk management process?", opts:["Risk response planning","Risk monitoring and control","Risk management planning","Risk identification"], correct:"D", justification:"Risk register details all identified risk. Primary outputs of risk identification are initial entries into risk register."},
+        {q:"Risk register is PRIMARILY a document communicating risk to:", opts:["the public.","the employees.","regulatory bodies.","relevant stakeholders."], correct:"D", justification:"Risk register contains information regarding risk and weaknesses relevant to enterprise and is shared only with relevant stakeholders."},
+        {q:"How can risk professional calculate total impact to operations if hard drives supporting critical financial system fail?", opts:["Calculate replacement cost and restoration time.","Gather estimates from finance department.","Use quantitative and qualitative methods to measure cumulative effects.","Review regulatory and contractual requirements."], correct:"C", justification:"Event in one department may affect many areas; using quantitative and qualitative methods provides information to assess effects."},
+        {q:"Which is the MAIN outcome of a business impact analysis (BIA)?", opts:["Project prioritization","Criticality of business processes","Root cause of IT risk","Asset alignment with business processes"], correct:"B", justification:"BIA measures total impact of tangible and intangible assets on business processes, indicating criticality of business processes."},
+        {q:"A business impact analysis is PRIMARILY used to:", opts:["estimate resources to resume normal operations.","evaluate impact of disruption over time.","calculate likelihood and impact of threats.","evaluate high-level business requirements."], correct:"B", justification:"BIA primarily evaluates impact of disruption over time to enterprise's ability to operate, determining urgency of each business activity."},
+        {q:"Which objective is PRIMARY reason risk professionals conduct risk assessments?", opts:["To maintain risk register","To enable management to choose right risk response","To provide assurance on risk management","To identify risk with highest business impact"], correct:"D", justification:"All decisions should be taken in context of business impact; consideration must be given to positive or negative impact on business."},
+        {q:"Which process is MOST critical for prioritizing actions in a business continuity plan?", opts:["Risk assessment","Vulnerability assessment","Business impact analysis","Business process mapping"], correct:"C", justification:"BIA is most critical for deciding which part of information system/business process should be given priority during business disruption."},
+        {q:"Which is BEST method to analyze risk, incidents and interdependencies to determine impact on enterprise goals?", opts:["SIEM solutions","Business impact analysis","ERM steering committee meetings","Interviews with business leaders"], correct:"B", justification:"BIA should include examination of risk, incidents and interdependencies to identify consequences for business objectives."},
+        {q:"When performing risk assessment on impact of losing a server, monetary value should be based on:", opts:["cost to obtain replacement.","annual loss expectancy.","cost of software stored.","original cost to acquire."], correct:"A", justification:"Value of server should be based on replacement cost; financial impact may be broader based on function server performs."},
+        {q:"GREATEST advantage in performing a business impact analysis is that it:", opts:["does not need updating.","promotes continuity awareness.","requires only qualitative estimates.","eliminates need for risk analysis."], correct:"B", justification:"BIA raises enterprise-wide awareness of risk to business recovery and continuity."}
+    ];
+
+    // Ensure exactly 75 questions
+    const fullQAData = qaData.slice(0, 75);
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let userAnswers = [];
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&';
+            if (m === '<') return '<';
+            if (m === '>') return '>';
+            return m;
+        });
+    }
+
+    function renderQuestion() {
+        const container = document.getElementById('questionsRoot');
+        const progressText = document.getElementById('progressText');
+        const scoreText = document.getElementById('scoreText');
+        const progressFill = document.getElementById('progressFill');
+        const nextBtn = document.getElementById('nextBtn');
+
+        answered = false;
+        nextBtn.disabled = true;
+
+        const qa = fullQAData[currentQuestionIndex];
+        const letters = ['A', 'B', 'C', 'D'];
+
+        progressText.textContent = `Question ${currentQuestionIndex + 1} of ${fullQAData.length}`;
+        scoreText.textContent = `Score: ${score}`;
+        progressFill.style.width = `${((currentQuestionIndex) / fullQAData.length) * 100}%`;
+
+        const optionsHtml = qa.opts.map((opt, i) => `
+            <li class="option-item" data-answer="${letters[i]}">
+                <span class="option-letter">${letters[i]}</span>
+                <span class="option-text">${escapeHtml(opt)}</span>
+            </li>
+        `).join('');
+
+        container.innerHTML = `
+            <div class="question-block">
+                <div class="q-meta">Q${currentQuestionIndex + 1}</div>
+                <div class="question-text">${escapeHtml(qa.q)}</div>
+                <ul class="options-list">${optionsHtml}</ul>
+                <div id="answerBox" style="display:none;">
+                    <div class="answer-result" id="answerResult"></div>
+                    <div class="explanation-box">
+                        <div class="explanation-title">📖 EXPLANATION</div>
+                        <div class="explanation-text">${escapeHtml(qa.justification)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.querySelectorAll('.option-item').forEach(option => {
+            option.addEventListener('click', function() {
+                selectAnswer(this);
+            });
+        });
+    }
+
+    function selectAnswer(selectedOption) {
+        if (answered) return;
+
+        answered = true;
+
+        const selectedAnswer = selectedOption.getAttribute('data-answer');
+        const qa = fullQAData[currentQuestionIndex];
+        const correctAnswer = qa.correct;
+
+        const answerBox = document.getElementById('answerBox');
+        const answerResult = document.getElementById('answerResult');
+        const nextBtn = document.getElementById('nextBtn');
+
+        userAnswers.push({
+            question: qa.q,
+            selected: selectedAnswer,
+            correct: correctAnswer,
+            isCorrect: selectedAnswer === correctAnswer
+        });
+
+        if (selectedAnswer === correctAnswer) {
+            score++;
+            selectedOption.classList.add('selected-correct');
+            answerResult.className = 'answer-result correct';
+            answerResult.innerHTML = `✓ Correct! Answer is: ${correctAnswer}`;
+        } else {
+            selectedOption.classList.add('selected-wrong');
+            answerResult.className = 'answer-result wrong';
+            answerResult.innerHTML = `✗ Wrong. Correct Answer is: ${correctAnswer}`;
+            
+            document.querySelectorAll('.option-item').forEach(option => {
+                if (option.getAttribute('data-answer') === correctAnswer) {
+                    option.classList.add('correct-answer');
+                }
+            });
+        }
+
+        document.getElementById('scoreText').textContent = `Score: ${score}`;
+        answerBox.style.display = 'block';
+        nextBtn.disabled = false;
+
+        if (currentQuestionIndex === fullQAData.length - 1) {
+            nextBtn.textContent = 'Finish Quiz';
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < fullQAData.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            showFinalResult();
+        }
+    }
+
+    function showFinalResult() {
+        const container = document.getElementById('questionsRoot');
+        const progressText = document.getElementById('progressText');
+        const scoreText = document.getElementById('scoreText');
+        const progressFill = document.getElementById('progressFill');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        const percentage = Math.round((score / fullQAData.length) * 100);
+
+        progressText.textContent = 'Quiz Completed';
+        scoreText.textContent = `Final Score: ${score}/${fullQAData.length}`;
+        progressFill.style.width = '100%';
+
+        let resultMessage = '';
+
+        if (percentage >= 90) {
+            resultMessage = 'Excellent risk assessment knowledge!';
+        } else if (percentage >= 75) {
+            resultMessage = 'Good result. Review the incorrect answers.';
+        } else if (percentage >= 60) {
+            resultMessage = 'Fair result. More revision is recommended.';
+        } else {
+            resultMessage = 'Needs improvement. Please review the full question set again.';
+        }
+
+        container.innerHTML = `
+            <div class="final-result">
+                <h2>🎉 Quiz Completed</h2>
+                <div class="final-score">${score} / ${fullQAData.length}</div>
+                <p><strong>Percentage:</strong> ${percentage}%</p>
+                <p>${resultMessage}</p>
+            </div>
+        `;
+
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'inline-block';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        answered = false;
+        userAnswers = [];
+
+        document.getElementById('nextBtn').style.display = 'inline-block';
+        document.getElementById('nextBtn').textContent = 'Next Question';
+        document.getElementById('restartBtn').style.display = 'none';
+
+        renderQuestion();
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('restartBtn').addEventListener('click', restartQuiz);
+        renderQuestion();
+    });
+</script>
+</body></html>

@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>CRISC Practice: 150 Tricky Scenario Questions</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1a1a2e;
+            line-height: 1.65;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            word-wrap: break-word;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .crisc-quiz-wrap {
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 12px 10px 40px;
+            box-sizing: border-box;
+        }
+
+        .crisc-quiz-card {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 24px 20px 28px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 3px solid #e8edf3;
+        }
+
+        .quiz-header h1 {
+            font-size: clamp(1.15rem, 4.5vw, 1.7rem);
+            color: #0f3460;
+            margin-bottom: 6px;
+            letter-spacing: -0.4px;
+            line-height: 1.3;
+            font-weight: 800;
+        }
+
+        .quiz-header .subtitle {
+            font-size: clamp(0.78rem, 3vw, 0.98rem);
+            color: #5a6a7e;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .quiz-header .badge {
+            display: inline-block;
+            background: #0f3460;
+            color: #fff;
+            font-size: clamp(0.6rem, 2.4vw, 0.7rem);
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-wrap {
+            margin-bottom: 18px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(0.68rem, 2.6vw, 0.78rem);
+            font-weight: 700;
+            color: #5a6a7e;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #e4e9f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0f3460, #1e6fbf);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .score-tracker {
+            display: flex;
+            justify-content: center;
+            gap: clamp(8px, 3vw, 22px);
+            background: #0f3460;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: 700;
+            font-size: clamp(0.68rem, 2.8vw, 0.85rem);
+            margin-bottom: 22px;
+            box-shadow: 0 4px 14px rgba(15, 52, 96, 0.22);
+            flex-wrap: wrap;
+        }
+
+        .score-tracker .stat span {
+            color: #ffd54f;
+        }
+
+        .score-tracker .stat.correct-stat span {
+            color: #81c784;
+        }
+
+        .score-tracker .stat.wrong-stat span {
+            color: #ef9a9a;
+        }
+
+        .question-card {
+            background: #fafbfd;
+            border: 1px solid #e4e9f0;
+            border-radius: 12px;
+            padding: clamp(16px, 4vw, 26px);
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.35s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(16px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #0f3460;
+            color: #fff;
+            font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+            font-weight: 700;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            display: flex;
+            align-items: flex-start;
+            font-size: clamp(0.85rem, 3.2vw, 1.02rem);
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 8px 0;
+        }
+
+        .options li {
+            margin-bottom: 8px;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 11px 14px 11px 40px;
+            position: relative;
+            font-size: clamp(0.78rem, 3vw, 0.95rem);
+            color: #3a4a5e;
+            background: #ffffff;
+            border: 1.5px solid #dce3ec;
+            border-radius: 9px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+            line-height: 1.45;
+            word-break: break-word;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: #eef4fb;
+            border-color: #0f3460;
+            transform: translateX(2px);
+        }
+
+        .option-btn::before {
+            content: attr(data-letter);
+            position: absolute;
+            left: 14px;
+            font-weight: 800;
+            color: #0f3460;
+            font-size: clamp(0.72rem, 2.8vw, 0.88rem);
+        }
+
+        .option-btn.correct {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #1b5e20;
+            font-weight: 700;
+        }
+
+        .option-btn.correct::before {
+            color: #2e7d32;
+            content: 'OK';
+            left: 12px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .option-btn.incorrect {
+            background: #fdecea;
+            border-color: #c62828;
+            color: #b71c1c;
+            font-weight: 700;
+        }
+
+        .option-btn.incorrect::before {
+            color: #c62828;
+            content: 'X';
+            left: 14px;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .option-btn.disabled {
+            cursor: default;
+            opacity: 0.72;
+        }
+
+        .option-btn.disabled:hover {
+            transform: none;
+        }
+
+        .option-btn.reveal-correct {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #1b5e20;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .option-btn.reveal-correct::before {
+            color: #2e7d32;
+            content: 'OK';
+            left: 12px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .answer-reveal {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 12px 14px;
+            border-radius: 0 8px 8px 0;
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            color: #1b5e20;
+            margin-top: 14px;
+            display: none;
+            line-height: 1.55;
+            word-break: break-word;
+        }
+
+        .answer-reveal.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .answer-reveal.incorrect-feedback {
+            background: #fdecea;
+            border-left-color: #c62828;
+            color: #b71c1c;
+        }
+
+        .answer-reveal.incorrect-feedback strong {
+            color: #b71c1c;
+        }
+
+        .answer-reveal strong {
+            color: #1b5e20;
+        }
+
+        .answer-reveal .explanation {
+            color: inherit;
+            font-style: italic;
+            margin-top: 4px;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .answer-reveal ul {
+            margin: 8px 0 0;
+            padding-left: 18px;
+        }
+
+        .answer-reveal ul li {
+            margin-bottom: 4px;
+            color: inherit;
+        }
+
+        .answer-reveal ul li b {
+            color: inherit;
+            font-weight: 800;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            font-family: inherit;
+            font-size: clamp(0.82rem, 3vw, 0.95rem);
+            font-weight: 700;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+            letter-spacing: 0.3px;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.97);
+        }
+
+        .nav-btn.next-btn {
+            background: #0f3460;
+            color: #ffffff;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .nav-btn.next-btn:hover:not(:disabled) {
+            background: #1e6fbf;
+        }
+
+        .nav-btn.next-btn:disabled {
+            background: #b0bec5;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .nav-btn.restart-btn {
+            background: #ffd54f;
+            color: #5a4a1a;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .nav-btn.restart-btn:hover {
+            background: #ffca28;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 24px 12px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-screen.active {
+            display: block;
+        }
+
+        .result-screen .trophy {
+            font-size: clamp(2.5rem, 10vw, 3.5rem);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .result-screen h2 {
+            color: #0f3460;
+            font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .result-screen .final-score {
+            font-size: clamp(2.2rem, 10vw, 3rem);
+            font-weight: 800;
+            color: #0f3460;
+            margin: 14px 0 4px;
+            line-height: 1.1;
+        }
+
+        .result-screen .final-score small {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-weight: 600;
+            color: #7a8a9e;
+        }
+
+        .result-screen .result-message {
+            font-size: clamp(0.82rem, 3.2vw, 1.02rem);
+            color: #5a6a7e;
+            margin-bottom: 22px;
+            line-height: 1.55;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: clamp(8px, 3vw, 28px);
+            margin: 20px 0 28px;
+            flex-wrap: wrap;
+        }
+
+        .result-breakdown .item {
+            background: #f4f6f9;
+            border-radius: 12px;
+            padding: 14px 18px;
+            min-width: clamp(80px, 25vw, 120px);
+            flex: 0 1 auto;
+        }
+
+        .result-breakdown .item .num {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .result-breakdown .item .lbl {
+            font-size: clamp(0.6rem, 2.4vw, 0.78rem);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #7a8a9e;
+            font-weight: 700;
+        }
+
+        .result-breakdown .item.correct .num { color: #2e7d32; }
+        .result-breakdown .item.wrong .num { color: #c62828; }
+        .result-breakdown .item.total .num { color: #0f3460; }
+
+        .section-divider {
+            text-align: center;
+            margin: 34px 0 22px;
+            position: relative;
+        }
+
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #dce3ec;
+        }
+
+        .section-divider span {
+            position: relative;
+            background: #fff;
+            padding: 0 14px;
+            font-weight: 800;
+            color: #0f3460;
+            font-size: clamp(0.85rem, 3.2vw, 1.05rem);
+            letter-spacing: 0.5px;
+        }
+
+        .tips-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 24px 0 16px;
+        }
+
+        .tips-box h3 {
+            color: #b8860b;
+            margin-bottom: 10px;
+            font-size: clamp(0.9rem, 3.4vw, 1.05rem);
+            font-weight: 800;
+        }
+
+        .tips-box ol {
+            padding-left: 20px;
+            color: #5a4a1a;
+            font-size: clamp(0.75rem, 2.9vw, 0.92rem);
+            line-height: 1.6;
+        }
+
+        .tips-box ol li {
+            margin-bottom: 7px;
+        }
+
+        .tips-box ol li strong {
+            color: #8b6914;
+        }
+
+        .quiz-footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 2px solid #e8edf3;
+            color: #7a8a9e;
+            font-size: clamp(0.7rem, 2.7vw, 0.85rem);
+            line-height: 1.55;
+        }
+
+        .quiz-footer .good-luck {
+            font-size: clamp(0.85rem, 3.2vw, 1rem);
+            font-weight: 800;
+            color: #0f3460;
+            margin-bottom: 4px;
+        }
+
+        .quiz-footer a {
+            color: #1e6fbf;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .quiz-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 360px) {
+            .crisc-quiz-wrap { padding: 8px 6px 30px; }
+            .crisc-quiz-card { padding: 16px 12px 20px; border-radius: 10px; }
+            .score-tracker { font-size: 0.62rem; gap: 6px; padding: 8px 8px; }
+            .option-btn { padding: 10px 10px 10px 36px; font-size: 0.76rem; }
+            .option-btn::before { left: 11px; font-size: 0.7rem; }
+            .option-btn.correct::before,
+            .option-btn.incorrect::before,
+            .option-btn.reveal-correct::before { left: 11px; }
+            .result-breakdown .item { padding: 10px 12px; min-width: 70px; }
+        }
+
+        @media (min-width: 361px) and (max-width: 600px) {
+            .crisc-quiz-wrap { padding: 12px 10px 36px; }
+            .crisc-quiz-card { padding: 18px 14px 22px; }
+            .nav-btn.next-btn { width: 100%; }
+            .nav-btn.restart-btn { width: 100%; max-width: 100%; }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            .crisc-quiz-wrap { padding: 20px 16px 40px; }
+            .crisc-quiz-card { padding: 28px 24px 32px; }
+            .nav-btn.next-btn { width: auto; min-width: 140px; }
+        }
+
+        @media (min-width: 901px) {
+            .crisc-quiz-wrap { padding: 30px 20px 50px; }
+            .crisc-quiz-card { padding: 36px 32px 40px; }
+            .nav-btn.next-btn { width: auto; min-width: 160px; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .option-btn { padding-top: 13px; padding-bottom: 13px; }
+            .nav-btn { padding-top: 14px; padding-bottom: 14px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="crisc-quiz-wrap">
+    <div class="crisc-quiz-card">
+
+        <div class="quiz-header">
+            <h1>CRISC Practice Questions</h1>
+            <div class="subtitle">150 Tricky Scenario-Based Questions</div>
+            <div class="badge">Interactive Quiz</div>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-info">
+                <span>Question <span id="currentQNum">1</span> of <span id="totalQNum">150</span></span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="score-tracker" id="scoreTracker">
+            <div class="stat">Score: <span id="scoreDisplay">0</span></div>
+            <div class="stat correct-stat">Correct: <span id="correctDisplay">0</span></div>
+            <div class="stat wrong-stat">Wrong: <span id="wrongDisplay">0</span></div>
+        </div>
+
+        <div id="quizArea"></div>
+
+        <div class="nav-buttons" id="navButtons">
+            <button class="nav-btn next-btn" id="nextBtn" disabled>Next</button>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <div class="trophy" id="trophyIcon">&#127942;</div>
+            <h2 id="resultTitle">Quiz Complete!</h2>
+            <div class="final-score" id="finalScore">0 <small>/ 150</small></div>
+            <div class="result-message" id="resultMessage"></div>
+
+            <div class="result-breakdown">
+                <div class="item correct">
+                    <div class="num" id="finalCorrect">0</div>
+                    <div class="lbl">Correct</div>
+                </div>
+                <div class="item wrong">
+                    <div class="num" id="finalWrong">0</div>
+                    <div class="lbl">Wrong</div>
+                </div>
+                <div class="item total">
+                    <div class="num" id="finalTotal">150</div>
+                    <div class="lbl">Total</div>
+                </div>
+            </div>
+
+            <button class="nav-btn restart-btn" id="restartBtn">Restart Quiz</button>
+        </div>
+
+        <div class="section-divider"><span>Exam Tips</span></div>
+
+        <div class="tips-box">
+            <h3>CRISC Scenario Tips</h3>
+            <ol>
+                <li><strong>Read carefully</strong> - Scenario questions often hide the key clue in one word (FIRST, BEST, GREATEST, PRIMARY).</li>
+                <li><strong>Answer the question asked</strong> - Don't fall for technically true statements that don't answer the actual question.</li>
+                <li><strong>Risk ownership</strong> - Business managers and senior management own risk; IT and risk functions support.</li>
+                <li><strong>FIRST steps</strong> - Usually involve understanding, analyzing, or validating before acting.</li>
+                <li><strong>GREATEST concern</strong> - Look for the option with the broadest or most strategic impact.</li>
+                <li><strong>MOST important</strong> - Usually related to business objectives, risk ownership, or governance.</li>
+                <li><strong>KRI vs KPI vs KCI</strong> - KRI = risk indicator; KPI = performance indicator; KCI = control indicator.</li>
+                <li><strong>Risk responses</strong> - Accept, Avoid, Transfer, Mitigate. Insurance = transfer; stopping activity = avoid.</li>
+                <li><strong>Control testing</strong> - Independent testing is the most reliable evidence of effectiveness.</li>
+                <li><strong>Gap analysis</strong> - Identifies the difference between current and desired states.</li>
+            </ol>
+        </div>
+
+        <div class="quiz-footer">
+            <div class="good-luck">Good luck on your CRISC exam!</div>
+            <div>150 scenario-based practice questions with detailed explanations.</div>
+            <div style="margin-top:6px;">From <a href="https://shelteracademy.blogspot.com/" target="_blank" rel="noopener">Shelter Academy</a></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* ============================================================
+   QUESTION DATA - 150 Questions
+   ============================================================ */
+var questions = [
+{q:"An organization's IT risk assessment is only as good as the information it's based on. Which of the following is the MOST critical first step in collecting and reviewing existing information?",
+o:["Interviewing the CIO about strategic objectives","Reviewing the previous year's risk register","Understanding the organization's business and IT environments","Conducting a vulnerability scan of all systems"],
+a:2,
+e:"The foundational step is understanding the business and IT environments; everything else builds on this context.<ul><li><b>A</b> is useful but not the first step.</li><li><b>B</b> is a later step.</li><li><b>D</b> is a technical activity, not the foundation.</li></ul>"},
+
+{q:"A risk practitioner discovers that business unit managers maintain separate, undocumented IT inventories. What is the GREATEST concern?",
+o:["The inventories may be incomplete","Risk assessments may be based on inaccurate or incomplete information","The IT department may lose budget","Auditors may issue a finding"],
+a:1,
+e:"Incomplete/undocumented information undermines the entire risk assessment process.<ul><li><b>A</b> is a symptom, not the greatest concern.</li><li><b>C</b> is unrelated.</li><li><b>D</b> is a byproduct.</li></ul>"},
+
+{q:"When reviewing existing information, a risk practitioner finds conflicting data between the asset inventory and the configuration management database (CMDB). What should the practitioner do FIRST?",
+o:["Delete the less reliable source","Report the discrepancy to the CIO","Validate and reconcile the data with data owners","Assume the CMDB is accurate"],
+a:2,
+e:"Data validation and reconciliation with owners is the appropriate first step before any action.<ul><li><b>A</b> is destructive.</li><li><b>B</b> skips validation.</li><li><b>D</b> is an unsafe assumption.</li></ul>"},
+
+{q:"Which of the following BEST describes why reviewing existing information is a continuous activity rather than a one-time event?",
+o:["Regulations require annual reviews","Business and IT environments change continuously","Auditors demand fresh data","Risk registers expire after one year"],
+a:1,
+e:"The dynamic nature of business and IT environments requires continuous review.<ul><li><b>A</b> is a compliance driver, not the core reason.</li><li><b>C</b> is a byproduct.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"A risk practitioner is reviewing third-party contracts and finds no security requirements. This information is MOST relevant to which risk domain?",
+o:["Threat and vulnerability identification","Risk response","Control monitoring","Risk reporting"],
+a:0,
+e:"Missing security requirements represent a vulnerability/threat exposure in the third-party environment.<ul><li><b>B</b> comes after identification.</li><li><b>C</b> is about controls.</li><li><b>D</b> is about communication.</li></ul>"},
+
+{q:"An IT risk has been identified that could cause a 4-hour outage of the order-processing system. The business objective is '99.9% order fulfillment accuracy.' Which is the MOST appropriate way to express the impact?",
+o:["'The system may go down'","'Order fulfillment accuracy may fall below the 99.9% target'","'IT will need more budget'","'Customers will be unhappy'"],
+a:1,
+e:"Impact must be tied directly to the business objective, not generic statements.<ul><li><b>A</b> is vague.</li><li><b>C</b> is an IT impact.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{q:"A risk practitioner identifies that a legacy system supports a business objective that is no longer strategic. How should this affect the risk assessment?",
+o:["The risk should be ignored","The risk should be assessed in the context of current business objectives","The system should be immediately decommissioned","The risk should be transferred to the business"],
+a:1,
+e:"Risk must be evaluated against current, not obsolete, business objectives.<ul><li><b>A</b> is negligent.</li><li><b>C</b> is a business decision, not a risk assessment action.</li><li><b>D</b> is not a valid response.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a realized impact of IT risk on business operations?",
+o:["A vulnerability scan found 50 unpatched servers","A phishing attack caused $2M in fraudulent transactions","The risk register has 200 entries","The CISO attended a conference"],
+a:1,
+e:"Realized impact means the risk event actually occurred and caused harm.<ul><li><b>A</b> is an identification.</li><li><b>C</b> is a document.</li><li><b>D</b> is an activity.</li></ul>"},
+
+{q:"A risk practitioner is mapping IT risks to business objectives. The CFO asks, 'Why not just list all IT risks?' What is the BEST response?",
+o:["'It's required by the framework'","'Risks must be prioritized by their potential impact on business objectives'","'IT risks are more important than business risks'","'The board requested it'"],
+a:1,
+e:"Prioritization by business impact is the core rationale for mapping.<ul><li><b>A</b> is not a rationale.</li><li><b>C</b> is false.</li><li><b>D</b> is not a rationale.</li></ul>"},
+
+{q:"An organization's business objective is 'expand into three new markets in 12 months.' An IT risk is identified: 'cloud provider cannot scale to new regions.' This is BEST classified as:",
+o:["A threat","A vulnerability","A risk scenario impacting a business objective","A control gap"],
+a:2,
+e:"It describes a risk scenario linked to a specific business objective.<ul><li><b>A</b> is a threat actor/event.</li><li><b>B</b> is a weakness.</li><li><b>D</b> is about controls.</li></ul>"},
+
+{q:"Which of the following is a threat rather than a vulnerability?",
+o:["Unpatched operating system","Lack of security awareness training","Ransomware gang targeting the industry","Weak password policy"],
+a:2,
+e:"A threat is an external or internal actor/event; the others are vulnerabilities.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are vulnerabilities.</li></ul>"},
+
+{q:"A risk practitioner identifies that employees share passwords. This is BEST classified as a vulnerability in which domain?",
+o:["People","Process","Technology","Facility"],
+a:0,
+e:"Password sharing is a human behavior vulnerability.<ul><li><b>B</b> is a missing process.</li><li><b>C</b> is a technical weakness.</li><li><b>D</b> is physical.</li></ul>"},
+
+{q:"An organization has a robust firewall but no formal change management process. Which is the GREATEST vulnerability?",
+o:["The firewall may be misconfigured","Unauthorized changes may introduce vulnerabilities","The firewall vendor may go out of business","Employees may bypass the firewall"],
+a:1,
+e:"Lack of change management is a process vulnerability that can introduce many risks.<ul><li><b>A</b> is possible but narrower.</li><li><b>C</b> is a continuity concern.</li><li><b>D</b> is a people issue.</li></ul>"},
+
+{q:"Which of the following BEST describes the relationship between threats and vulnerabilities?",
+o:["A threat always exploits a vulnerability","A vulnerability always leads to a threat","A threat requires a vulnerability to cause harm","Threats and vulnerabilities are the same"],
+a:2,
+e:"Both must exist for a risk event to occur (threat exploits vulnerability).<ul><li><b>A</b> is too absolute.</li><li><b>B</b> is false.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"A risk practitioner is identifying threats to a cloud-based CRM. Which of the following is the MOST relevant threat?",
+o:["Physical theft of servers","Cloud provider API compromise","Office lease expiration","Employee cafeteria closure"],
+a:1,
+e:"API compromise is directly relevant to cloud CRM.<ul><li><b>A</b> is the provider's responsibility.</li><li><b>C</b> and <b>D</b> are irrelevant.</li></ul>"},
+
+{q:"Which of the following BEST describes an IT risk scenario?",
+o:["'The server is unpatched'","'A hacker exploits an unpatched server to steal customer data, causing regulatory fines'","'We need more budget'","'The firewall is outdated'"],
+a:1,
+e:"A risk scenario describes a threat exploiting a vulnerability to cause an impact.<ul><li><b>A</b> and <b>D</b> are vulnerabilities.</li><li><b>C</b> is a budget request.</li></ul>"},
+
+{q:"A risk practitioner is developing risk scenarios. What is the PRIMARY input?",
+o:["The IT budget","Threats, vulnerabilities, and potential business impacts","The number of employees","The CEO's risk appetite"],
+a:1,
+e:"Scenarios are built from threats, vulnerabilities, and impacts.<ul><li><b>A</b>, <b>C</b> are not inputs.</li><li><b>D</b> is context, not primary input.</li></ul>"},
+
+{q:"How many risk scenarios should an organization typically develop?",
+o:["One per asset","One per threat","Enough to cover significant risks to business objectives","Exactly 100"],
+a:2,
+e:"Scenarios should be sufficient to address significant risks, not arbitrarily numbered.<ul><li><b>A</b> is impractical.</li><li><b>B</b> may miss combined risks.</li><li><b>D</b> is arbitrary.</li></ul>"},
+
+{q:"A risk scenario is rated 'high likelihood, low impact.' Another is 'low likelihood, high impact.' Which should be prioritized?",
+o:["Always the high-likelihood one","Always the high-impact one","Depends on the organization's risk tolerance and the specific context","Neither; both are equal"],
+a:2,
+e:"Prioritization depends on risk tolerance and context; there's no universal rule.<ul><li><b>A</b> and <b>B</b> are oversimplifications.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"Which of the following is a common pitfall in developing risk scenarios?",
+o:["Involving business stakeholders","Focusing only on technical threats and ignoring business context","Using a consistent format","Reviewing scenarios annually"],
+a:1,
+e:"Ignoring business context is a major pitfall; scenarios must be business-relevant.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are best practices.</li></ul>"},
+
+{q:"Who should be the risk owner for a risk related to customer data privacy?",
+o:["The IT security manager","The business unit leader who owns the customer relationship","The CIO","The internal auditor"],
+a:1,
+e:"Risk owners should be those who own the business process/asset and can manage the risk.<ul><li><b>A</b> may be a control owner.</li><li><b>C</b> is too senior.</li><li><b>D</b> provides assurance.</li></ul>"},
+
+{q:"A risk practitioner assigns a risk owner. The owner says, 'I don't have the authority to implement controls.' What is the BEST response?",
+o:["'You're still accountable'","'Then you're not the right risk owner; we need someone with authority'","'Just do your best'","'Escalate to the CEO'"],
+a:1,
+e:"Risk owners must have the authority and resources to manage the risk.<ul><li><b>A</b> is unfair.</li><li><b>C</b> is not a solution.</li><li><b>D</b> may be eventual, but reassignment comes first.</li></ul>"},
+
+{q:"What is the difference between a risk owner and a control owner?",
+o:["They are the same","Risk owner is accountable for the risk; control owner is accountable for the control's design and operation","Risk owner is IT; control owner is business","Control owner is senior to risk owner"],
+a:1,
+e:"Clear distinction: risk vs. control accountability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"A risk practitioner validates risk ownership. Which of the following is the BEST evidence of valid ownership?",
+o:["The owner's name is in the risk register","The owner has accepted the risk in writing and has authority over the risk","The owner attended a meeting","The owner is a senior executive"],
+a:1,
+e:"Valid ownership requires acceptance and authority, not just a name.<ul><li><b>A</b> is documentation only.</li><li><b>C</b> is not evidence.</li><li><b>D</b> is insufficient.</li></ul>"},
+
+{q:"An organization has no clear risk ownership. What is the MOST likely consequence?",
+o:["Risks will be over-managed","Risks will be unmanaged or poorly managed","The risk register will be too long","Auditors will be happy"],
+a:1,
+e:"Without ownership, risks fall through the cracks.<ul><li><b>A</b> is unlikely.</li><li><b>C</b> is not a direct consequence.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of an IT risk register?",
+o:["To list all IT assets","To document, track, and manage IT risks","To replace the enterprise risk register","To satisfy auditors"],
+a:1,
+e:"The register is a management tool for documenting and tracking risks.<ul><li><b>A</b> is an asset inventory.</li><li><b>C</b> is false.</li><li><b>D</b> is a byproduct.</li></ul>"},
+
+{q:"An IT risk register is NOT integrated into the enterprise risk profile. What is the GREATEST concern?",
+o:["IT risks may be invisible to enterprise-level decision-makers","The IT register will be too long","IT will need more budget","The CIO will be upset"],
+a:0,
+e:"Lack of integration means enterprise decisions may ignore significant IT risks.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not the main concerns.</li></ul>"},
+
+{q:"How often should an IT risk register be updated?",
+o:["Annually","Only when a risk event occurs","Continuously, as risks change","Every five years"],
+a:2,
+e:"The register should be a living document updated as the risk environment changes.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are too infrequent or reactive.</li></ul>"},
+
+{q:"A risk practitioner finds that the IT risk register contains 500 risks, most rated 'low.' What is the BEST action?",
+o:["Delete all low risks","Aggregate and prioritize risks for meaningful reporting","Add more risks","Ignore the register"],
+a:1,
+e:"Aggregation and prioritization make the register actionable; don't just delete.<ul><li><b>A</b> is risky.</li><li><b>C</b> is counterproductive.</li><li><b>D</b> is negligent.</li></ul>"},
+
+{q:"Which of the following BEST describes the relationship between the IT risk register and the enterprise risk profile?",
+o:["They are independent","The IT risk register feeds into the enterprise risk profile","The enterprise risk profile feeds into the IT risk register","They are the same document"],
+a:1,
+e:"IT risks are a subset of enterprise risks and should feed upward.<ul><li><b>A</b>, <b>D</b> are false.</li><li><b>C</b> is not the primary relationship.</li></ul>"},
+
+{q:"What is the difference between risk appetite and risk tolerance?",
+o:["They are the same","Appetite is the amount of risk the organization is willing to accept; tolerance is the acceptable variation around that appetite","Appetite is for IT; tolerance is for business","Tolerance is set by the board; appetite by management"],
+a:1,
+e:"Standard CRISC distinction.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"Who should facilitate the identification of risk appetite and tolerance?",
+o:["The IT manager alone","Key stakeholders, facilitated by the risk practitioner","The external auditor","The CEO alone"],
+a:1,
+e:"It's a stakeholder-driven process facilitated by risk professionals.<ul><li><b>A</b>, <b>D</b> are too narrow.</li><li><b>C</b> is not the facilitator.</li></ul>"},
+
+{q:"An organization has a 'zero risk appetite' for customer data breaches. What does this mean in practice?",
+o:["No data breaches will ever occur","The organization will invest heavily in controls to minimize breach risk","The organization will stop collecting customer data","Risk management is unnecessary"],
+a:1,
+e:"Zero appetite means maximum effort to prevent, not a guarantee.<ul><li><b>A</b> is impossible.</li><li><b>C</b> is extreme.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"A business unit wants to accept a risk that exceeds the organization's stated risk tolerance. What should happen?",
+o:["The business unit can accept it independently","The risk must be escalated to appropriate senior management/board","The risk practitioner should ignore it","The risk should be transferred to IT"],
+a:1,
+e:"Exceeding tolerance requires escalation to those who set the tolerance.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not acceptable.</li></ul>"},
+
+{q:"Which of the following is the BEST indicator that risk appetite is effectively communicated?",
+o:["It's written in a policy","Decision-makers consistently make risk-based decisions aligned with it","The board approved it","It's published on the intranet"],
+a:1,
+e:"Effective communication is demonstrated by consistent behavior, not just documentation.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are necessary but not sufficient.</li></ul>"},
+
+{q:"What is the PRIMARY goal of security awareness training?",
+o:["To punish employees who make mistakes","To promote a risk-aware culture","To satisfy compliance requirements","To reduce IT budget"],
+a:1,
+e:"The goal is culture change; compliance is a byproduct.<ul><li><b>A</b> is counterproductive.</li><li><b>C</b> is secondary.</li><li><b>D</b> is unrelated.</li></ul>"},
+
+{q:"A risk practitioner wants to promote a risk-aware culture. Which is the MOST effective approach?",
+o:["Annual mandatory training only","Continuous, role-based training with executive sponsorship","Sending emails about risks","Posting posters in the break room"],
+a:1,
+e:"Continuous, role-based, and executive-sponsored training is most effective.<ul><li><b>A</b> is insufficient.</li><li><b>C</b>, <b>D</b> are passive.</li></ul>"},
+
+{q:"Executive leadership does not participate in security awareness training. What is the GREATEST impact?",
+o:["The training budget will be cut","Employees may perceive security as unimportant","The CEO will be fired","Auditors will complain"],
+a:1,
+e:"Lack of executive participation undermines the culture message.<ul><li><b>A</b> is possible but secondary.</li><li><b>C</b> is extreme.</li><li><b>D</b> is secondary.</li></ul>"},
+
+{q:"Which of the following BEST measures the effectiveness of a risk-aware culture?",
+o:["Number of training sessions delivered","Percentage of employees who completed training","Reduction in risk events and improved risk reporting","Training budget spent"],
+a:2,
+e:"Outcomes (fewer incidents, better reporting) are better measures than activity metrics.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are activity/compliance metrics.</li></ul>"},
+
+{q:"A risk practitioner is developing security awareness training. What is the MOST important consideration?",
+o:["The length of the training","The relevance to the audience's role and risks","The cost of the training","The vendor's reputation"],
+a:1,
+e:"Relevance drives engagement and effectiveness.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary.</li></ul>"},
+
+{q:"What are the two primary dimensions of risk assessment?",
+o:["Cost and benefit","Likelihood and impact","Threat and vulnerability","Probability and severity"],
+a:1,
+e:"Likelihood and impact are the standard dimensions.<ul><li><b>A</b> is a business case concept.</li><li><b>C</b> are inputs.</li><li><b>D</b> is close but not standard CRISC terminology.</li></ul>"},
+
+{q:"A risk practitioner uses qualitative risk assessment. What is the PRIMARY limitation?",
+o:["It's too expensive","It's subjective and may lack consistency","It requires too much data","It's not accepted by auditors"],
+a:1,
+e:"Subjectivity is the main limitation of qualitative assessment.<ul><li><b>A</b>, <b>C</b> are false.</li><li><b>D</b> is not necessarily true.</li></ul>"},
+
+{q:"When should a risk assessment be conducted?",
+o:["Only annually","Only when a risk event occurs","At planned intervals and when significant changes occur","Only when auditors request it"],
+a:2,
+e:"Both scheduled and event-driven assessments are needed.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"A risk scenario is assessed as 'high likelihood, high impact.' What is the MOST appropriate next step?",
+o:["Accept the risk","Prioritize for risk response","Ignore it","Transfer it immediately"],
+a:1,
+e:"High/high risks should be prioritized for response.<ul><li><b>A</b> is inappropriate.</li><li><b>C</b> is negligent.</li><li><b>D</b> may be an option but prioritization comes first.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a risk assessment input?",
+o:["The number of IT staff","Threat intelligence and vulnerability data","The CEO's salary","Office rent"],
+a:1,
+e:"Threat and vulnerability data are core inputs to risk assessment.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not core inputs.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of evaluating existing controls?",
+o:["To justify control costs","To determine their effectiveness in mitigating IT risk","To satisfy auditors","To reduce the number of controls"],
+a:1,
+e:"Effectiveness evaluation ensures controls actually mitigate risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the primary purpose.</li></ul>"},
+
+{q:"A control is designed well but not operating consistently. This is BEST described as:",
+o:["A design deficiency","An operating deficiency","A risk","A threat"],
+a:1,
+e:"Operating (or operating effectiveness) deficiency.<ul><li><b>A</b> is incorrect - design is good.</li><li><b>C</b>, <b>D</b> are broader concepts.</li></ul>"},
+
+{q:"Which of the following is the MOST reliable evidence of control effectiveness?",
+o:["The control owner's opinion","Independent testing and observation","The control's design document","The control's cost"],
+a:1,
+e:"Independent testing provides the most reliable evidence.<ul><li><b>A</b> is subjective.</li><li><b>C</b> shows design only.</li><li><b>D</b> is irrelevant.</li></ul>"},
+
+{q:"A risk practitioner finds that a key control has never been tested. What is the GREATEST concern?",
+o:["The control may not be effective","The control owner will be upset","The audit will be delayed","The control will be too expensive"],
+a:0,
+e:"Untested controls may provide false assurance.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not risk management concerns.</li></ul>"},
+
+{q:"Which of the following BEST describes a compensating control?",
+o:["A control that replaces the primary control","An alternative control that mitigates risk when the primary control is not feasible","A control that is more expensive","A control that is not documented"],
+a:1,
+e:"Compensating controls provide alternative mitigation.<ul><li><b>A</b> is not accurate.</li><li><b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of comparing current and desired states of the IT risk environment?",
+o:["To identify gaps that need to be addressed","To justify budget increases","To blame IT","To satisfy auditors"],
+a:0,
+e:"Gap analysis identifies where action is needed.<ul><li><b>B</b> is a possible outcome.</li><li><b>C</b>, <b>D</b> are not the purpose.</li></ul>"},
+
+{q:"A gap analysis reveals that the organization has no data loss prevention (DLP) controls, but the desired state requires them. What is the NEXT step?",
+o:["Immediately purchase DLP","Assess the risk and prioritize the gap for treatment","Ignore the gap","Report to the board"],
+a:1,
+e:"Gaps should be risk-assessed and prioritized, not automatically remediated.<ul><li><b>A</b> skips assessment.</li><li><b>C</b> is negligent.</li><li><b>D</b> may come later.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a gap between current and desired states?",
+o:["The organization has a firewall","The organization has a policy but no enforcement","The organization has 100 employees","The organization uses cloud services"],
+a:1,
+e:"Policy without enforcement is a classic gap.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are facts, not gaps.</li></ul>"},
+
+{q:"A risk practitioner finds that the organization's controls meet the framework requirements but do not address a key business risk. What is the BEST conclusion?",
+o:["The controls are adequate","There is a gap between control coverage and business risk","The framework is wrong","The business risk is not real"],
+a:1,
+e:"Framework compliance does not guarantee business risk coverage.<ul><li><b>A</b> is false.</li><li><b>C</b>, <b>D</b> are not the best conclusions.</li></ul>"},
+
+{q:"Who should be involved in reviewing gap analysis results?",
+o:["Only IT","Only the board","Relevant stakeholders, including risk and control owners","Only external auditors"],
+a:2,
+e:"Gap analysis review requires multi-stakeholder involvement.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"What are the four common risk response options?",
+o:["Accept, avoid, transfer, mitigate","Ignore, deny, blame, hide","Accept, reject, defer, ignore","Mitigate, monitor, report, audit"],
+a:0,
+e:"Standard CRISC risk responses: accept, avoid, transfer, mitigate.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not standard.</li></ul>"},
+
+{q:"An organization decides to purchase cyber insurance. This is an example of:",
+o:["Risk acceptance","Risk avoidance","Risk transfer","Risk mitigation"],
+a:2,
+e:"Insurance transfers financial impact.<ul><li><b>A</b> is retaining risk.</li><li><b>B</b> is eliminating the activity.</li><li><b>D</b> is reducing risk.</li></ul>"},
+
+{q:"An organization decides to stop offering a risky online service. This is:",
+o:["Risk acceptance","Risk avoidance","Risk transfer","Risk mitigation"],
+a:1,
+e:"Eliminating the activity avoids the risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are different responses.</li></ul>"},
+
+{q:"Who should facilitate the selection of recommended risk responses?",
+o:["The risk practitioner alone","Key stakeholders, facilitated by the risk practitioner","The IT manager","The auditor"],
+a:1,
+e:"Stakeholders select; risk practitioner facilitates.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the facilitators.</li></ul>"},
+
+{q:"A risk owner decides to accept a risk without any treatment. What is the MOST important requirement?",
+o:["The risk must be documented and approved by appropriate authority","The risk must be ignored","The risk must be transferred","The risk must be reported to the media"],
+a:0,
+e:"Documented, authorized acceptance is essential.<ul><li><b>B</b> is negligent.</li><li><b>C</b> is a different response.</li><li><b>D</b> is absurd.</li></ul>"},
+
+{q:"Who is responsible for developing risk treatment plans?",
+o:["The risk practitioner alone","The risk owner, in collaboration with the risk practitioner","The auditor","The CEO"],
+a:1,
+e:"Collaboration between risk owner and practitioner.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the primary responsible parties.</li></ul>"},
+
+{q:"A control owner is selecting a control. What is the MOST important consideration?",
+o:["The control's cost","The control's effectiveness in mitigating the risk","The vendor's brand","The control's popularity"],
+a:1,
+e:"Effectiveness is the primary consideration.<ul><li><b>A</b> is a constraint.</li><li><b>C</b>, <b>D</b> are irrelevant.</li></ul>"},
+
+{q:"A risk treatment plan is developed but never executed. What is the GREATEST concern?",
+o:["The risk remains unmitigated","The plan document is wasted","The risk owner will be upset","The budget is unused"],
+a:0,
+e:"Unexecuted plans leave risk unaddressed.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are trivial.</li></ul>"},
+
+{q:"Who should validate that risk responses have been executed according to the plan?",
+o:["The risk owner alone","The risk practitioner (or independent validator)","The control owner","The vendor"],
+a:1,
+e:"Independent validation ensures execution.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not independent.</li></ul>"},
+
+{q:"A control is implemented but not maintained. What is the MOST likely outcome?",
+o:["The control remains effective","The control degrades and risk increases","The control becomes cheaper","The control becomes a threat"],
+a:1,
+e:"Lack of maintenance leads to control degradation.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are unlikely or false.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of a key risk indicator (KRI)?",
+o:["To measure control performance","To provide early warning of increasing risk","To measure business performance","To satisfy auditors"],
+a:1,
+e:"KRIs are early warning indicators for risk.<ul><li><b>A</b> is a KCI.</li><li><b>C</b> is a KPI.</li><li><b>D</b> is a byproduct.</li></ul>"},
+
+{q:"What is the difference between a KRI and a KPI?",
+o:["They are the same","KRI measures risk; KPI measures performance","KRI is for IT; KPI is for business","KPI is more important"],
+a:1,
+e:"KRI = risk; KPI = performance.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"What is the difference between a KRI and a KCI?",
+o:["They are the same","KRI measures risk; KCI measures control effectiveness","KRI is for IT; KCI is for business","KCI is more important"],
+a:1,
+e:"KCI = key control indicator.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"A KRI is trending upward beyond its threshold. What should happen FIRST?",
+o:["Ignore it","Investigate the cause and assess the risk","Immediately implement controls","Report to the media"],
+a:1,
+e:"Investigation precedes action.<ul><li><b>A</b> is negligent.</li><li><b>C</b> skips investigation.</li><li><b>D</b> is absurd.</li></ul>"},
+
+{q:"Who should be involved in identifying KPIs and KCIs?",
+o:["Only IT","Control owners, in collaboration with the risk practitioner","Only the board","Only external auditors"],
+a:1,
+e:"Control owners collaborate with risk practitioners.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"A KRI has been monitored for a year but never triggered. What is the BEST interpretation?",
+o:["The KRI is useless","The KRI may be set too high, or the risk may be well-controlled","The risk doesn't exist","The KRI should be deleted"],
+a:1,
+e:"Either the threshold is too high or controls are effective; both need evaluation.<ul><li><b>A</b>, <b>D</b> are premature.</li><li><b>C</b> is not necessarily true.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a KRI for ransomware risk?",
+o:["Number of employees","Number of unpatched critical systems","IT budget","Number of meetings"],
+a:1,
+e:"Unpatched systems are a leading indicator of ransomware risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not risk indicators.</li></ul>"},
+
+{q:"A control assessment reveals that the control environment is at 'maturity level 2' but the desired state is 'level 4.' What is the BEST action?",
+o:["Ignore the gap","Develop a plan to improve maturity, prioritized by risk","Immediately implement all level 4 controls","Reduce the desired state to level 2"],
+a:1,
+e:"Prioritized improvement planning is appropriate.<ul><li><b>A</b> is negligent.</li><li><b>C</b> is impractical.</li><li><b>D</b> is capitulation.</li></ul>"},
+
+{q:"A risk practitioner is reporting risk information to the board. What is the MOST important consideration?",
+o:["The length of the report","The relevance and clarity of information for risk-based decision-making","The number of charts","The font size"],
+a:1,
+e:"Relevance and clarity for decision-making are paramount.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are trivial or secondary.</li></ul>"},
+
+{q:"An organization is evaluating a new AI technology. What is the MOST important risk consideration?",
+o:["The cost of the technology","The threats, vulnerabilities, and opportunities it introduces","The vendor's location","The number of users"],
+a:1,
+e:"Emerging technology evaluation must consider threats, vulnerabilities, and opportunities.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary factors.</li></ul>"},
+
+{q:"An organization's risk management practices are not aligned with any recognized framework. What is the GREATEST concern?",
+o:["Auditors will complain","The organization may miss critical risk management processes and lack consistency","The IT budget will increase","The CEO will be unhappy"],
+a:1,
+e:"Lack of framework alignment can lead to gaps, inconsistency, and missed processes.<ul><li><b>A</b> is a symptom.</li><li><b>C</b>, <b>D</b> are not risk management concerns.</li></ul>"},
+
+{q:"A risk practitioner is reviewing existing information and finds that the IT asset inventory was last updated 18 months ago. The organization has since migrated 40% of workloads to the cloud. What is the MOST significant risk of using this inventory for risk assessment?",
+o:["The inventory may list decommissioned assets","The risk assessment may omit critical cloud assets and their associated risks","The inventory may be too large to process","The IT team may be embarrassed"],
+a:1,
+e:"A stale inventory that predates a major cloud migration will miss cloud assets entirely, leading to incomplete risk assessment.<ul><li><b>A</b> is a lesser concern.</li><li><b>C</b> is irrelevant.</li><li><b>D</b> is not a risk management concern.</li></ul>"},
+
+{q:"When collecting information about the organization's IT environment, which source is MOST likely to provide accurate data about data flows between business processes and systems?",
+o:["The IT budget","Data flow diagrams and process maps","The organizational chart","The facilities management plan"],
+a:1,
+e:"Data flow diagrams and process maps show how data moves between systems and business processes.<ul><li><b>A</b> shows spending.</li><li><b>C</b> shows reporting lines.</li><li><b>D</b> is about physical facilities.</li></ul>"},
+
+{q:"A risk practitioner discovers that two business units use different definitions for 'critical system.' What is the GREATEST concern?",
+o:["The business units may argue","Risk assessments may be inconsistent and incomparable across the organization","The IT budget may be miscalculated","The CIO may need to mediate"],
+a:1,
+e:"Inconsistent definitions lead to inconsistent risk assessments, making it impossible to aggregate, compare, or prioritize risks.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary.</li></ul>"},
+
+{q:"Which of the following BEST describes why reviewing existing information should include both internal and external sources?",
+o:["External sources are more accurate","Internal sources provide context; external sources provide threat intelligence and benchmarking","Auditors require both","It's a regulatory requirement"],
+a:1,
+e:"Internal information provides organizational context, while external information provides perspective on emerging threats and comparative risk.<ul><li><b>A</b> is false.</li><li><b>C</b>, <b>D</b> are not the primary reasons.</li></ul>"},
+
+{q:"A risk practitioner finds that the organization has no documented IT architecture. What is the MOST appropriate action?",
+o:["Refuse to conduct a risk assessment","Document the architecture as part of the information collection process","Assume the architecture is standard","Report the CIO to the board"],
+a:1,
+e:"If documentation is missing, the practitioner should work to document it as part of information collection.<ul><li><b>A</b> is unprofessional.</li><li><b>C</b> is dangerous.</li><li><b>D</b> is excessive.</li></ul>"},
+
+{q:"A risk practitioner is assessing the impact of a potential outage of the HR system. The business objective is 'maintain employee satisfaction above 85%.' Which of the following is the MOST direct impact?",
+o:["IT costs may increase","Payroll may be delayed, reducing employee satisfaction","The HR director may be unhappy","The system may need upgrading"],
+a:1,
+e:"The impact must link directly to the business objective. A payroll delay directly affects employee satisfaction.<ul><li><b>A</b> is an IT impact.</li><li><b>C</b> is a stakeholder reaction.</li><li><b>D</b> is a technical remedy.</li></ul>"},
+
+{q:"An organization's business objective is 'achieve 99.99% uptime for customer-facing services.' A risk is identified: 'a DDoS attack could cause 2 hours of downtime.' What is the BEST way to express the impact?",
+o:["'The DDoS attack is bad'","'The 2-hour outage would breach the 99.99% uptime objective'","'IT needs better firewalls'","'Customers will complain'"],
+a:1,
+e:"The impact should be expressed in terms of the business objective.<ul><li><b>A</b> is vague.</li><li><b>C</b> is a control recommendation.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{q:"A risk practitioner identifies that a legacy system supports a regulatory reporting obligation. The system is end-of-life and unsupported. What is the MOST significant potential impact?",
+o:["Increased maintenance costs","Regulatory penalties and reputational damage","Difficulty finding trained staff","Slower system performance"],
+a:1,
+e:"The most significant impact of failing to meet a regulatory obligation is penalties and reputational damage.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are lesser impacts.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a realized impact of IT risk on a business objective?",
+o:["A vulnerability scan identified 200 unpatched systems","A data breach caused a 15% drop in customer trust scores","The risk register has 300 entries","The CISO attended a risk conference"],
+a:1,
+e:"A realized impact means the risk event occurred and affected a business objective.<ul><li><b>A</b> is an identification.</li><li><b>C</b>, <b>D</b> are activities.</li></ul>"},
+
+{q:"A risk practitioner is mapping IT risks to business objectives. The CEO asks, 'Why should we care about IT risks if they don't directly affect revenue?' What is the BEST response?",
+o:["'IT risks always affect revenue eventually'","'IT risks can affect operational efficiency, compliance, and reputation, which all influence revenue and strategic objectives'","'The board requires it'","'IT risks are more important than business risks'"],
+a:1,
+e:"IT risks affect business objectives through multiple pathways.<ul><li><b>A</b> is an overgeneralization.</li><li><b>C</b> is not compelling.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"Which of the following is a vulnerability rather than a threat?",
+o:["A hacker group targeting the financial sector","A hurricane in the region","An unpatched web server","A disgruntled employee"],
+a:2,
+e:"An unpatched web server is a weakness (vulnerability) that can be exploited.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are threats.</li></ul>"},
+
+{q:"A risk practitioner identifies that the organization has no formal offboarding process for terminated employees. This is BEST classified as a vulnerability in which domain?",
+o:["People","Process","Technology","Facility"],
+a:1,
+e:"The lack of a formal process is a process vulnerability.<ul><li><b>A</b> is the symptom.</li><li><b>C</b>, <b>D</b> are not the issue.</li></ul>"},
+
+{q:"Which of the following BEST describes the relationship between threats and vulnerabilities in risk assessment?",
+o:["A threat always exploits a vulnerability","A vulnerability always leads to a threat","A risk event occurs when a threat exploits a vulnerability","Threats and vulnerabilities are the same thing"],
+a:2,
+e:"A risk event requires both a threat and a vulnerability.<ul><li><b>A</b> is too absolute.</li><li><b>B</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"A risk practitioner is identifying threats to a third-party cloud provider. Which of the following is the MOST relevant threat?",
+o:["The cloud provider's data center is in a flood zone","The cloud provider's employees may go on strike","The cloud provider's API may be compromised","The cloud provider's cafeteria may close"],
+a:2,
+e:"API compromise directly affects the organization's data and operations in the cloud.<ul><li><b>A</b> is a vulnerability.</li><li><b>B</b> is less directly relevant.</li><li><b>D</b> is irrelevant.</li></ul>"},
+
+{q:"An organization has a robust firewall but no intrusion detection system (IDS). Which is the GREATEST vulnerability?",
+o:["The firewall may be misconfigured","Attacks that bypass the firewall may go undetected","The firewall vendor may go out of business","Employees may bypass the firewall"],
+a:1,
+e:"Without an IDS, attacks that penetrate the firewall will not be detected.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are lesser concerns.</li></ul>"},
+
+{q:"Which of the following BEST describes a well-formed IT risk scenario?",
+o:["'The server is unpatched'","'A hacker exploits an unpatched server to steal customer data, causing regulatory fines and reputational damage'","'We need more budget for security'","'The firewall is outdated'"],
+a:1,
+e:"A well-formed risk scenario describes a threat exploiting a vulnerability to cause a business impact.<ul><li><b>A</b>, <b>D</b> are vulnerabilities.</li><li><b>C</b> is a budget request.</li></ul>"},
+
+{q:"A risk practitioner is developing risk scenarios for a new mobile banking app. Which of the following is the MOST important input?",
+o:["The app's marketing plan","Threats, vulnerabilities, and potential impacts to the app and its users","The number of developers","The app's color scheme"],
+a:1,
+e:"Risk scenarios are built from threats, vulnerabilities, and impacts.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are irrelevant.</li></ul>"},
+
+{q:"How many risk scenarios should an organization develop?",
+o:["One per asset","One per threat","Enough to cover significant risks to business objectives","Exactly 100"],
+a:2,
+e:"The number of scenarios should be sufficient to address significant risks.<ul><li><b>A</b>, <b>B</b> are impractical.</li><li><b>D</b> is arbitrary.</li></ul>"},
+
+{q:"A risk scenario is rated 'low likelihood, high impact.' Another is 'high likelihood, low impact.' Which should be prioritized?",
+o:["Always the high-likelihood one","Always the high-impact one","Depends on the organization's risk tolerance and the specific context","Neither; both are equal"],
+a:2,
+e:"Prioritization depends on risk tolerance, context, and the organization's objectives.<ul><li><b>A</b>, <b>B</b> are oversimplifications.</li><li><b>D</b> is false.</li></ul>"},
+
+{q:"Which of the following is a common pitfall in developing risk scenarios?",
+o:["Involving business stakeholders","Focusing only on technical threats and ignoring business context","Using a consistent format","Reviewing scenarios annually"],
+a:1,
+e:"Ignoring business context leads to scenarios that don't resonate with business leaders.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are best practices.</li></ul>"},
+
+{q:"Who should be the risk owner for a risk related to customer data privacy?",
+o:["The IT security manager","The business unit leader who owns the customer relationship","The CIO","The internal auditor"],
+a:1,
+e:"Risk owners should be those who own the business process or asset.<ul><li><b>A</b> may be a control owner.</li><li><b>C</b> is too senior.</li><li><b>D</b> provides assurance.</li></ul>"},
+
+{q:"A risk practitioner assigns a risk owner. The owner says, 'I don't have the authority to implement controls.' What is the BEST response?",
+o:["'You're still accountable'","'Then you're not the right risk owner; we need someone with authority'","'Just do your best'","'Escalate to the CEO'"],
+a:1,
+e:"Risk owners must have the authority and resources to manage the risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the best responses.</li></ul>"},
+
+{q:"What is the difference between a risk owner and a control owner?",
+o:["They are the same","Risk owner is accountable for the risk; control owner is accountable for the control's design and operation","Risk owner is IT; control owner is business","Control owner is senior to risk owner"],
+a:1,
+e:"The risk owner is accountable for managing the risk; the control owner for the control.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"A risk practitioner validates risk ownership. Which of the following is the BEST evidence of valid ownership?",
+o:["The owner's name is in the risk register","The owner has accepted the risk in writing and has authority over the risk","The owner attended a meeting","The owner is a senior executive"],
+a:1,
+e:"Valid ownership requires formal acceptance and authority.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are insufficient.</li></ul>"},
+
+{q:"An organization has no clear risk ownership. What is the MOST likely consequence?",
+o:["Risks will be over-managed","Risks will be unmanaged or poorly managed","The risk register will be too long","Auditors will be happy"],
+a:1,
+e:"Without ownership, risks fall through the cracks.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are unlikely or false.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of an IT risk register?",
+o:["To list all IT assets","To document, track, and manage IT risks","To replace the enterprise risk register","To satisfy auditors"],
+a:1,
+e:"The risk register is a management tool for documenting, tracking, and managing risks.<ul><li><b>A</b> is an asset inventory.</li><li><b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"An IT risk register is NOT integrated into the enterprise risk profile. What is the GREATEST concern?",
+o:["IT risks may be invisible to enterprise-level decision-makers","The IT register will be too long","IT will need more budget","The CIO will be upset"],
+a:0,
+e:"Without integration, enterprise decision-makers may not be aware of significant IT risks.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not the main concerns.</li></ul>"},
+
+{q:"How often should an IT risk register be updated?",
+o:["Annually","Only when a risk event occurs","Continuously, as risks change","Every five years"],
+a:2,
+e:"The risk register should be a living document updated as the risk environment changes.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are too infrequent.</li></ul>"},
+
+{q:"A risk practitioner finds that the IT risk register contains 500 risks, most rated 'low.' What is the BEST action?",
+o:["Delete all low risks","Aggregate and prioritize risks for meaningful reporting","Add more risks","Ignore the register"],
+a:1,
+e:"Aggregation and prioritization make the register actionable.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not advisable.</li></ul>"},
+
+{q:"Which of the following BEST describes the relationship between the IT risk register and the enterprise risk profile?",
+o:["They are independent","The IT risk register feeds into the enterprise risk profile","The enterprise risk profile feeds into the IT risk register","They are the same document"],
+a:1,
+e:"IT risks are a subset of enterprise risks and should feed upward.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"What is the difference between risk appetite and risk tolerance?",
+o:["They are the same","Appetite is the amount of risk the organization is willing to accept; tolerance is the acceptable variation around that appetite","Appetite is for IT; tolerance is for business","Tolerance is set by the board; appetite by management"],
+a:1,
+e:"Risk appetite is the overall willingness to accept risk; tolerance is the acceptable deviation.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"Who should facilitate the identification of risk appetite and tolerance?",
+o:["The IT manager alone","Key stakeholders, facilitated by the risk practitioner","The external auditor","The CEO alone"],
+a:1,
+e:"Risk appetite and tolerance are set by key stakeholders, facilitated by the risk practitioner.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"An organization has a 'zero risk appetite' for customer data breaches. What does this mean in practice?",
+o:["No data breaches will ever occur","The organization will invest heavily in controls to minimize breach risk","The organization will stop collecting customer data","Risk management is unnecessary"],
+a:1,
+e:"Zero appetite means maximum effort to prevent breaches, not a guarantee.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"A business unit wants to accept a risk that exceeds the organization's stated risk tolerance. What should happen?",
+o:["The business unit can accept it independently","The risk must be escalated to appropriate senior management/board","The risk practitioner should ignore it","The risk should be transferred to IT"],
+a:1,
+e:"Exceeding tolerance requires escalation to those who set the tolerance.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not acceptable.</li></ul>"},
+
+{q:"Which of the following is the BEST indicator that risk appetite is effectively communicated?",
+o:["It's written in a policy","Decision-makers consistently make risk-based decisions aligned with it","The board approved it","It's published on the intranet"],
+a:1,
+e:"Effective communication is demonstrated by consistent behavior.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are necessary but not sufficient.</li></ul>"},
+
+{q:"What is the PRIMARY goal of security awareness training?",
+o:["To punish employees who make mistakes","To promote a risk-aware culture","To satisfy compliance requirements","To reduce IT budget"],
+a:1,
+e:"The goal is culture change; compliance is a byproduct.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the primary goal.</li></ul>"},
+
+{q:"A risk practitioner wants to promote a risk-aware culture. Which is the MOST effective approach?",
+o:["Annual mandatory training only","Continuous, role-based training with executive sponsorship","Sending emails about risks","Posting posters in the break room"],
+a:1,
+e:"Continuous, role-based, and executive-sponsored training is most effective.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are insufficient.</li></ul>"},
+
+{q:"Executive leadership does not participate in security awareness training. What is the GREATEST impact?",
+o:["The training budget will be cut","Employees may perceive security as unimportant","The CEO will be fired","Auditors will complain"],
+a:1,
+e:"Lack of executive participation undermines the culture message.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary.</li></ul>"},
+
+{q:"Which of the following BEST measures the effectiveness of a risk-aware culture?",
+o:["Number of training sessions delivered","Percentage of employees who completed training","Reduction in risk events and improved risk reporting","Training budget spent"],
+a:2,
+e:"Outcomes (fewer incidents, better reporting) are better measures than activity metrics.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are activity metrics.</li></ul>"},
+
+{q:"A risk practitioner is developing security awareness training. What is the MOST important consideration?",
+o:["The length of the training","The relevance to the audience's role and risks","The cost of the training","The vendor's reputation"],
+a:1,
+e:"Relevance drives engagement and effectiveness.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary.</li></ul>"},
+
+{q:"What are the two primary dimensions of risk assessment?",
+o:["Cost and benefit","Likelihood and impact","Threat and vulnerability","Probability and severity"],
+a:1,
+e:"Likelihood and impact are the standard CRISC dimensions.<ul><li><b>A</b> is a business case concept.</li><li><b>C</b> are inputs.</li><li><b>D</b> is close but not standard.</li></ul>"},
+
+{q:"A risk practitioner uses qualitative risk assessment. What is the PRIMARY limitation?",
+o:["It's too expensive","It's subjective and may lack consistency","It requires too much data","It's not accepted by auditors"],
+a:1,
+e:"Subjectivity is the main limitation of qualitative assessment.<ul><li><b>A</b>, <b>C</b> are false.</li><li><b>D</b> is not necessarily true.</li></ul>"},
+
+{q:"When should a risk assessment be conducted?",
+o:["Only annually","Only when a risk event occurs","At planned intervals and when significant changes occur","Only when auditors request it"],
+a:2,
+e:"Both scheduled and event-driven assessments are needed.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"A risk scenario is assessed as 'high likelihood, high impact.' What is the MOST appropriate next step?",
+o:["Accept the risk","Prioritize for risk response","Ignore it","Transfer it immediately"],
+a:1,
+e:"High/high risks should be prioritized for response.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not appropriate first steps.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a risk assessment input?",
+o:["The number of IT staff","Threat intelligence and vulnerability data","The CEO's salary","Office rent"],
+a:1,
+e:"Threat and vulnerability data are core inputs to risk assessment.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not core inputs.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of evaluating existing controls?",
+o:["To justify control costs","To determine their effectiveness in mitigating IT risk","To satisfy auditors","To reduce the number of controls"],
+a:1,
+e:"Effectiveness evaluation ensures controls actually mitigate risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the primary purpose.</li></ul>"},
+
+{q:"A control is designed well but not operating consistently. This is BEST described as:",
+o:["A design deficiency","An operating deficiency","A risk","A threat"],
+a:1,
+e:"Operating (or operating effectiveness) deficiency.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not accurate.</li></ul>"},
+
+{q:"Which of the following is the MOST reliable evidence of control effectiveness?",
+o:["The control owner's opinion","Independent testing and observation","The control's design document","The control's cost"],
+a:1,
+e:"Independent testing provides the most reliable evidence.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are less reliable.</li></ul>"},
+
+{q:"A risk practitioner finds that a key control has never been tested. What is the GREATEST concern?",
+o:["The control may not be effective","The control owner will be upset","The audit will be delayed","The control will be too expensive"],
+a:0,
+e:"Untested controls may provide false assurance.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not risk management concerns.</li></ul>"},
+
+{q:"Which of the following BEST describes a compensating control?",
+o:["A control that replaces the primary control","An alternative control that mitigates risk when the primary control is not feasible","A control that is more expensive","A control that is not documented"],
+a:1,
+e:"Compensating controls provide alternative mitigation.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not accurate.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of comparing current and desired states of the IT risk environment?",
+o:["To identify gaps that need to be addressed","To justify budget increases","To blame IT","To satisfy auditors"],
+a:0,
+e:"Gap analysis identifies where action is needed.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not the purpose.</li></ul>"},
+
+{q:"A gap analysis reveals that the organization has no data loss prevention (DLP) controls, but the desired state requires them. What is the NEXT step?",
+o:["Immediately purchase DLP","Assess the risk and prioritize the gap for treatment","Ignore the gap","Report to the board"],
+a:1,
+e:"Gaps should be risk-assessed and prioritized, not automatically remediated.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the best next steps.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a gap between current and desired states?",
+o:["The organization has a firewall","The organization has a policy but no enforcement","The organization has 100 employees","The organization uses cloud services"],
+a:1,
+e:"Policy without enforcement is a classic gap.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are facts, not gaps.</li></ul>"},
+
+{q:"A risk practitioner finds that the organization's controls meet the framework requirements but do not address a key business risk. What is the BEST conclusion?",
+o:["The controls are adequate","There is a gap between control coverage and business risk","The framework is wrong","The business risk is not real"],
+a:1,
+e:"Framework compliance does not guarantee business risk coverage.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the best conclusions.</li></ul>"},
+
+{q:"Who should be involved in reviewing gap analysis results?",
+o:["Only IT","Only the board","Relevant stakeholders, including risk and control owners","Only external auditors"],
+a:2,
+e:"Gap analysis review requires multi-stakeholder involvement.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"What are the four common risk response options?",
+o:["Accept, avoid, transfer, mitigate","Ignore, deny, blame, hide","Accept, reject, defer, ignore","Mitigate, monitor, report, audit"],
+a:0,
+e:"Standard CRISC risk responses: accept, avoid, transfer, mitigate.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not standard.</li></ul>"},
+
+{q:"An organization decides to purchase cyber insurance. This is an example of:",
+o:["Risk acceptance","Risk avoidance","Risk transfer","Risk mitigation"],
+a:2,
+e:"Insurance transfers financial impact.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are different responses.</li></ul>"},
+
+{q:"An organization decides to stop offering a risky online service. This is:",
+o:["Risk acceptance","Risk avoidance","Risk transfer","Risk mitigation"],
+a:1,
+e:"Eliminating the activity avoids the risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are different responses.</li></ul>"},
+
+{q:"Who should facilitate the selection of recommended risk responses?",
+o:["The risk practitioner alone","Key stakeholders, facilitated by the risk practitioner","The IT manager","The auditor"],
+a:1,
+e:"Stakeholders select; risk practitioner facilitates.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the facilitators.</li></ul>"},
+
+{q:"A risk owner decides to accept a risk without any treatment. What is the MOST important requirement?",
+o:["The risk must be documented and approved by appropriate authority","The risk must be ignored","The risk must be transferred","The risk must be reported to the media"],
+a:0,
+e:"Documented, authorized acceptance is essential.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not acceptable.</li></ul>"},
+
+{q:"Who is responsible for developing risk treatment plans?",
+o:["The risk practitioner alone","The risk owner, in collaboration with the risk practitioner","The auditor","The CEO"],
+a:1,
+e:"Collaboration between risk owner and practitioner.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the primary responsible parties.</li></ul>"},
+
+{q:"A control owner is selecting a control. What is the MOST important consideration?",
+o:["The control's cost","The control's effectiveness in mitigating the risk","The vendor's brand","The control's popularity"],
+a:1,
+e:"Effectiveness is the primary consideration.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary.</li></ul>"},
+
+{q:"A risk treatment plan is developed but never executed. What is the GREATEST concern?",
+o:["The risk remains unmitigated","The plan document is wasted","The risk owner will be upset","The budget is unused"],
+a:0,
+e:"Unexecuted plans leave risk unaddressed.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are trivial.</li></ul>"},
+
+{q:"Who should validate that risk responses have been executed according to the plan?",
+o:["The risk owner alone","The risk practitioner (or independent validator)","The control owner","The vendor"],
+a:1,
+e:"Independent validation ensures execution.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not independent.</li></ul>"},
+
+{q:"A control is implemented but not maintained. What is the MOST likely outcome?",
+o:["The control remains effective","The control degrades and risk increases","The control becomes cheaper","The control becomes a threat"],
+a:1,
+e:"Lack of maintenance leads to control degradation.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"What is the PRIMARY purpose of a key risk indicator (KRI)?",
+o:["To measure control performance","To provide early warning of increasing risk","To measure business performance","To satisfy auditors"],
+a:1,
+e:"KRIs are early warning indicators for risk.<ul><li><b>A</b> is a KCI.</li><li><b>C</b> is a KPI.</li><li><b>D</b> is a byproduct.</li></ul>"},
+
+{q:"What is the difference between a KRI and a KPI?",
+o:["They are the same","KRI measures risk; KPI measures performance","KRI is for IT; KPI is for business","KPI is more important"],
+a:1,
+e:"KRI = risk; KPI = performance.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"What is the difference between a KRI and a KCI?",
+o:["They are the same","KRI measures risk; KCI measures control effectiveness","KRI is for IT; KCI is for business","KCI is more important"],
+a:1,
+e:"KCI = key control indicator.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false.</li></ul>"},
+
+{q:"A KRI is trending upward beyond its threshold. What should happen FIRST?",
+o:["Ignore it","Investigate the cause and assess the risk","Immediately implement controls","Report to the media"],
+a:1,
+e:"Investigation precedes action.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the first step.</li></ul>"},
+
+{q:"Who should be involved in identifying KPIs and KCIs?",
+o:["Only IT","Control owners, in collaboration with the risk practitioner","Only the board","Only external auditors"],
+a:1,
+e:"Control owners collaborate with risk practitioners.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are too narrow.</li></ul>"},
+
+{q:"A KRI has been monitored for a year but never triggered. What is the BEST interpretation?",
+o:["The KRI is useless","The KRI may be set too high, or the risk may be well-controlled","The risk doesn't exist","The KRI should be deleted"],
+a:1,
+e:"Either the threshold is too high or controls are effective.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are premature.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a KRI for ransomware risk?",
+o:["Number of employees","Number of unpatched critical systems","IT budget","Number of meetings"],
+a:1,
+e:"Unpatched systems are a leading indicator of ransomware risk.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not risk indicators.</li></ul>"},
+
+{q:"A control assessment reveals that the control environment is at 'maturity level 2' but the desired state is 'level 4.' What is the BEST action?",
+o:["Ignore the gap","Develop a plan to improve maturity, prioritized by risk","Immediately implement all level 4 controls","Reduce the desired state to level 2"],
+a:1,
+e:"Prioritized improvement planning is appropriate.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not advisable.</li></ul>"},
+
+{q:"A risk practitioner is reporting risk information to the board. What is the MOST important consideration?",
+o:["The length of the report","The relevance and clarity of information for risk-based decision-making","The number of charts","The font size"],
+a:1,
+e:"Relevance and clarity for decision-making are paramount.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are trivial.</li></ul>"},
+
+{q:"An organization is evaluating a new AI technology. What is the MOST important risk consideration?",
+o:["The cost of the technology","The threats, vulnerabilities, and opportunities it introduces","The vendor's location","The number of users"],
+a:1,
+e:"Emerging technology evaluation must consider threats, vulnerabilities, and opportunities.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary.</li></ul>"},
+
+{q:"An organization's risk management practices are not aligned with any recognized framework. What is the GREATEST concern?",
+o:["Auditors will complain","The organization may miss critical risk management processes and lack consistency","The IT budget will increase","The CEO will be unhappy"],
+a:1,
+e:"Lack of framework alignment can lead to gaps, inconsistency, and missed processes.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the greatest concern.</li></ul>"},
+
+{q:"An organization's risk appetite states it is 'conservative' for financial risk. A business unit wants to invest in a high-risk product. What should happen FIRST?",
+o:["The business unit should proceed if profitable","The risk should be assessed against the stated risk appetite","The CEO should approve it personally","The IT department should block it"],
+a:1,
+e:"Any risk decision must first be assessed against the stated risk appetite.<ul><li><b>A</b>, <b>C</b>, <b>D</b> skip the assessment step.</li></ul>"},
+
+{q:"A risk practitioner discovers that risk treatment plans are being executed without approval. What is the MOST appropriate action?",
+o:["Ignore it if the plans are successful","Escalate the lack of governance to management","Approve the plans retroactively","Stop all risk treatment activities"],
+a:1,
+e:"Unauthorized execution indicates a governance gap that must be escalated.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not appropriate.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a leading indicator?",
+o:["Number of security incidents last quarter","Percentage of systems missing critical patches","Total cost of last year's breaches","Number of audit findings closed"],
+a:1,
+e:"Unpatched systems are a leading indicator of future incidents.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are lagging indicators.</li></ul>"},
+
+{q:"Which of the following is the BEST example of a lagging indicator?",
+o:["Number of open vulnerabilities","Number of security incidents that occurred","Percentage of unpatched systems","Number of employees without training"],
+a:1,
+e:"Incidents that occurred are a lagging indicator; the others are leading.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are leading indicators.</li></ul>"},
+
+{q:"A risk practitioner is asked to justify a security investment. Which is the MOST persuasive approach?",
+o:["Describe the technical features of the solution","Quantify the risk reduction and compare with the cost of the control","Explain that it is a best practice","Reference the vendor's marketing materials"],
+a:1,
+e:"Quantifying risk reduction vs. cost (ROI) is the most persuasive, business-focused approach.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are less persuasive.</li></ul>"},
+
+{q:"An organization's risk register has not been updated after a major acquisition. What is the GREATEST concern?",
+o:["The register is incomplete and may not reflect new risks from the acquired entity","The register is too long","The acquired entity may have its own register","Auditors will complain"],
+a:0,
+e:"A major acquisition introduces new risks that must be reflected in the register.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are not the greatest concern.</li></ul>"}
+];
+
+/* ============================================================
+   QUIZ LOGIC
+   ============================================================ */
+(function() {
+    'use strict';
+
+    var currentIndex = 0;
+    var score = 0;
+    var correctCount = 0;
+    var wrongCount = 0;
+    var answeredCurrent = false;
+    var totalQuestions = questions.length;
+
+    var quizArea, nextBtn, restartBtn, resultScreen, navButtons;
+    var progressWrap, scoreTracker, currentQNumEl, totalQNumEl;
+    var progressFill, progressPercent, scoreDisplay, correctDisplay, wrongDisplay;
+    var finalScore, finalCorrect, finalWrong, finalTotal;
+    var resultMessage, resultTitle, trophyIcon;
+
+    var letters = ['A', 'B', 'C', 'D'];
+
+    function initElements() {
+        quizArea = document.getElementById('quizArea');
+        nextBtn = document.getElementById('nextBtn');
+        restartBtn = document.getElementById('restartBtn');
+        resultScreen = document.getElementById('resultScreen');
+        navButtons = document.getElementById('navButtons');
+        progressWrap = document.getElementById('progressWrap');
+        scoreTracker = document.getElementById('scoreTracker');
+
+        currentQNumEl = document.getElementById('currentQNum');
+        totalQNumEl = document.getElementById('totalQNum');
+        progressFill = document.getElementById('progressFill');
+        progressPercent = document.getElementById('progressPercent');
+
+        scoreDisplay = document.getElementById('scoreDisplay');
+        correctDisplay = document.getElementById('correctDisplay');
+        wrongDisplay = document.getElementById('wrongDisplay');
+
+        finalScore = document.getElementById('finalScore');
+        finalCorrect = document.getElementById('finalCorrect');
+        finalWrong = document.getElementById('finalWrong');
+        finalTotal = document.getElementById('finalTotal');
+        resultMessage = document.getElementById('resultMessage');
+        resultTitle = document.getElementById('resultTitle');
+        trophyIcon = document.getElementById('trophyIcon');
+    }
+
+    function renderQuestions() {
+        var html = '';
+        for (var i = 0; i < questions.length; i++) {
+            var q = questions[i];
+            html += '<div class="question-card" data-question="' + (i + 1) + '" data-answer="' + letters[q.a] + '">';
+            html += '<div class="question-text"><span class="question-number">' + (i + 1) + '</span> ' + q.q + '</div>';
+            html += '<ul class="options">';
+            for (var j = 0; j < q.o.length; j++) {
+                html += '<li><button class="option-btn" data-option="' + letters[j] + '" data-letter="' + letters[j] + '.">' + q.o[j] + '</button></li>';
+            }
+            html += '</ul>';
+            html += '<div class="answer-reveal"><strong>Answer: ' + letters[q.a] + '</strong><span class="explanation">' + q.e + '</span></div>';
+            html += '</div>';
+        }
+        quizArea.innerHTML = html;
+    }
+
+    function updateProgress() {
+        var pct = Math.round((currentIndex / totalQuestions) * 100);
+        if (currentIndex === totalQuestions - 1 && answeredCurrent) {
+            pct = 100;
+        }
+        if (progressFill) progressFill.style.width = pct + '%';
+        if (progressPercent) progressPercent.textContent = pct + '%';
+    }
+
+    function updateScore() {
+        if (scoreDisplay) scoreDisplay.textContent = score;
+        if (correctDisplay) correctDisplay.textContent = correctCount;
+        if (wrongDisplay) wrongDisplay.textContent = wrongCount;
+    }
+
+    function scrollToTop() {
+        var wrap = document.querySelector('.crisc-quiz-wrap');
+        if (wrap) {
+            try {
+                wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (e) {
+                wrap.scrollIntoView();
+            }
+        }
+    }
+
+    function showQuestion(index) {
+        var cards = document.querySelectorAll('.question-card');
+        for (var i = 0; i < cards.length; i++) {
+            if (i === index) {
+                cards[i].classList.add('active');
+            } else {
+                cards[i].classList.remove('active');
+            }
+        }
+
+        if (currentQNumEl) currentQNumEl.textContent = index + 1;
+        updateProgress();
+
+        var card = cards[index];
+        var wasAnswered = card.getAttribute('data-answered') === 'true';
+        answeredCurrent = wasAnswered;
+
+        if (nextBtn) {
+            nextBtn.disabled = !wasAnswered;
+            if (index === totalQuestions - 1) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        scrollToTop();
+    }
+
+    function attachAnswerHandlers() {
+        var cards = document.querySelectorAll('.question-card');
+        for (var i = 0; i < cards.length; i++) {
+            (function(card) {
+                var correctAnswer = card.getAttribute('data-answer');
+                var buttons = card.querySelectorAll('.option-btn');
+                var revealBox = card.querySelector('.answer-reveal');
+
+                for (var j = 0; j < buttons.length; j++) {
+                    (function(btn) {
+                        btn.addEventListener('click', function() {
+                            if (card.getAttribute('data-answered') === 'true') return;
+
+                            card.setAttribute('data-answered', 'true');
+                            answeredCurrent = true;
+
+                            var selected = btn.getAttribute('data-option');
+                            var isCorrect = (selected === correctAnswer);
+
+                            for (var k = 0; k < buttons.length; k++) {
+                                buttons[k].classList.add('disabled');
+                            }
+
+                            if (isCorrect) {
+                                btn.classList.add('correct');
+                                score++;
+                                correctCount++;
+                                if (revealBox) revealBox.classList.add('show');
+                            } else {
+                                btn.classList.add('incorrect');
+                                wrongCount++;
+
+                                for (var k = 0; k < buttons.length; k++) {
+                                    if (buttons[k].getAttribute('data-option') === correctAnswer) {
+                                        buttons[k].classList.add('reveal-correct');
+                                    }
+                                }
+
+                                if (revealBox) revealBox.classList.add('show', 'incorrect-feedback');
+                            }
+
+                            updateScore();
+
+                            if (nextBtn) nextBtn.disabled = false;
+
+                            if (currentIndex === totalQuestions - 1) {
+                                if (progressFill) progressFill.style.width = '100%';
+                                if (progressPercent) progressPercent.textContent = '100%';
+                            }
+                        });
+                    })(buttons[j]);
+                }
+            })(cards[i]);
+        }
+    }
+
+    function finishQuiz() {
+        if (quizArea) quizArea.style.display = 'none';
+        if (navButtons) navButtons.style.display = 'none';
+        if (progressWrap) progressWrap.style.display = 'none';
+        if (scoreTracker) scoreTracker.style.display = 'none';
+
+        if (finalScore) finalScore.innerHTML = score + ' <small>/ ' + totalQuestions + '</small>';
+        if (finalCorrect) finalCorrect.textContent = correctCount;
+        if (finalWrong) finalWrong.textContent = wrongCount;
+        if (finalTotal) finalTotal.textContent = totalQuestions;
+
+        var pct = (score / totalQuestions) * 100;
+        var message = '';
+        var trophy = '&#127942;';
+        var title = 'Quiz Complete!';
+
+        if (pct === 100) {
+            trophy = '&#127942;';
+            title = 'Perfect Score!';
+            message = 'Outstanding! You have mastered these CRISC scenarios. You are well prepared for the exam.';
+        } else if (pct >= 80) {
+            trophy = '&#127881;';
+            title = 'Excellent Work!';
+            message = 'Great job! You have a strong grasp of CRISC concepts. Review the ones you missed and you are ready.';
+        } else if (pct >= 60) {
+            trophy = '&#128214;';
+            title = 'Good Effort!';
+            message = 'You are on the right track. Review the explanations for the questions you missed and try again.';
+        } else {
+            trophy = '&#128218;';
+            title = 'Keep Studying!';
+            message = 'Review the Exam Tips below, then retake the quiz to reinforce your understanding.';
+        }
+
+        if (trophyIcon) trophyIcon.innerHTML = trophy;
+        if (resultTitle) resultTitle.textContent = title;
+        if (resultMessage) resultMessage.textContent = message;
+
+        if (resultScreen) resultScreen.classList.add('active');
+
+        if (resultScreen) {
+            try {
+                resultScreen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (e) {
+                resultScreen.scrollIntoView();
+            }
+        }
+    }
+
+    function restartQuiz() {
+        currentIndex = 0;
+        score = 0;
+        correctCount = 0;
+        wrongCount = 0;
+        answeredCurrent = false;
+
+        var cards = document.querySelectorAll('.question-card');
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].removeAttribute('data-answered');
+            cards[i].classList.remove('active');
+
+            var buttons = cards[i].querySelectorAll('.option-btn');
+            for (var j = 0; j < buttons.length; j++) {
+                buttons[j].classList.remove('correct', 'incorrect', 'disabled', 'reveal-correct');
+            }
+
+            var revealBox = cards[i].querySelector('.answer-reveal');
+            if (revealBox) {
+                revealBox.classList.remove('show', 'incorrect-feedback');
+            }
+        }
+
+        if (quizArea) quizArea.style.display = '';
+        if (navButtons) navButtons.style.display = '';
+        if (progressWrap) progressWrap.style.display = '';
+        if (scoreTracker) scoreTracker.style.display = '';
+
+        if (resultScreen) resultScreen.classList.remove('active');
+
+        updateScore();
+        showQuestion(0);
+
+        scrollToTop();
+    }
+
+    function attachNavHandlers() {
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                if (!answeredCurrent) return;
+
+                if (currentIndex < totalQuestions - 1) {
+                    currentIndex++;
+                    showQuestion(currentIndex);
+                } else {
+                    finishQuiz();
+                }
+            });
+        }
+
+        if (restartBtn) {
+            restartBtn.addEventListener('click', restartQuiz);
+        }
+    }
+
+    function boot() {
+        initElements();
+        renderQuestions();
+
+        if (totalQNumEl) totalQNumEl.textContent = totalQuestions;
+
+        attachAnswerHandlers();
+        attachNavHandlers();
+
+        updateScore();
+        showQuestion(0);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+
+})();
+</script>
+
+</body>
+</html>

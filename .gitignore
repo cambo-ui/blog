@@ -1,0 +1,12 @@
+# Hugo build output
+public/
+resources/
+.hugo_build.lock
+.hugo-verify/
+
+# Raw Blogger export (source for import_blogger.py; not part of the site)
+takeout-extract/
+
+# macOS / editors
+.DS_Store
+.vscode/

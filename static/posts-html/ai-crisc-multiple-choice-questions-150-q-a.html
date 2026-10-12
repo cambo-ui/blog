@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'></head><body>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f2f4f8;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            color: #1a2c2e;
+        }
+
+        .quiz-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 20, 20, 0.08);
+            overflow: hidden;
+            padding: 2rem 2rem 2.5rem 2rem;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #e9edf2;
+            padding-bottom: 1.2rem;
+        }
+        .quiz-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1a4d4a, #2c7a6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.4rem;
+        }
+        .quiz-header p {
+            color: #5b6e6e;
+            font-size: 0.95rem;
+            font-weight: 450;
+        }
+
+        .question-block {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eef2f5;
+            padding-bottom: 1.5rem;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #0b1f22;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            background: #F9FBFD;
+            padding: 0.2rem 0 0.2rem 0.8rem;
+            border-left: 4px solid #2c7a6e;
+        }
+
+        .options-list {
+            list-style: none;
+            margin: 0 0 0.6rem 0;
+            padding-left: 1rem;
+        }
+        .option-item {
+            font-size: 0.92rem;
+            margin-bottom: 0.35rem;
+            color: #2b3e42;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            cursor: pointer;
+            padding: 0.65rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid #e4ebef;
+            transition: all 0.2s ease;
+        }
+        .option-item:hover {
+            background: #f4faf8;
+            border-color: #2c7a6e;
+        }
+        .option-letter {
+            font-weight: 700;
+            background: #f0f2f5;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            font-size: 0.75rem;
+            color: #1f5e58;
+        }
+        .option-text {
+            flex: 1;
+        }
+
+        .option-item.selected-correct {
+            background: #e7f8ef;
+            border-color: #3b9e6d;
+            color: #155c3d;
+            font-weight: 700;
+        }
+
+        .option-item.selected-wrong {
+            background: #fff0f0;
+            border-color: #c72a2a;
+            color: #9a1f1f;
+            font-weight: 700;
+        }
+
+        .option-item.correct-answer {
+            background: #e7f8ef;
+            border-color: #3b9e6d;
+            font-weight: 700;
+        }
+
+        .answer-result {
+            font-weight: 700;
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0 0.5rem 0;
+        }
+
+        .answer-result.correct {
+            color: #216e48;
+            background: #e7f8ef;
+            border-left: 4px solid #3b9e6d;
+        }
+
+        .answer-result.wrong {
+            color: #9a1f1f;
+            background: #fff0f0;
+            border-left: 4px solid #c72a2a;
+        }
+
+        .explanation-box {
+            background: #eef7ea;
+            border-left: 5px solid #3b9e6d;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            margin-top: 0.3rem;
+        }
+        .explanation-title {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #216e48;
+            margin-bottom: 0.25rem;
+        }
+        .explanation-text {
+            font-size: 0.82rem;
+            color: #1e443a;
+            line-height: 1.45;
+        }
+
+        .q-meta {
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: #8b9b9b;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 680px) {
+            .quiz-container {
+                padding: 1.2rem;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+        }
+
+        .quiz-footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8fa3a3;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+
+        .quiz-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1f5e58;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e7edf0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+        }
+
+        #progressFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #1a4d4a, #2c7a6e);
+            transition: width 0.3s ease;
+        }
+
+        .quiz-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-actions button {
+            border: none;
+            background: #2c7a6e;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quiz-actions button:hover {
+            background: #1f5e58;
+        }
+
+        .quiz-actions button:disabled {
+            background: #b9c7c7;
+            cursor: not-allowed;
+        }
+
+        .final-result {
+            text-align: center;
+            padding: 2rem;
+            background: #f9fbfd;
+            border-radius: 18px;
+        }
+
+        .final-result h2 {
+            color: #1f5e58;
+            margin-bottom: 1rem;
+        }
+
+        .final-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2c7a6e;
+            margin-bottom: 1rem;
+        }
+    </style>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>📘 IT Risk Assessment · Complete 150 Q&A</h1>
+        <p>Expert-level questions — risk identification, analysis, evaluation, BIA, risk treatment & reporting</p>
+    </div>
+    <div class="quiz-status">
+        <div id="progressText">Question 1 of 150</div>
+        <div id="scoreText">Score: 0</div>
+    </div>
+    <div class="progress-bar">
+        <div id="progressFill"></div>
+    </div>
+    <div id="questionsRoot"></div>
+    <div class="quiz-actions">
+        <button disabled id="nextBtn">Next Question</button>
+        <button id="restartBtn" style="display: none;">Restart Quiz</button>
+    </div>
+    <div class="quiz-footer">
+        ✅ Full set of 150 expert-level questions | Based on CRISC / risk practitioner framework
+    </div>
+</div>
+
+<script>
+    // Complete dataset of 150 IT Risk Assessment multiple choice questions
+    // Combined from user's questions and additional unique questions
+    const qaData = [
+        // User's original questions (58 questions)
+        {q:"Which of the following is the GREATEST challenge of performing a quantitative risk analysis?", opts:["Obtaining accurate figures on the impact of a realized threat","Obtaining accurate figures on the value of assets","Calculating the annual loss expectancy of a specific threat","Obtaining accurate figures on the frequency of specific threats"], correct:"D", justification:"It can be challenging to obtain an accurate figure representing the frequency of threat occurrence."},
+        {q:"The PRIMARY reason to verify the completion of a risk mitigation response is to:", opts:["confirm that residual risk is within acceptable thresholds.","verify that vulnerabilities are no longer exploitable.","maintain an accurate risk profile and inventory.","manage and report on the status of risk action plans."], correct:"A", justification:"The primary reason to verify the completion of the risk mitigation response is to confirm that residual risk is within acceptable thresholds or to plan for further action if it is not."},
+        {q:"A PRIMARY reason for initiating a policy-exception process is:", opts:["the risk is justified by the benefit.","policy compliance is difficult to enforce.","operations are too busy to comply.","users may initially be inconvenienced."], correct:"A", justification:"Exceptions to policies are warranted if the benefits outweigh the costs of policy compliance."},
+        {q:"The board of directors wants to know the financial impact of specific, individual risk scenarios. What type of approach is BEST suited to fulfill this requirement?", opts:["Delphi method","Quantitative analysis","Qualitative analysis","Financial risk modeling"], correct:"B", justification:"A quantitative approach puts a monetary amount on the potential loss resulting from a risk scenario."},
+        {q:"Which of the following practices BEST mitigates the risk associated with outsourcing a business function?", opts:["Performing audits to verify compliance with contract requirements","Requiring all vendor staff to complete annual awareness training sessions","Retaining copies of all sensitive data on internal systems","Reviewing the financial records of the vendor to verify financial soundness"], correct:"A", justification:"Conducting regular audits to verify that the vendor is compliant with contract requirements is an important practice to mitigate outsourcing risk."},
+        {q:"Which of the following is an effective monitoring process to ensure a third party is performing in accordance with contract requirements?", opts:["Review independent audit reports","Review the third party's service level agreements","Review the number of third party security-related incidents","Ongoing third-party oversight"], correct:"D", justification:"Third-party management should be an ongoing process that monitors for compliance with agreements."},
+        {q:"The criticality of an IT infrastructure element can be quantified based on:", opts:["audit logs.","thresholds.","dependencies.","replacement cost."], correct:"C", justification:"A system on which many other things depend is critical even if the individual importance of any one element is relatively low."},
+        {q:"Which of the following processes is MOST critical for prioritizing actions in a business continuity plan?", opts:["Risk assessment","Vulnerability assessment","Business impact analysis","Business process mapping"], correct:"C", justification:"The business impact analysis is the most critical process for deciding which part should be given priority."},
+        {q:"Which of the following BEST helps the risk practitioner identify IS control deficiencies?", opts:["An IT control framework","Defined control objectives","A countermeasure analysis","A threat analysis"], correct:"B", justification:"Controls are deployed to achieve the desired objectives based on risk assessment and business requirements."},
+        {q:"Which of the following objectives is the PRIMARY reason that risk professionals conduct risk assessments?", opts:["To maintain the enterprise's risk register","To enable management to choose the right risk response","To provide assurance on the risk management process","To identify risk with the highest business impact"], correct:"D", justification:"All decisions should be taken in the context of business impact."},
+        {q:"Which of the following types of risk is high for projects that affect multiple business areas?", opts:["Control risk","Inherent risk","Compliance risk","Residual risk"], correct:"B", justification:"Inherent risk reflects risk or exposure without accounting for mitigating action by management."},
+        {q:"Which of the following compensating controls should management implement when a segregation of duties conflict exists because an enterprise has a small IT department?", opts:["Independent analysis of IT incidents","Entitlement reviews","Independent review of audit logs","Tighter controls over user provisioning"], correct:"C", justification:"An independent review of audit logs would be the best compensating control."},
+        {q:"Which of the following can be expected when a key control is being maintained at an optimal level?", opts:["The shortest lead time until the control breach comes to the surface","Balance between control effectiveness and cost","An adequate maturity level of the risk management process","An accurate estimation of operational risk amounts"], correct:"B", justification:"Maintaining controls at an optimal level translates into a balance between control cost and derived benefit."},
+        {q:"Which of the following factors determines the acceptable level of residual risk in an enterprise?", opts:["Management discretion","Regulatory requirements","Risk assessment results","Internal audit findings"], correct:"A", justification:"Deciding what level of risk is acceptable is fundamentally a function of management."},
+        {q:"What should be performed FIRST when establishing the IT risk framework of an enterprise?", opts:["Setting accountabilities and responsibilities for risk","Articulating the financial risk appetite for the enterprise","Allocating control owners for critical information systems","Endorsing a risk matrix that specifies risk tolerances"], correct:"A", justification:"Without ownership and accountability, the risk framework will not be driven forward."},
+        {q:"Which of the following is the GREATEST benefit of a risk-aware culture?", opts:["Issues are escalated when suspicious activity is noticed.","Controls are double-checked to anticipate any issues.","Individuals communicate with peers for knowledge sharing.","Employees are self-motivated to learn about costs and benefits."], correct:"A", justification:"Management benefits most from an escalation process because risk and incidents are reported in a timely manner."},
+        {q:"Which of the following is the MOST important risk an enterprise must consider when developing a disaster recovery plan?", opts:["Budgets have not yet been finalized.","A business impact analysis has not been conducted.","No risk strategy has been established.","All employees have not attended disaster recovery training."], correct:"B", justification:"Without a business impact analysis, the enterprise does not know what it needs to recover and when."},
+        {q:"Who is MOST likely responsible for data classification?", opts:["Data user","Data owner","Data custodian","System administrator"], correct:"B", justification:"The data owner is responsible for classifying data according to the enterprise's data classification scheme."},
+        {q:"A substantive test to verify that tape library inventory records are accurate involves:", opts:["determining whether bar code readers are installed.","conducting a physical count of the tape inventory.","checking whether receipts and issues of tapes are accurately recorded.","determining whether the movement of tapes is authorized."], correct:"B", justification:"Conducting a physical count of the tape inventory is a substantive test."},
+        {q:"The implementation of unjustified controls is MOST likely to result in:", opts:["an increase in residual risk related to the controls.","a decrease in residual risk related to the controls.","an ineffective monitoring of the related controls.","a smaller return on IT investment."], correct:"D", justification:"Enterprises with controls that do not relate to critical objectives have a greater likelihood of decreasing their return on IT investment."},
+        {q:"Which of the following options BEST ensures that an identified risk is mitigated?", opts:["Control metrics","Control testing","Control objective","Control ownership"], correct:"B", justification:"Control testing determines the effectiveness of the controls in achieving their stated objectives."},
+        {q:"Which of the following requirements MUST be met during the initial stages of developing a risk management program?", opts:["Management establishes ownership of identified risk.","Information security policies and standards are established.","A management committee exists to provide program oversight.","The context and purpose of the program are defined."], correct:"D", justification:"Initial requirements include determining the desired outcomes and defining objectives."},
+        {q:"A lack of adequate controls represents:", opts:["an impact.","a risk indicator.","a vulnerability.","a threat."], correct:"C", justification:"The lack of adequate controls represents a vulnerability."},
+        {q:"Risk assessments should be repeated at regular intervals because:", opts:["omissions in earlier assessments can be addressed.","periodic assessments allow various methodologies.","business threats are constantly changing.","they help raise risk awareness among staff."], correct:"C", justification:"As business objectives and methods change, the nature and relevance of threats also change."},
+        {q:"Which of the following is the MAIN reason senior management monitors and analyzes trends in key control indicators?", opts:["It provides feedback on the overall control environment.","It helps in identifying redundant controls.","It proactively identifies impacts to the risk profile.","It helps determine if additional controls are required."], correct:"C", justification:"Analysis of KCI trends provides information on the overall effectiveness of controls."},
+        {q:"Which of the following risk response options is MOST likely to increase the liability of the enterprise?", opts:["Risk acceptance","Risk reduction","Risk transfer","Risk avoidance"], correct:"A", justification:"An enterprise may choose to accept risk without knowing the correct level of risk; this may result in accusations of negligence."},
+        {q:"Purchasing insurance is a form of:", opts:["risk avoidance.","risk mitigation.","risk acceptance.","risk transfer."], correct:"D", justification:"Transferring risk typically involves insurance policies to share the financial risk."},
+        {q:"Which of the following BEST mitigates control risk?", opts:["Continuous monitoring","An effective security awareness program","Effective change management procedures","Senior management support for control implementation"], correct:"A", justification:"Continuous monitoring tests controls that mitigate the risk of the control being less effective over time."},
+        {q:"Which of the following is BEST addressed by transferring risk?", opts:["An antiquated fire suppression system in the computer room","The threat of disgruntled employee sabotage","The threat of disgruntled employee theft","A building located in a 100-year flood plain"], correct:"D", justification:"Purchasing an insurance policy transfers the risk of a flood."},
+        {q:"Development of corporate information security policy should PRIMARILY be based on:", opts:["vulnerabilities.","threats.","assets.","impacts."], correct:"C", justification:"The corporate information security policy is based on management's commitment to protect the assets of the enterprise."},
+        {q:"Which of the following is an example of a key performance indicator?", opts:["Average network availability uptime","Average number of missed patches","Average number of data entry errors","Average number of virus and phishing attacks"], correct:"A", justification:"Average network availability is an example of a key performance indicator."},
+        {q:"Which of the following BEST assists in the proper design of an effective key risk indicator?", opts:["Generating the frequency of reporting cycles to report on the risk","Preparing a business case that includes the measurement criteria for the risk","Conducting a risk assessment to provide an overview of the key risk","Documenting the operational flow of the business from beginning to end"], correct:"D", justification:"The risk manager requires detailed insight into data flows, decision-making processes, and acceptable levels of risk."},
+        {q:"An excessive number of standard workstation images can be categorized as a key risk indicator for:", opts:["change management.","configuration management.","IT operations management.","data management."], correct:"B", justification:"An excessive number of unique workstation images is an indicator that poor configuration management processes are in place."},
+        {q:"Which of the following is MOST important when selecting an appropriate risk management methodology?", opts:["Risk culture","Countermeasure analysis","Cost-benefit analysis","Risk transfer strategy"], correct:"A", justification:"Without understanding risk culture, one cannot select a risk management methodology."},
+        {q:"Risk management strategic plans are MOST effective when developed for:", opts:["the enterprise as a whole.","each individual system based on technology used.","every location based on geographic threats.","end-to-end business processes."], correct:"A", justification:"Risk management strategic plans are most effective when they are created and followed by the entire enterprise."},
+        {q:"Which of the following is the MOST important when transmitting personal information across networks?", opts:["encrypting the personal information.","obtaining consent to transfer personal information.","ensuring the privacy of the personal information.","ensuring effective change management."], correct:"C", justification:"Privacy protection is necessary to ensure that the receiving party has the appropriate level of protection."},
+        {q:"Which of the following is MOST suitable for reporting IT-related business risk to senior management?", opts:["Balanced scorecards","Gantt charts","Technical vulnerability reports","Dashboards"], correct:"D", justification:"Dashboards are most suitable for reporting risk to senior management because they provide a high-level overview."},
+        {q:"An enterprise has contracted an external supplier to develop critical components of a consumer product. Risk tolerance levels for the outsourced component have been documented and approved. Which of the following can serve to gauge risk that may trigger stakeholder concern?", opts:["Indicators with approved thresholds","Approved status report of completed milestones","List of controls to be implemented by the supplier","Number of findings in external audit reports"], correct:"A", justification:"Indicators with approved thresholds demonstrate the acceptable risk levels stakeholders are willing to tolerate."},
+        {q:"Which of the following choices should drive the IT plan?", opts:["Strategic planning and business requirements","Technology and operational procedures","Compliance with laws and regulations","Project plans and stakeholder requirements"], correct:"A", justification:"IT exists to support business objectives. Management of enterprise IT should align the IT plan closely with the business."},
+        {q:"Which of the following documents BEST identifies an enterprise's compliance risk and the corrective actions in progress to meet these regulatory requirements?", opts:["An internal audit report","A risk register","An external audit report","A risk assessment report"], correct:"B", justification:"A risk register provides a report of all current identified risk within an enterprise and tracks the status of corrective actions."},
+        {q:"An enterprise has decided to perform backups on a weekly basis. Which of the following choices BEST describes the risk response approach used by management?", opts:["Any residual risk from performing weekly backups has been accepted.","The risk of losing data has been mitigated to as low a level as possible.","The control is ineffective because any loss of data should be minimized.","The inherent risk of losing data has not been adequately mitigated."], correct:"A", justification:"Residual risk arises where there is a risk response or control in place, but the potential for loss is still probable."},
+        {q:"Which of the following is the MOST appropriate metric to measure how well the information security function is managing the administration of user access?", opts:["Elapsed time to suspend accounts of terminated users","Elapsed time to suspend accounts of users transferring","Ratio of actual accounts to actual end users","Percent of accounts with configurations in compliance"], correct:"D", justification:"The percent of accounts with configurations in compliance is the best measure of how well administration is being managed."},
+        {q:"The application of information classification is the responsibility of the:", opts:["information security officer.","information owner.","information systems auditor.","information custodian."], correct:"B", justification:"The information owner determines classification based on the criticality and sensitivity of information."},
+        {q:"As part of risk monitoring, the administrator of a two-factor authentication system identifies a trusted independent source indicating that the algorithm used for generating keys has been compromised. The vendor of the authentication system has not provided further information. Which of the following is the BEST initial course of action?", opts:["Wait for the vendor to formally confirm the breach and provide a solution.","Determine and implement suitable compensating controls.","Identify all systems requiring two-factor authentication and notify their business owners.","Disable the system and rely on single-factor authentication until further information is received."], correct:"C", justification:"Business owners should be notified, even when some information may not be available."},
+        {q:"Which of the following risk management activities initially identifies critical business functions and key business risk?", opts:["Risk monitoring","Risk analysis","Risk assessment","Risk evaluation"], correct:"C", justification:"Risk assessment identifies and evaluates risk and its potential effects."},
+        {q:"Risk tolerance levels, risk ratings, related projects, affected stakeholders, assessment details and risk owners are all captured in which of the following items?", opts:["Risk register","Risk subject","Risk factors","Risk treatment plan"], correct:"A", justification:"A risk register includes risk tolerance levels, risk ratings, related projects, affected stakeholders, assessment details and risk owners."},
+        {q:"The PRIMARY reason to have the risk management process reviewed by an independent risk management professional is to:", opts:["validate cost-effective solutions for mitigating risk.","validate control weaknesses detected by the internal team.","assess the validity of the end-to-end process.","assess whether the risk profile and risk factors are properly defined."], correct:"C", justification:"The independent risk professional will be unbiased to review the risk management process end to end."},
+        {q:"Which of the following controls within the user provision process BEST ensures revocation of system access for contractors and other temporary users when it is no longer required?", opts:["Log all account usage and send it to the users' managers.","Establish predetermined, automatic expiration dates.","Ensure that each user signs a security acknowledgment.","Require managers to email security when the user leaves."], correct:"B", justification:"Predetermined expiration dates are the most effective means of removing systems access for temporary users."},
+        {q:"To which of the following documents does an enterprise refer to determine the intellectual property ownership of an application built by a third-party service manager in the course of its work for the enterprise?", opts:["Service level agreement","Statement of work","Operational level agreement","Nondisclosure agreement"], correct:"B", justification:"A statement of work typically defines terms of governance and conditions for third-party engagement."},
+        {q:"Which of the following criteria is MOST essential for the effectiveness of operational metrics?", opts:["Relevance to the recipient","Timeliness of the reporting","Accuracy of the measurement","Cost of obtaining the metrics"], correct:"A", justification:"Unless the metric is relevant to the recipient and the recipient understands what the metric means, all other criteria are of little importance."},
+        {q:"An asset's annual loss expectancy is calculated as the:", opts:["exposure factor (EF) multiplied by the annualized rate of occurrence (ARO).","single loss expectancy (SLE) multiplied by the EF.","SLE multiplied by the ARO.","asset value multiplied by the SLE."], correct:"C", justification:"ALE is calculated by multiplying the SLE by the ARO."},
+        {q:"Which of the following is MOST likely to be reduced to achieve acceptable risk?", opts:["Risk appetite","Control risk","Residual risk","Inherent risk"], correct:"C", justification:"Residual risk is the remaining risk after management has implemented a risk response."},
+        {q:"Which of the following is the BEST way for a risk practitioner to ensure that controls are in place and effectively addressing the risk?", opts:["Key performance indicators","Control testing","Control monitoring","Key risk indicators"], correct:"C", justification:"Control monitoring confirms that the control is addressing the risk and operating effectively."},
+        {q:"An enterprise wants to use a cloud solution for its travel booking system that will store its employees' information. Which of the following cloud models presents the lowest risk to the risk practitioner?", opts:["Hybrid","Private","Public","Community"], correct:"B", justification:"The private cloud model presents the least risk because the data is under the control of the enterprise."},
+        {q:"Which of the following choices is the MOST important critical success factor of implementing a risk-based approach to the system development life cycle?", opts:["Existence of a risk management framework","Defined risk mitigation strategies","Compliance with the change management process","Adequate involvement of business representatives"], correct:"D", justification:"Adequate involvement of business representatives is a critical success factor for system development."},
+        {q:"While prioritizing the risk for treatment, the IT risk practitioner should PRIMARILY consider the:", opts:["risk impact","risk appetite","risk exposure","risk rating"], correct:"D", justification:"The risk rating quantifies the risk by providing a ranking that can be used to prioritize treatment."},
+        {q:"Which of the following information in the risk register BEST helps in developing proper risk scenarios? A list of:", opts:["potential threats to assets.","residual risk on individual assets.","accepted risk.","security incidents."], correct:"A", justification:"Identifying potential threats to business assets will help isolate vulnerabilities and associated risk."},
+        {q:"Which of the following is MOST relevant to include in a cost-benefit analysis of a two-factor authentication system?", opts:["The approved budget of the project","The frequency of incidents","The annual loss expectancy of security incidents","The total cost of ownership"], correct:"D", justification:"Total cost of ownership is the most relevant piece of information because it establishes a cost baseline."},
+
+        // Additional unique questions to reach 150 (92 more questions)
+        {q:"Which of the following BEST describes the risk-related roles and responsibilities of an organizational business unit (BU)? The BU management team:", opts:["owns the mitigation plan for the risk belonging to its BU, while board members are responsible for identifying and assessing risk and reporting to the appropriate support functions.","owns the risk and is responsible for identifying, assessing and mitigating risk, and reporting to the appropriate support functions and the board of directors.","carries out the respective risk-related responsibilities, but ultimate accountability for risk management and goal achievement belongs to the board of directors.","is ultimately accountable for risk management and goal achievement, and the board of directors owns the risk."], correct:"B", justification:"The BU is responsible for owning the risk and its resulting actions."},
+        {q:"Which of the following is a MAJOR risk associated with the use of governance, risk and compliance (GRC) tools?", opts:["Misinterpretation of the dashboard's output","Incomplete or inaccurate coverage in the enterprise for GRC","Obsolescence of content","Complex integration of diverse requirements"], correct:"C", justification:"A GRC application has to be updated regularly with current regulations, policies, etc. Obsolete content renders a GRC outdated."},
+        {q:"During which of the following phases of an incident response process will an attempt to limit the impact of the incident MOST likely be made?", opts:["Mitigation","Recovery","Response","Detection"], correct:"C", justification:"During the response phase, attempts are made to limit the impact of an incident because the occurrence is ongoing."},
+        {q:"Which of the following risk responses relieves the enterprise of risk ownership?", opts:["Mitigation","Avoidance","Transference","Acceptance"], correct:"B", justification:"When an enterprise avoids a risk, it relieves itself of ownership of the risk by ceasing to engage in the activities with which the risk is associated."},
+        {q:"Due to changes in the IT environment, the disaster recovery plan of a large enterprise has been modified. What is the GREATEST benefit of testing the new plan? To ensure that:", opts:["the plan is complete.","the team is trained.","that all assets have been identified.","that the risk assessment was validated."], correct:"A", justification:"The greatest benefit of testing the new plan is to ensure that the plan is complete and will work during a crisis."},
+        {q:"Information that is no longer required to support the main purpose of the enterprise from an information security perspective should be managed:", opts:["under the retention policy.","under the information classification policy.","under the backup policy.","under the business impact analysis."], correct:"A", justification:"Information that is no longer required should be analyzed under the retention policy."},
+        {q:"What is the enterprise ensuring by using key performance indicators?", opts:["The internal controls are effective.","The risk profile is known, and impact to risk tolerance is assessed.","The business goals are being achieved.","The desired metrics are achieved."], correct:"D", justification:"Key performance indicators ensure desired performance levels and metrics are achieved."},
+        {q:"What is the MOST important criterion when reviewing information security controls?", opts:["To provide assurance to management of control monitoring","To ensure that the controls are effectively addressing risk","To review the impact of the controls on business operations and performance","To establish a baseline as a benchmark for future tests"], correct:"B", justification:"The primary purpose of a control is to ensure that it is effectively addressing the risk."},
+        {q:"Who should be accountable for risk to an IT system that supports a critical business process?", opts:["IT managers","Senior managers","Risk management department","System users"], correct:"B", justification:"The accountable party is senior management. Although senior managers are not responsible for executing the risk management program, they are ultimately liable for acceptance and mitigation of all risk."},
+        {q:"The BEST reason to implement a maturity model for risk management is to:", opts:["establish alignment with business objectives.","help improve governance and compliance.","ensure that security controls are effective.","enable continuous improvement."], correct:"D", justification:"Maturity models are designed to enable continuous improvement."},
+        {q:"A risk response report includes recommendations for:", opts:["acceptance.","assessment.","evaluation.","quantification."], correct:"A", justification:"Acceptance of a risk is an alternative to be considered in the risk response process."},
+        {q:"Which of the following would be the BEST approach for a global enterprise that is subject to regulation by multiple governmental jurisdictions with differing requirements?", opts:["Bringing all locations into conformity with the aggregate requirements of all governmental jurisdictions","Bringing all locations into conformity with a generally accepted set of industry good practices","Establishing a baseline standard incorporating the requirements all jurisdictions have in common","Establishing baseline standards for all locations and add supplemental standards as required"], correct:"D", justification:"It is more efficient to establish a baseline standard and then develop additional standards for locations that must meet specific requirements."},
+        {q:"Which of the following is MOST important when considering the risk appetite of an enterprise?", opts:["The capacity of the enterprise to absorb loss","The definition of responsibilities for risk management","The line of business and the typical risk of the industry","The culture and predisposition toward risk taking"], correct:"D", justification:"When considering risk appetite, two major factors are relevant: the management culture and the predisposition toward risk taking."},
+        {q:"Which of the following is a PRIMARY role of the system owner during the accreditation process? The system owner:", opts:["reviews and approves the security plan supporting the system.","selects and documents the security controls for the system.","assesses the security controls in accordance with the assessment procedures.","determines whether the risk to the business is acceptable."], correct:"B", justification:"The system owner specifies the information security controls for the system being deployed."},
+        {q:"Which of the following BEST estimates the likelihood of significant events affecting an enterprise?", opts:["Threat analysis","Cost-benefit analysis","Scenario analysis","Countermeasure analysis"], correct:"C", justification:"Scenario analysis, along with vulnerability analysis, best determines whether a particular risk is relevant to the enterprise."},
+        {q:"Which of the following attributes of a key risk indicator is the MOST important when reviewing its effectiveness?", opts:["Repeatable","Timing","Corrective action","Actionable"], correct:"A", justification:"A key risk indicator must be repeatable to be measured and to be effective over time."},
+        {q:"How can an enterprise determine the aggregated risk from several sources? Through a:", opts:["security information and event management system","fault tree analysis","failure modes and effects analysis","business impact analysis"], correct:"A", justification:"A security information and event management system gathers incident activity from several locations and prepares reports on risk trends and correlated events."},
+        {q:"An enterprise recently developed a breakthrough technology that could provide a significant competitive edge. Which of the following FIRST governs how this information is to be protected from within the enterprise?", opts:["The data classification policy","The acceptable use policy","Encryption standards","The access control policy"], correct:"A", justification:"A data classification policy describes the data classification categories, level of protection to be provided for each category of data."},
+        {q:"What is the BEST tool for documenting the status of risk mitigation and risk ownership at the enterprise level?", opts:["Risk action plans","Risk scenarios","Business impact analysis documents","Risk register"], correct:"D", justification:"A risk register is designed to document all risk identified for the enterprise."},
+        {q:"Which of the following will produce comprehensive results when performing a qualitative risk analysis?", opts:["A vulnerability assessment","Scenarios with threats and impacts","The value of information assets","Estimated productivity losses"], correct:"B", justification:"Using a list of possible scenarios with threats and impacts will better frame the range of risk."},
+        {q:"The MAIN reason an enterprise maintains a risk register is that it:", opts:["acts as a repository of identified risk for decision-making.","helps in benchmarking against the risk impacting industry peers.","improves the risk culture by communicating risk to all employees.","establishes the risk indicators that an enterprise can focus upon."], correct:"A", justification:"The risk register has the identified risk and is a repository that helps in decision-making."},
+        {q:"Because of its importance to the business, an enterprise wants to quickly implement a technical solution that deviates from the company's policies. The risk practitioner should:", opts:["recommend against implementation because it violates the company's policies.","recommend revision of the current policy.","conduct a risk assessment and allow or disallow based on the outcome.","recommend a risk assessment and subsequent implementation only if residual risk is accepted."], correct:"D", justification:"A risk assessment should be conducted to clarify the risk whenever the enterprise's policies cannot be followed."},
+        {q:"Who is responsible for explaining the ramifications of a new zero-day exploit to the enterprise to senior management?", opts:["Chief operating officer","Chief risk officer","Chief information security officer","Chief information officer"], correct:"B", justification:"The chief risk officer is the most senior official accountable for all aspects of risk management across the enterprise."},
+        {q:"Which of the following uses risk scenarios when estimating the likelihood and impact of significant risk to the enterprise?", opts:["An IT audit","A security gap analysis","A threat and vulnerability assessment","An IT security assessment"], correct:"C", justification:"A threat and vulnerability assessment typically evaluates all elements of a business process for threats and vulnerabilities."},
+        {q:"The board of directors of a one-year-old start-up company asked the chief information officer to create all the enterprise's IT policies and procedures, to be managed and approved by the IT steering committee. The IT steering committee makes all the IT decisions for the enterprise, including those related to the technology budget. Which type of IT organizational structure does the enterprise have?", opts:["Project-based","Centralized","Decentralized","Divisional"], correct:"B", justification:"Within a centralized IT organizational structure, one group makes all decisions for the entire enterprise."},
+        {q:"Which of the following is the BIGGEST concern for a chief information security officer regarding interconnections with systems outside the enterprise?", opts:["Requirements to comply with each other's contractual security obligations","Uncertainty that the other system will be available as needed","The ability to perform risk assessments on the other system","Ensuring that communications between the two systems are encrypted through a virtual private network tunnel"], correct:"A", justification:"Ensuring that both systems comply with mutual contractual security obligations should be the primary concern."},
+        {q:"Control objectives are useful to risk professionals because they provide the basis for understanding the:", opts:["techniques for securing information for a given risk.","information security policies, procedures and standards.","control good practices relevant to a specific entity.","desired outcome of implementing specific control procedures."], correct:"D", justification:"IT control objectives define the main purpose or objective of an IT control."},
+        {q:"Which of the following would BEST measure the effectiveness of operational controls?", opts:["Control matrix","Key performance indicator","Statement of applicability","Key control indicator"], correct:"D", justification:"Key control indicators provide information on the degree to which a control is working."},
+        {q:"Which of the following is MOST important when mitigating or managing risk?", opts:["Vulnerability assessment results","A business impact analysis","The risk appetite and tolerance levels","A security controls framework"], correct:"C", justification:"The risk tolerance level determines what kind of risk response an enterprise selects."},
+        {q:"Deriving the likelihood and impact of risk scenarios through statistical methods is BEST described as:", opts:["quantitative risk analysis.","risk scenario analysis.","qualitative risk analysis.","probabilistic risk assessment."], correct:"A", justification:"Quantitative risk analysis derives the probability and impact of risk scenarios from statistical methods and data."},
+        {q:"Who grants formal authorization for user access to a protected file?", opts:["The process owner","The system administrator","The data owner","The security manager"], correct:"C", justification:"The data owner grants formal authorization for users to access protected files."},
+        {q:"An enterprise can earn client trust and confidence in the information security area by publishing:", opts:["its information security policies.","an external assurance certification.","its personally identifiable information handling policy.","the number of findings from the most recent audit."], correct:"B", justification:"An external assurance certification provides an independent view of risk and controls."},
+        {q:"A global financial institution has decided not to take any further action on a denial-of-service vulnerability found by the risk assessment team. The MOST likely reason for making this decision is that:", opts:["the needed countermeasure is too complicated to deploy.","there are sufficient safeguards in place to prevent this risk from happening.","the likelihood of the risk occurring is unknown.","the cost of countermeasure outweighs the value of the asset and potential loss."], correct:"D", justification:"An enterprise may decide to accept a specific risk because the protection would cost more than the potential loss."},
+        {q:"Which of the following would BEST help finalize the risk treatment plan?", opts:["Vulnerability analysis","Impact analysis","Cost-benefit analysis","SWOT analysis"], correct:"C", justification:"A cost-benefit analysis helps determine if the benefit of a control outweighs the cost of implementing the control."},
+        {q:"Which of the following actions will MOST likely occur during an incident response plan activation?", opts:["Enabling logging to track what resources have been accessed","Shutting down a server to patch defects in the operating system","Implementing virus scanning tools to scan attachments in incoming email","Assisting in the migration to an alphanumeric password authorization policy"], correct:"B", justification:"An incident response plan defines actions to be taken in response to a threat, loss or vulnerability event."},
+        {q:"Which of the following BEST determines compliance with the risk appetite of an enterprise?", opts:["Balance between preventive and detective controls","Inherent risk and acceptable risk level","Residual risk and acceptable risk level","Balance between countermeasures to threats and preventive controls"], correct:"C", justification:"Considering residual risk in terms of acceptable risk yields risk that is appropriately balanced after the application of controls."},
+        {q:"When aligning controls with business objectives, what is MOST important?", opts:["Monitoring control activities periodically","Ensuring ownership of key control activities","Reviewing the risk management strategy","Prioritizing control activities based on residual risk"], correct:"B", justification:"Ensuring ownership of key control activities is the most important factor in assigning control responsibility and control accountability."},
+        {q:"Which of the following would create the GREATEST benefit for an enterprise deploying new IT infrastructure processing personal data?", opts:["Privacy by design","Privacy notices","Data encryption","Data classification"], correct:"A", justification:"Privacy by design embeds privacy within the IT infrastructure life cycle."},
+        {q:"Which of the following is the MOST important information to include in a risk management strategic plan?", opts:["Risk management staffing requirements","Risk management mission statement","Risk mitigation investment plans","Current state and desired future state"], correct:"D", justification:"It is most important to paint a vision for the future and then draw a road map from the starting point."},
+        {q:"During an internal risk assessment in a global enterprise, a risk manager notes that local management has proactively mitigated some of the high-level risk related to the global purchasing process. This means that:", opts:["the local management is now responsible for the risk.","the risk owner is the corporate chief risk officer.","the risk owner is the local purchasing manager.","corporate management remains responsible for the risk."], correct:"D", justification:"Corporate management remains responsible for the risk, even when the risk response is executed at a lower organizational level."},
+        {q:"An enterprise is applying controls to protect its product price list from being exposed to unauthorized staff. These internal controls will include:", opts:["identification and authentication.","authentication and authorization.","segregation of duties and authorization.","availability and confidentiality."], correct:"B", justification:"Authentication and authorization are two complementary control objectives that will ensure confidentiality."},
+        {q:"Monitoring has flagged a security exception. What is the MOST appropriate action?", opts:["Escalate the exception.","Update the risk register.","Activate the risk response plan.","Validate the exception."], correct:"D", justification:"Before any other action is taken, the risk practitioner should ensure that the exception identified by monitoring is not a false positive."},
+        {q:"Which of the following is MOST important for measuring the effectiveness of a security awareness program?", opts:["Increased interest in focus groups on security issues","A reduced number of security violation reports","A quantitative evaluation to ensure user comprehension","An increased number of security violation reports"], correct:"D", justification:"An increase in the number of violation reports is the best indicator of a high level of security awareness."},
+        {q:"What control focuses directly on preventing the risk of collusion?", opts:["Mandatory access control","Principle of least privilege","Discretionary access control","Mandatory job rotation"], correct:"D", justification:"With job rotation, people are assigned different job responsibilities over a period of time, which reduces opportunities for collusion."},
+        {q:"Which of the following project management tools is MOST appropriate when managing a system development project of uncertain duration?", opts:["A Gantt chart","A work breakdown structure","A program evaluation review technique","A histogram"], correct:"C", justification:"A program evaluation review technique (PERT) calculates times according to a formula that gives distributed weight to optimistic, likely and pessimistic estimates."},
+        {q:"Which of the following is MOST essential for a risk management program to be effective?", opts:["New risk detection","A sound risk baseline","Accurate risk reporting","A flexible security budget"], correct:"A", justification:"Without identifying new risk, other measures will succeed only for a limited period."},
+        {q:"The MOST important reason for reporting control effectiveness as part of risk reporting is that it:", opts:["enables audit reporting.","affects the risk profile.","requires mitigation.","helps manage the control life cycle."], correct:"B", justification:"Changes may render a control ineffective and allow a vulnerability to be exploited."},
+        {q:"Risk assessment techniques should be used by a risk practitioner to:", opts:["maximize the return on investment.","provide documentation for auditors and regulators.","justify the selection of risk mitigation strategies.","quantify the risk that would otherwise be subjective."], correct:"C", justification:"A risk practitioner should use risk assessment techniques to justify and implement a risk mitigation strategy as efficiently as possible."},
+        {q:"Which of the following is true about IT risk?", opts:["IT risk cannot be assessed and measured quantitatively.","IT risk should be calculated separately from business risk.","IT risk management is the responsibility of the IT department.","IT risk exists regardless of whether it is detected or recognized by an enterprise."], correct:"D", justification:"The enterprise must identify, acknowledge and respond to risk; ignorance of risk is not acceptable."},
+        {q:"Which of the following factors should be included when assessing the impact of losing network connectivity for 18 to 24 hours?", opts:["The hourly billing rate charged by the carrier","Financial losses incurred by affected business units","The value of the data transmitted over the network","An aggregate compensation of all affected business users"], correct:"B", justification:"The impact of network unavailability reflects the cumulative costs incurred by the enterprise."},
+        {q:"Which of the following changeover techniques would have the GREATEST risk regarding consistency of data when moving application users from one system to another?", opts:["Parallel","Outsourcing","Abrupt","Phased"], correct:"C", justification:"Abrupt changeover is usually least expensive but involves high risk of data loss and system failure."},
+        {q:"What should an enterprise use to assess the security controls of a third party hosting its server infrastructure?", opts:["Enterprise security requirements","Internal audit recommendations","Applicable laws and regulations","Security good practices"], correct:"A", justification:"The enterprise should develop its own security requirements considering many factors such as audit recommendations and good practices."},
+        {q:"Which of the following is an example of a directive control in relation to risk management?", opts:["Active user authentication","An enterprise policy","Inhibiting security policy violations","Regular remediation of errors"], correct:"B", justification:"An enterprise policy states the enterprise's directive related to risk management."},
+        {q:"Which of the following is the MOST critical to ensure the three lines of defense work together effectively?", opts:["A documented disaster recovery plan","Automated operational processes","Independent external audits","Clear, detailed roles and responsibilities"], correct:"D", justification:"Without clear, detailed job descriptions, there can be confusion on what is expected at each level."},
+        {q:"Which of the following concepts of data validation is MOST likely to be of value to enterprises reviewing transaction data for fraudulent activity?", opts:["Reliability","Duplicates","Reasonableness","Validity"], correct:"C", justification:"Reasonableness identifies values that are substantially different from the norm, and routes them for additional scrutiny."},
+        {q:"Which of the following can provide the BEST perspective of risk management to an enterprise's employees and stakeholders?", opts:["An interdisciplinary team within the enterprise","A third-party risk assessment service provider","The enterprise's IT department","The enterprise's internal compliance department"], correct:"A", justification:"Assembling an interdisciplinary team ensures that all areas are adequately considered in risk assessment."},
+        {q:"Which of the following is the PRIMARY objective of a risk management program?", opts:["Maintain residual risk at an acceptable level","Implement preventive controls for every threat","Remove all identified risk","Reduce inherent risk to zero"], correct:"A", justification:"Ensuring that all residual risk is maintained at a level acceptable to the business is the objective of a risk management program."},
+        {q:"Which of the following BEST provides message integrity, authentication of sender's identity and nonrepudiation?", opts:["Symmetric encryption","Message hashing","Message authentication code","Digital signatures"], correct:"D", justification:"A digital signature combines a hash function with asymmetric encryption ability to verify the author's identity, message integrity and nonrepudiation."},
+        {q:"Which of the following would be the BEST approach for a global enterprise that is subject to regulation by multiple governmental jurisdictions with differing requirements?", opts:["Bringing all locations into conformity with the aggregate requirements of all governmental jurisdictions","Bringing all locations into conformity with a generally accepted set of industry good practices","Establishing a baseline standard incorporating the requirements all jurisdictions have in common","Establishing baseline standards for all locations and add supplemental standards as required"], correct:"D", justification:"It is more efficient to establish a baseline standard and then develop additional standards for locations that must meet specific requirements."},
+        {q:"Which of the following is MOST important to determine when defining risk management strategies?", opts:["Risk assessment criteria","IT architecture complexity","Enterprise disaster recovery plan","Business objectives and operations"], correct:"D", justification:"While defining risk management strategies, the risk practitioner needs to analyze the enterprise's objectives and risk tolerance."},
+        {q:"The MOST effective method to conduct a risk assessment on an internal system in an enterprise is to start by understanding the:", opts:["performance metrics and indicators.","policies and standards.","recent audit findings and recommendations.","system and its subsystems."], correct:"D", justification:"To conduct a proper risk assessment, the risk practitioner must understand the system and subsystems."},
+        {q:"A risk professional has been asked to determine which factors were responsible for a loss event. Which of the following methods should be used?", opts:["Key risk indicators","Cause-and-effect analysis","Business process modeling","Business impact analysis"], correct:"B", justification:"Cause-and-effect analysis is a predictive or diagnostic analytical tool used to explore the root causes."},
+        {q:"Which of the following is the MOST important component when reporting the status of the IT control environment to management?", opts:["Amendments to the risk register","Lessons learned from loss events","Technical details on vulnerabilities","Risk profile of the enterprise"], correct:"D", justification:"The risk profile of the enterprise provides the overall portfolio of identified risk to which the enterprise is exposed."},
+        {q:"When assessing the performance of a critical application server, the MOST reliable assessment results may be obtained from:", opts:["activation of native database auditing.","documentation of performance objectives.","continuous monitoring.","documentation of security modules."], correct:"C", justification:"With continuous monitoring it is possible to track key performance metrics and also possible to address critical issues with minimum impact."},
+        {q:"Prior to releasing an operating system security patch into production, the MOST important practice is to have the patch:", opts:["applied simultaneously to all systems.","procured from an approved vendor.","tested in a preproduction test environment.","approved by business stakeholders."], correct:"C", justification:"In the case of a security patch, testing is essential because an untested security patch may cause serious business disruptions."},
+        {q:"Which indicator ensures that the enterprise's risk is effectively treated?", opts:["An indicator that is used to define the control environment and measures toward tolerance","An indicator implemented to detect and signal the root cause of a risk event","An indicator used to define and monitor changes in the risk profile","An indicator used to define performance targets and measure progress toward goals"], correct:"A", justification:"Control indicators are used to determine the effectiveness of an enterprise's controls designed to treat risk."},
+        {q:"Which of the following roles provides formal authorization of user access?", opts:["Database administrator","Data owner","Process owner","Data custodian"], correct:"B", justification:"The data owner provides formal authorization to grant user access."},
+        {q:"The BEST way to ensure that an information systems control is appropriate and effective is to verify that the:", opts:["control is operating as designed.","risk associated with the control is mitigated.","control has not been bypassed.","control logs are reviewed frequently."], correct:"B", justification:"A control is designed to mitigate or reduce a risk. Even if the control is operating correctly, it is not the appropriate control if it does not address the risk."},
+        {q:"Risk treatment plans are necessary to describe how the:", opts:["identified risk is further analyzed.","chosen treatment options will be implemented.","accepted risk is treated.","risk indicators will monitor the risk."], correct:"B", justification:"A risk treatment plan includes the plan of action for the chosen treatment, how it will be implemented, who will implement it, key dates and resource requirements."},
+        {q:"Which of the following BEST helps identify information systems control deficiencies?", opts:["Gap analysis","The current IT risk profile","The IT controls framework","Countermeasure analysis"], correct:"A", justification:"The gap between desired control objectives and actual control design and operational effectiveness identifies control deficiencies."},
+        {q:"Data from which of the following would provide the risk practitioner the BEST information for investigating the root cause of a security incident?", opts:["Intrusion detection system","Intrusion prevention system","Configuration management system","Event management system"], correct:"D", justification:"The event management system has the capability to merge logs from various systems and analyze entire data sets at once."},
+        {q:"Which of the following BEST helps while presenting the current risk profile to executive management and the board of directors?", opts:["Risk response dashboard","Emerging risk report","Risk register dashboard","Key risk indicators report"], correct:"C", justification:"A risk register dashboard would provide a comprehensive overview of the risk profile of the enterprise."},
+        {q:"Which of the following is of MOST concern to the risk practitioner regarding applications running in production?", opts:["Unpatched vulnerabilities","Backdoors","Unskilled resources","Informal system development life cycle"], correct:"B", justification:"Attackers can use backdoors to bypass authorized access control in applications."},
+        {q:"Which of the following is the BEST reason for an enterprise to decide not to reduce an identified risk?", opts:["There is no regulatory requirement to reduce the risk.","There are mitigating controls in place.","The cost of mitigation exceeds the risk.","The budget for risk mitigation is limited."], correct:"C", justification:"Enterprises will accept the risk when the cost of mitigation exceeds the risk."},
+        {q:"An internal assessment reveals that servers log only a couple dozen hardcoded individual transactions. The set of logged transactions does not meet regulatory requirements. The assessment also establishes that log entries are stored according to the first in, first out (FIFO) principle. Most files recycle in less than 24 hours. What is the MOST financially damaging vulnerability associated with the current logging practice?", opts:["The log data stored recycles in less than 24 hours.","The log files are stored on the originating servers.","Transactions required by regulation may not be tracked.","Transactions being logged are hardcoded."], correct:"C", justification:"The enterprise may be fined for failing to track regulation-related transactions properly."},
+        {q:"Which of the following BEST ensures that identified risk remains at an acceptable level?", opts:["Reviewing controls periodically, according to the risk treatment plan","Listing each risk as a separate entry in the risk register","Creating a separate risk register for every department","Maintaining a key risk indicator for assets in the risk register"], correct:"A", justification:"Controls deployed according to the risk treatment plan should provide the desired results."},
+        {q:"Which of the following roles is accountable for a risk treatment plan?", opts:["Business manager","Senior management","Risk owner","Control owner"], correct:"C", justification:"The risk owner is responsible for a risk treatment plan."},
+        {q:"Which of the following will have the MOST significant impact on standard information security governance models?", opts:["Number of employees and consulting staff","Cultural differences between physical locations","Complexity of the organizational structure","Uncertainty in legislative requirements"], correct:"C", justification:"Information security governance models are highly dependent on the complexity of the organizational structure."},
+        {q:"Senior management will MOST likely have the highest tolerance for moving which of the following to a public cloud?", opts:["Credit-card processing","Research and development","The legacy financial system","The corporate email system"], correct:"D", justification:"The corporate email system has the least competitive distinction, complexity, and sensitive/highly classified information."},
+        {q:"During a risk assessment of a start-up enterprise with a bring your own device (BYOD) practice, a risk practitioner notes that the database administrator (DBA) minimizes a social media website on his/her personal device before running a query of credit card account numbers on a third-party cloud application. The risk practitioner should recommend that the enterprise:", opts:["develop and deploy an acceptable use policy for BYOD.","place a virtualized desktop on each mobile device.","blacklist social media websites for devices inside the demilitarized zone.","provide the DBA with user awareness training."], correct:"B", justification:"With a virtualized desktop client, no data will be stored on the device and all commands will be executed and stored within the enterprise's demilitarized zone."},
+        {q:"A healthcare enterprise has implemented role-based access controls for its users on systems that manage patient data. Which of the following statements BEST describes how the control reduces risk to the enterprise?", opts:["The control reduces the probability and impact of an insider attack event.","The control reduces the impact of reputation damage in the event of a successful breach.","The control reduces the probability and impact of an outsider attack event.","The control reduces the probability that a sensitive report will be delivered to the wrong recipient."], correct:"A", justification:"Role-based access controls address the amount of sensitive data available to users and the number of attack vectors."},
+        {q:"Which of the following approaches to corporate policy BEST supports an enterprise's expansion to other regions, where different local laws apply?", opts:["A global policy without provisions that might be disputed at local levels","A global policy amended to comply with local laws","A global policy that complies with laws at enterprise headquarters","Local policies to accommodate laws within each region"], correct:"B", justification:"A global policy including local amendments ensures alignment with local laws and regulations."},
+        {q:"What is a PRIMARY advantage of performing a risk assessment on a consistent basis?", opts:["It lowers the costs of assessing risk.","It provides evidence of threats.","It indicates trends in the risk profile.","It eliminates the need for periodic audits."], correct:"C", justification:"Tracking trends in evolving risk is of significant benefit to managing risk and ensuring that appropriate controls are in place."},
+        {q:"Which of the following is MOST useful when computing annual loss exposure?", opts:["The cost of existing controls","The number of vulnerabilities","The net present value of the asset","The business value of the asset"], correct:"D", justification:"Annual loss exposure is a function of the value of the information asset and the impact if a given potential risk should materialize."},
+        {q:"The MAIN objective of IT risk management is to:", opts:["prevent loss of IT assets.","provide timely management reports.","ensure regulatory compliance.","enable risk-aware business decisions."], correct:"D", justification:"IT risk management should be conducted as part of enterprise-wide risk management, whose ultimate objective is to support risk-aware business decisions."},
+        {q:"The GREATEST risk posed by an absence of strategic planning is:", opts:["increase in the number of licensing violations.","increase in the number of obsolete systems.","improper oversight of IT investment.","unresolved current and past problems."], correct:"C", justification:"Without proper oversight from management, IT investment may fail to align with business strategy."},
+        {q:"Which of the following items is MOST important to consider in relation to a risk profile?", opts:["A summary of regional loss events","Aggregated risk to the enterprise","A description of critical risk","An analysis of historical loss events"], correct:"B", justification:"The risk profile is based on the aggregated risk to the enterprise, including historical risk, critical risk and emerging risk."},
+        {q:"The GREATEST benefit of performing a periodic disaster recovery site exercise is to ensure:", opts:["the continued suitability of the contingency facilities.","the continued availability of data sent from the primary site.","that the correct equipment is at the contingency facilities.","that security measures at recovery sites are the same as the primary site."], correct:"A", justification:"The greatest benefit is continued suitability of the contingency facilities because if the facility itself is not suitable, even with data and personnel resources, the disaster recovery plan will not work."},
+        {q:"A risk practitioner has collected several IT-related key risk indicators related to the core financial application. These would MOST likely be reported to:", opts:["key stakeholders.","the IT administrator group.","the finance department.","IT management."], correct:"D", justification:"IT management is a key target group for sharing IT-related KRIs because it makes decisions related to risk response."},
+        {q:"A procurement employee notices that new printer models offered by the vendor keep a copy of all printed documents on an internal hard disk. Considering the risk of unintentionally disclosing confidential data, the employee should:", opts:["proceed with the order and configure printers to automatically wipe all data on disks after each print job.","notify the security manager to conduct a risk assessment for the new equipment.","seek another vendor that offers printers without built-in hard disk drives.","procure printers with built-in hard disks and notify staff to wipe hard disks when decommissioning the printer."], correct:"B", justification:"Risk assessment is most appropriate because it yields risk mitigation techniques that are appropriate for enterprise risk context and appetite."},
+        {q:"The IT department wants to use a server for an enterprise database, but the hardware is not certified by its manufacturer for the intended operating system or database software. A risk practitioner determines that introducing the hardware presents:", opts:["a minimal level of risk.","an unknown level of risk.","a medium level of risk.","a high level of risk."], correct:"B", justification:"Because the hardware is not certified by its manufacturer to work without major issues using the OS or the database software, the risk is unknown."},
+        {q:"Which of the following is the BEST indicator of an effective information risk management program?", opts:["The security policy is made widely available.","Risk is considered before all decisions.","Security procedures are updated annually.","Risk assessments occur on an annual basis."], correct:"B", justification:"Defining information risk in advance of business decisions best ensures that risk tolerance remains at approved levels."}
+    ];
+
+    // Verify we have exactly 150 questions
+    console.log(`Total questions: ${qaData.length}`);
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let userAnswers = [];
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&';
+            if (m === '<') return '<';
+            if (m === '>') return '>';
+            return m;
+        });
+    }
+
+    function renderQuestion() {
+        const container = document.getElementById('questionsRoot');
+        const progressText = document.getElementById('progressText');
+        const scoreText = document.getElementById('scoreText');
+        const progressFill = document.getElementById('progressFill');
+        const nextBtn = document.getElementById('nextBtn');
+
+        answered = false;
+        nextBtn.disabled = true;
+
+        const qa = qaData[currentQuestionIndex];
+        const letters = ['A', 'B', 'C', 'D'];
+
+        progressText.textContent = `Question ${currentQuestionIndex + 1} of ${qaData.length}`;
+        scoreText.textContent = `Score: ${score}`;
+        progressFill.style.width = `${((currentQuestionIndex) / qaData.length) * 100}%`;
+
+        const optionsHtml = qa.opts.map((opt, i) => `
+            <li class="option-item" data-answer="${letters[i]}">
+                <span class="option-letter">${letters[i]}</span>
+                <span class="option-text">${escapeHtml(opt)}</span>
+            </li>
+        `).join('');
+
+        container.innerHTML = `
+            <div class="question-block">
+                <div class="q-meta">Q${currentQuestionIndex + 1}</div>
+                <div class="question-text">${escapeHtml(qa.q)}</div>
+                <ul class="options-list">${optionsHtml}</ul>
+                <div id="answerBox" style="display:none;">
+                    <div class="answer-result" id="answerResult"></div>
+                    <div class="explanation-box">
+                        <div class="explanation-title">📖 EXPLANATION</div>
+                        <div class="explanation-text">${escapeHtml(qa.justification)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.querySelectorAll('.option-item').forEach(option => {
+            option.addEventListener('click', function() {
+                selectAnswer(this);
+            });
+        });
+    }
+
+    function selectAnswer(selectedOption) {
+        if (answered) return;
+
+        answered = true;
+
+        const selectedAnswer = selectedOption.getAttribute('data-answer');
+        const qa = qaData[currentQuestionIndex];
+        const correctAnswer = qa.correct;
+
+        const answerBox = document.getElementById('answerBox');
+        const answerResult = document.getElementById('answerResult');
+        const nextBtn = document.getElementById('nextBtn');
+
+        userAnswers.push({
+            question: qa.q,
+            selected: selectedAnswer,
+            correct: correctAnswer,
+            isCorrect: selectedAnswer === correctAnswer
+        });
+
+        if (selectedAnswer === correctAnswer) {
+            score++;
+            selectedOption.classList.add('selected-correct');
+            answerResult.className = 'answer-result correct';
+            answerResult.innerHTML = `✓ Correct! Answer is: ${correctAnswer}`;
+        } else {
+            selectedOption.classList.add('selected-wrong');
+            answerResult.className = 'answer-result wrong';
+            answerResult.innerHTML = `✗ Wrong. Correct Answer is: ${correctAnswer}`;
+            
+            document.querySelectorAll('.option-item').forEach(option => {
+                if (option.getAttribute('data-answer') === correctAnswer) {
+                    option.classList.add('correct-answer');
+                }
+            });
+        }
+
+        document.getElementById('scoreText').textContent = `Score: ${score}`;
+        answerBox.style.display = 'block';
+        nextBtn.disabled = false;
+
+        if (currentQuestionIndex === qaData.length - 1) {
+            nextBtn.textContent = 'Finish Quiz';
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < qaData.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            showFinalResult();
+        }
+    }
+
+    function showFinalResult() {
+        const container = document.getElementById('questionsRoot');
+        const progressText = document.getElementById('progressText');
+        const scoreText = document.getElementById('scoreText');
+        const progressFill = document.getElementById('progressFill');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        const percentage = Math.round((score / qaData.length) * 100);
+
+        progressText.textContent = 'Quiz Completed';
+        scoreText.textContent = `Final Score: ${score}/${qaData.length}`;
+        progressFill.style.width = '100%';
+
+        let resultMessage = '';
+
+        if (percentage >= 90) {
+            resultMessage = 'Excellent risk assessment knowledge!';
+        } else if (percentage >= 75) {
+            resultMessage = 'Good result. Review the incorrect answers.';
+        } else if (percentage >= 60) {
+            resultMessage = 'Fair result. More revision is recommended.';
+        } else {
+            resultMessage = 'Needs improvement. Please review the full question set again.';
+        }
+
+        container.innerHTML = `
+            <div class="final-result">
+                <h2>🎉 Quiz Completed</h2>
+                <div class="final-score">${score} / ${qaData.length}</div>
+                <p><strong>Percentage:</strong> ${percentage}%</p>
+                <p>${resultMessage}</p>
+            </div>
+        `;
+
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'inline-block';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        answered = false;
+        userAnswers = [];
+
+        document.getElementById('nextBtn').style.display = 'inline-block';
+        document.getElementById('nextBtn').textContent = 'Next Question';
+        document.getElementById('restartBtn').style.display = 'none';
+
+        renderQuestion();
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('restartBtn').addEventListener('click', restartQuiz);
+        renderQuestion();
+    });
+</script>
+</body></html>

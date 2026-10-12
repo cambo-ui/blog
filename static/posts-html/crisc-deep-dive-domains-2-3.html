@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRISC Deep-Dive — Domains 2 &amp; 3</title>
+<style>
+  :root{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --card2:#273449;
+    --text:#e2e8f0;
+    --muted:#94a3b8;
+    --accent:#38bdf8;
+    --correct:#22c55e;
+    --wrong:#ef4444;
+    --border:#334155;
+    --domain2:#3b82f6;
+    --domain3:#a855f7;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:var(--text);
+    line-height:1.6;
+    padding:20px;
+  }
+  header{
+    max-width:900px;
+    margin:0 auto 30px;
+    text-align:center;
+  }
+  header h1{
+    font-size:2rem;
+    margin-bottom:8px;
+    background:linear-gradient(90deg,#3b82f6,#a855f7);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  header p{color:var(--muted);margin:0;}
+  .score-bar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    max-width:900px;
+    margin:0 auto 20px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  }
+  .score-bar span{font-weight:600;}
+  .score-bar .score{color:var(--accent);font-size:1.2rem;}
+  .reset-btn{
+    background:var(--accent);
+    color:#0f172a;
+    border:none;
+    padding:8px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.2s;
+  }
+  .reset-btn:hover{background:#7dd3fc;}
+  .container{max-width:900px;margin:0 auto;}
+  .section-title{
+    margin:40px 0 20px;
+    padding:14px 22px;
+    border-radius:10px;
+    font-size:1.15rem;
+    font-weight:700;
+    color:#fff;
+  }
+  .section-title.domain2{background:linear-gradient(90deg,#1e40af,#3b82f6);}
+  .section-title.domain3{background:linear-gradient(90deg,#6b21a8,#a855f7);}
+  .section-sub{
+    font-size:0.9rem;
+    font-weight:400;
+    opacity:0.85;
+    display:block;
+    margin-top:4px;
+  }
+  .question{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:20px;
+    transition:0.2s;
+  }
+  .question:hover{border-color:var(--accent);}
+  .q-num{
+    display:inline-block;
+    color:#0f172a;
+    font-weight:700;
+    border-radius:6px;
+    padding:2px 10px;
+    margin-bottom:10px;
+    font-size:0.85rem;
+  }
+  .q-num.d2{background:var(--domain2);}
+  .q-num.d3{background:var(--domain3);}
+  .q-text{font-size:1.05rem;margin-bottom:14px;font-weight:500;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option{
+    background:var(--card2);
+    border:2px solid var(--border);
+    border-radius:8px;
+    padding:12px 16px;
+    cursor:pointer;
+    transition:0.2s;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .option:hover{border-color:var(--accent);background:#2e4057;}
+  .option .letter{
+    font-weight:700;
+    color:var(--accent);
+    min-width:20px;
+  }
+  .option.correct{
+    border-color:var(--correct);
+    background:rgba(34,197,94,0.15);
+  }
+  .option.correct .letter{color:var(--correct);}
+  .option.wrong{
+    border-color:var(--wrong);
+    background:rgba(239,68,68,0.12);
+  }
+  .option.wrong .letter{color:var(--wrong);}
+  .option.disabled{cursor:default;}
+  .explanation{
+    display:none;
+    margin-top:16px;
+    padding:16px;
+    background:rgba(56,189,248,0.08);
+    border-left:4px solid var(--accent);
+    border-radius:8px;
+    font-size:0.95rem;
+  }
+  .explanation.show{display:block;}
+  .explanation strong{color:var(--accent);}
+  .explanation .ans{color:var(--correct);font-weight:700;}
+  .explanation ul{margin:8px 0 0;padding-left:20px;}
+  .explanation li{margin-bottom:4px;color:var(--muted);}
+  .explanation li b{color:var(--text);}
+  .question{display:none;}
+  .question.active{display:block;animation:slideIn 0.35s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:translateX(0);}}
+  .progress-wrap{max-width:900px;margin:0 auto 20px;}
+  .progress-info{display:flex;justify-content:space-between;font-size:0.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+  .progress-bar-bg{width:100%;height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+  .progress-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#3b82f6,#a855f7);transition:width 0.4s ease;}
+  .nav-buttons{max-width:900px;margin:10px auto 0;display:flex;justify-content:flex-end;}
+  .nav-btn{background:var(--accent);color:#0f172a;border:none;padding:12px 28px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1rem;width:100%;transition:0.2s;}
+  .nav-btn:hover:not(:disabled){background:#7dd3fc;}
+  .nav-btn:disabled{background:#475569;color:#94a3b8;cursor:not-allowed;}
+  .result-screen{display:none;text-align:center;padding:30px 10px;}
+  .result-screen.active{display:block;}
+  .result-screen h2{font-size:1.6rem;margin-bottom:8px;}
+  .final-score{font-size:2.6rem;font-weight:800;color:var(--accent);margin:14px 0 4px;}
+  .final-score small{font-size:1.1rem;color:var(--muted);}
+  .result-breakdown{display:flex;justify-content:center;gap:16px;margin:20px 0 28px;flex-wrap:wrap;}
+  .result-breakdown .item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 22px;min-width:100px;}
+  .result-breakdown .num{font-size:1.7rem;font-weight:800;}
+  .result-breakdown .lbl{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);font-weight:700;}
+  .result-breakdown .item.correct .num{color:var(--correct);}
+  .result-breakdown .item.wrong .num{color:var(--wrong);}
+  .result-breakdown .item.total .num{color:var(--accent);}
+  footer{
+    text-align:center;
+    color:var(--muted);
+    margin:50px 0 20px;
+    font-size:0.9rem;
+  }
+  @media(max-width:600px){
+    header h1{font-size:1.4rem;}
+    .question{padding:16px;}
+    .score-bar{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CRISC Deep-Dive: Domains 2 &amp; 3</h1>
+  <p>60 Advanced Scenario-Based Questions with Detailed Explanations</p>
+</header>
+
+<div class="score-bar">
+  <span>Score: <span class="score" id="score">0</span></span>
+  <span>Correct: <span id="correctDisplay">0</span></span>
+  <span>Wrong: <span id="wrongDisplay">0</span></span>
+  <button class="reset-btn" onclick="resetQuiz()">Reset Quiz</button>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span>Question <span id="currentQNum">1</span> of <span id="totalQNum">60</span></span>
+    <span id="progressPercent">0%</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+</div>
+
+<div class="container" id="quiz-container"></div>
+
+<div class="nav-buttons" id="navButtons">
+  <button class="nav-btn" id="nextBtn" disabled>Next</button>
+</div>
+
+<div class="container result-screen" id="resultScreen">
+  <h2>Quiz Complete!</h2>
+  <div class="final-score" id="finalScore">0 <small>/ 60</small></div>
+  <div class="result-breakdown">
+    <div class="item correct"><div class="num" id="finalCorrect">0</div><div class="lbl">Correct</div></div>
+    <div class="item wrong"><div class="num" id="finalWrong">0</div><div class="lbl">Wrong</div></div>
+    <div class="item total"><div class="num" id="finalTotal">60</div><div class="lbl">Total</div></div>
+  </div>
+  <button class="nav-btn" id="restartBtn" style="max-width:280px;" onclick="resetQuiz()">Restart Quiz</button>
+</div>
+
+<footer>
+  CRISC Deep-Dive Practice &mdash; Domains 2 &amp; 3. For educational purposes only. Not affiliated with ISACA.
+</footer>
+
+<script>
+/* ============================================================
+   QUESTION DATA
+   d = domain (2 or 3)
+   ============================================================ */
+const questions = [
+
+/* ================= DOMAIN 2 (30 unique questions) ================= */
+
+{d:2,q:"A risk practitioner identifies that a critical billing system outage would delay revenue recognition by 30 days. The CFO's primary concern is quarterly earnings reporting. Which type of impact is MOST relevant?",
+o:["Operational impact","Financial reporting impact","Reputational impact","Regulatory impact"],
+a:1,
+e:"The impact directly affects financial reporting (revenue recognition timing), which is the CFO's concern.<ul><li><b>A</b> is the cause, not the primary business impact.</li><li><b>C</b> and <b>D</b> are secondary here.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'reduce customer churn by 15%.' An IT risk is identified: 'CRM system performance degradation could delay customer issue resolution.' What is the BEST way to express the impact?",
+o:["'The CRM may be slow'","'Delayed issue resolution could increase customer churn, undermining the 15% reduction objective'","'IT needs to upgrade the CRM'","'Customers will be frustrated'"],
+a:1,
+e:"The impact must link directly to the business objective (churn reduction).<ul><li><b>A</b> is technical.</li><li><b>C</b> is a control recommendation.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a data breach involving 50,000 customer records. Which of the following is the MOST difficult impact to quantify?",
+o:["Regulatory fines","Legal fees","Reputational damage and customer trust erosion","IT remediation costs"],
+a:2,
+e:"Reputational damage and trust erosion are the hardest to quantify because they are intangible and long-term.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are more directly measurable.</li></ul>"},
+
+{d:2,q:"An organization has a business objective to 'achieve ISO 27001 certification within 12 months.' An IT risk is identified: 'lack of documentation for key controls.' What is the MOST direct impact?",
+o:["The certification timeline may be delayed","The IT budget may increase","The CISO may be replaced","Auditors may complain"],
+a:0,
+e:"The impact must tie to the business objective (certification timeline).<ul><li><b>B</b>, <b>C</b>, <b>D</b> are secondary or unrelated.</li></ul>"},
+
+{d:2,q:"A risk practitioner is evaluating the impact of a ransomware attack on a hospital. Which of the following represents a realized impact on business operations?",
+o:["The risk register was updated","Patient care was delayed by 6 hours","The CISO attended a conference","A vulnerability scan was scheduled"],
+a:1,
+e:"A realized impact means the event occurred and affected operations.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are activities, not impacts.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'expand into three new markets in 12 months.' An IT risk is identified: 'cloud provider cannot scale to new regions.' This is BEST classified as:",
+o:["A threat","A vulnerability","A risk scenario impacting a business objective","A control gap"],
+a:2,
+e:"It describes a risk scenario linked to a specific business objective.<ul><li><b>A</b> is a threat actor/event.</li><li><b>B</b> is a weakness.</li><li><b>D</b> is about controls.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a third-party data breach on the organization. The third party is a payroll processor. Which of the following is the MOST significant impact?",
+o:["The third party may lose its contract","Employee personal data may be exposed, leading to regulatory fines and trust erosion","The third party's reputation may suffer","The organization may need to find a new vendor"],
+a:1,
+e:"The most significant impact is on the organization's employees and regulatory obligations.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary or affect the third party.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a supply chain attack on a software vendor. The organization uses the vendor's product for critical operations. Which of the following is the MOST significant impact?",
+o:["The vendor may lose market share","The organization's operations may be disrupted, and customer data may be compromised","The vendor's stock price may drop","The organization may need to renegotiate the contract"],
+a:1,
+e:"The most significant impact is on the organization's operations and data.<ul><li><b>A</b>, <b>C</b> affect the vendor.</li><li><b>D</b> is a secondary business impact.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'increase market share by 10%.' An IT risk is identified: 'mobile app crash rate of 5%.' What is the MOST direct impact?",
+o:["The app may need to be redesigned","Poor user experience may drive customers to competitors, undermining market share growth","The development team may be criticized","The app's rating may drop"],
+a:1,
+e:"The impact must link to the business objective (market share).<ul><li><b>A</b> is a remedy.</li><li><b>C</b> is a stakeholder reaction.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{d:2,q:"A risk practitioner is evaluating the impact of a data integrity issue in the financial reporting system. Which of the following is the MOST significant impact?",
+o:["IT may need to restore from backup","Financial statements may be misstated, leading to regulatory penalties and loss of investor confidence","The database administrator may be reprimanded","The system may need to be patched"],
+a:1,
+e:"Misstated financial statements have severe regulatory and reputational consequences.<ul><li><b>A</b>, <b>D</b> are technical remedies.</li><li><b>C</b> is a personnel issue.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'achieve 95% customer satisfaction.' An IT risk is identified: 'CRM system outage during peak hours.' What is the MOST direct impact?",
+o:["The CRM vendor may be penalized","Customer satisfaction may drop below 95% due to unresolved issues","IT may need to work overtime","The CRM system may need to be replaced"],
+a:1,
+e:"The impact must link to the business objective (customer satisfaction).<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary or technical.</li></ul>"},
+
+{d:2,q:"A risk practitioner identifies that a cloud provider's outage could affect multiple business units simultaneously. This is BEST described as:",
+o:["A localized impact","A systemic impact with cascading effects across the organization","A minor operational impact","A vendor-specific issue"],
+a:1,
+e:"The impact is systemic because it affects multiple business units simultaneously.<ul><li><b>A</b>, <b>C</b>, <b>D</b> understate the impact.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'reduce operational costs by 20%.' An IT risk is identified: 'automation system failure could require manual processing.' What is the MOST direct impact?",
+o:["IT may need to hire more staff","Manual processing may increase operational costs, undermining the 20% reduction objective","The automation vendor may be penalized","The system may need to be upgraded"],
+a:1,
+e:"The impact must link to the business objective (cost reduction).<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary or technical.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a phishing attack that compromised an executive's credentials. Which of the following is the MOST significant potential impact?",
+o:["The executive may be embarrassed","The attacker may use the credentials to access sensitive data and systems, leading to data breach and financial loss","IT may need to reset the executive's password","The phishing email may be reported to the helpdesk"],
+a:1,
+e:"The most significant impact is the potential for data breach and financial loss.<ul><li><b>A</b> is a personal concern.</li><li><b>C</b> is a technical remedy.</li><li><b>D</b> is a process step.</li></ul>"},
+
+{d:2,q:"A risk practitioner is evaluating the impact of a social media account takeover on the organization's brand. Which of the following is the MOST significant impact?",
+o:["The social media team may be criticized","The attacker may post false information, damaging brand reputation and customer trust","The account may need to be recovered","The social media platform may be contacted"],
+a:1,
+e:"The most significant impact is reputational damage and loss of customer trust.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary or procedural.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a data loss event on a research organization. The lost data includes 10 years of proprietary research. Which of the following is the MOST significant impact?",
+o:["The IT team may need to restore from backup","The organization may lose its competitive advantage and intellectual property","The research team may be reprimanded","The backup system may need to be upgraded"],
+a:1,
+e:"The most significant impact is loss of competitive advantage and IP.<ul><li><b>A</b>, <b>D</b> are technical remedies.</li><li><b>C</b> is a personnel issue.</li></ul>"},
+
+{d:2,q:"A risk practitioner is evaluating the impact of a third-party cloud provider's bankruptcy. Which of the following is the MOST significant impact?",
+o:["The cloud provider's employees may lose jobs","The organization may lose access to critical data and services, disrupting operations","The cloud provider's investors may lose money","The organization may need to find a new vendor"],
+a:1,
+e:"The most significant impact is loss of access to critical data and services.<ul><li><b>A</b>, <b>C</b> affect the provider.</li><li><b>D</b> is a secondary business impact.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a data breach on a healthcare organization. Which of the following is the MOST significant impact?",
+o:["IT may need to notify patients","Regulatory fines, legal liability, and loss of patient trust","The CISO may be replaced","The breach may be reported in the news"],
+a:1,
+e:"The most significant impact includes regulatory fines, legal liability, and loss of trust.<ul><li><b>A</b> is a procedural step.</li><li><b>C</b> is a personnel issue.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{d:2,q:"A risk practitioner identifies that a legacy system supports a regulatory reporting obligation. The system is end-of-life and unsupported. What is the MOST significant potential impact?",
+o:["Increased maintenance costs","Regulatory penalties and reputational damage","Difficulty finding trained staff","Slower system performance"],
+a:1,
+e:"The most significant impact of failing to meet a regulatory obligation is penalties and reputational damage.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are lesser impacts.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'maintain employee satisfaction above 85%.' An IT risk is identified: 'HR system outage could delay payroll.' What is the MOST direct impact?",
+o:["IT costs may increase","Payroll may be delayed, reducing employee satisfaction","The HR director may be unhappy","The system may need upgrading"],
+a:1,
+e:"The impact must link directly to the business objective.<ul><li><b>A</b> is an IT impact.</li><li><b>C</b> is a stakeholder reaction.</li><li><b>D</b> is a technical remedy.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a DDoS attack on an e-commerce platform during Black Friday. Which of the following is the MOST significant impact?",
+o:["The platform may need to be patched","Lost sales revenue and long-term customer defection","The IT team may need to work overtime","The DDoS attack may be reported in the news"],
+a:1,
+e:"The most significant impact is lost revenue and customer defection.<ul><li><b>A</b>, <b>C</b> are technical/operational.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'achieve 99.99% uptime for customer-facing services.' A risk is identified: 'a DDoS attack could cause 2 hours of downtime.' What is the BEST way to express the impact?",
+o:["'The DDoS attack is bad'","'The 2-hour outage would breach the 99.99% uptime objective'","'IT needs better firewalls'","'Customers will complain'"],
+a:1,
+e:"The impact should be expressed in terms of the business objective (uptime target).<ul><li><b>A</b> is vague.</li><li><b>C</b> is a control recommendation.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{d:2,q:"A risk practitioner identifies that an IoT device vulnerability could allow attackers to pivot into the corporate network. Which of the following is the MOST significant business impact?",
+o:["The IoT device may need to be replaced","Attackers may access sensitive corporate data, leading to financial and reputational loss","The IoT vendor may be penalized","The IT team may need to work overtime"],
+a:1,
+e:"The most significant impact is unauthorized access to sensitive data.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary or technical.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'launch a new product line in 6 months.' An IT risk is identified: 'development team lacks cloud security expertise.' What is the MOST direct impact?",
+o:["The development team may need training","The product launch may be delayed or the product may have security flaws, undermining the launch objective","The IT budget may increase","The cloud vendor may be penalized"],
+a:1,
+e:"The impact must link to the business objective (product launch).<ul><li><b>A</b> is a remedy.</li><li><b>C</b> is secondary.</li><li><b>D</b> is unrelated.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a critical vendor's failure to meet SLAs. Which of the following is the MOST significant impact?",
+o:["The vendor may lose the contract","Business operations may be disrupted, affecting customer service and revenue","The vendor's reputation may suffer","The organization may need to renegotiate the contract"],
+a:1,
+e:"The most significant impact is on the organization's operations and revenue.<ul><li><b>A</b>, <b>C</b> affect the vendor.</li><li><b>D</b> is a secondary business impact.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'reduce customer churn by 15%.' An IT risk is identified: 'CRM system performance degradation could delay customer issue resolution.' What is the BEST way to express the impact?",
+o:["'The CRM may be slow'","'Delayed issue resolution could increase customer churn, undermining the 15% reduction objective'","'IT needs to upgrade the CRM'","'Customers will be frustrated'"],
+a:1,
+e:"The impact must link directly to the business objective (churn reduction).<ul><li><b>A</b> is technical.</li><li><b>C</b> is a control recommendation.</li><li><b>D</b> is a symptom.</li></ul>"},
+
+{d:2,q:"A risk practitioner is evaluating the impact of an AI model making biased decisions in a customer-facing application. Which of the following is the MOST significant impact?",
+o:["The AI model may need retraining","Regulatory penalties, reputational damage, and loss of customer trust","The data science team may be criticized","The AI vendor may be penalized"],
+a:1,
+e:"The most significant impact is regulatory, reputational, and trust-related.<ul><li><b>A</b> is a remedy.</li><li><b>C</b> is a personnel issue.</li><li><b>D</b> affects the vendor.</li></ul>"},
+
+{d:2,q:"An organization's business objective is 'achieve 99.9% order fulfillment accuracy.' An IT risk is identified: 'inventory system data corruption.' What is the MOST direct impact?",
+o:["The system may need to be restored","Order fulfillment accuracy may fall below 99.9% due to incorrect inventory data","The inventory team may be reprimanded","The system may need to be patched"],
+a:1,
+e:"The impact must link to the business objective (order fulfillment accuracy).<ul><li><b>A</b>, <b>D</b> are technical remedies.</li><li><b>C</b> is a personnel issue.</li></ul>"},
+
+{d:2,q:"A risk practitioner is assessing the impact of a ransomware attack that encrypts critical backups. Which of the following is the MOST significant impact?",
+o:["The backups may need to be restored","Recovery time may be significantly extended, causing prolonged downtime and business disruption","The backup vendor may be penalized","The IT team may need to work overtime"],
+a:1,
+e:"The most significant impact is extended downtime and business disruption.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are secondary or technical.</li></ul>"},
+
+/* ================= DOMAIN 3 (30 unique questions) ================= */
+
+{d:3,q:"Which of the following BEST distinguishes a threat from a vulnerability?",
+o:["A threat is internal; a vulnerability is external","A threat is a potential cause of harm; a vulnerability is a weakness that can be exploited","A threat is technical; a vulnerability is human","A threat is always malicious; a vulnerability is always accidental"],
+a:1,
+e:"A threat is any potential cause of harm (actor or event); a vulnerability is a weakness.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are false or overly narrow.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that a departing employee copied sensitive files to a personal USB drive before resigning. This is BEST classified as which type of threat?",
+o:["External cybercriminal","Malicious insider","Negligent insider","Nation-state actor"],
+a:1,
+e:"A departing employee intentionally taking data is a malicious insider threat.<ul><li><b>A</b> is external.</li><li><b>C</b> implies unintentional action.</li><li><b>D</b> is a specific external actor type.</li></ul>"},
+
+{d:3,q:"An organization's software development team uses open-source libraries without tracking versions or vulnerabilities. Which vulnerability domain does this PRIMARILY represent?",
+o:["People","Process","Technology","Physical"],
+a:1,
+e:"The lack of a process for tracking and managing open-source components is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the primary domain.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to an Industrial Control System (ICS). Which of the following is the MOST significant threat?",
+o:["A phishing email to an office employee","A nation-state actor targeting critical infrastructure","A lost laptop","A misconfigured firewall"],
+a:1,
+e:"Nation-state actors targeting critical infrastructure are a significant and growing ICS threat.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are less directly relevant to ICS.</li></ul>"},
+
+{d:3,q:"Which of the following is the BEST example of a technology vulnerability?",
+o:["Employees sharing passwords","Lack of a change management process","Unpatched Apache Struts library","A phishing campaign targeting executives"],
+a:2,
+e:"An unpatched Apache Struts library is a technology vulnerability.<ul><li><b>A</b> is a people vulnerability.</li><li><b>B</b> is a process vulnerability.</li><li><b>D</b> is a threat.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that the organization's incident response plan has never been tested. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A threat"],
+a:1,
+e:"An untested incident response plan is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes a 'zero-day' vulnerability?",
+o:["A vulnerability that has been known for zero days","A vulnerability with no available patch at the time of discovery","A vulnerability with zero impact","A vulnerability that requires zero effort to exploit"],
+a:1,
+e:"A zero-day is a vulnerability with no available patch at the time of discovery.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are incorrect definitions.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to a remote workforce. Which of the following is the MOST significant threat?",
+o:["Home office ergonomics","Unsecured home Wi-Fi networks and personal device use","Increased electricity costs","Reduced office space needs"],
+a:1,
+e:"Unsecured home networks and personal devices are the most significant remote work threat.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not security threats.</li></ul>"},
+
+{d:3,q:"An organization's third-party vendor has access to its internal network but no security requirements in the contract. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A physical vulnerability"],
+a:1,
+e:"Missing contractual security requirements is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following is the BEST example of a threat actor motivated by ideology?",
+o:["A cybercriminal seeking financial gain","A nation-state conducting espionage","A hacktivist protesting organizational policies","A negligent employee"],
+a:2,
+e:"A hacktivist is motivated by ideology.<ul><li><b>A</b> is financially motivated.</li><li><b>B</b> is politically/strategically motivated.</li><li><b>D</b> is not a threat actor in this sense.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that the organization's backup tapes are stored in an unlocked cabinet. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A physical vulnerability"],
+a:3,
+e:"Unlocked storage of backup tapes is a physical vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes the relationship between a threat, a vulnerability, and a risk?",
+o:["A threat exploits a vulnerability to create risk","A vulnerability exploits a threat to create risk","A risk exploits a threat to create a vulnerability","A threat and a vulnerability are the same thing"],
+a:0,
+e:"A threat exploits a vulnerability to create risk.<ul><li><b>B</b>, <b>C</b>, <b>D</b> are incorrect relationships.</li></ul>"},
+
+{d:3,q:"An organization uses a legacy operating system that no longer receives security patches. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A threat"],
+a:2,
+e:"An unsupported legacy OS is a technology vulnerability.<ul><li><b>A</b>, <b>B</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to a cloud environment. Which of the following is the MOST relevant threat?",
+o:["Physical theft of cloud servers","Misconfiguration of cloud storage buckets leading to data exposure","Cloud provider's office lease expiration","Cloud provider's employee cafeteria closure"],
+a:1,
+e:"Misconfiguration of cloud storage is a leading cloud threat.<ul><li><b>A</b> is the provider's responsibility.</li><li><b>C</b>, <b>D</b> are irrelevant.</li></ul>"},
+
+{d:3,q:"Which of the following is the BEST example of a people vulnerability?",
+o:["Unpatched server","Lack of security awareness","Missing firewall rule","Weak encryption algorithm"],
+a:1,
+e:"Lack of security awareness is a people vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are technology vulnerabilities.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that the organization has no segregation of duties in its finance system. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A threat"],
+a:1,
+e:"Lack of segregation of duties is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes a supply chain vulnerability?",
+o:["A vulnerability in the organization's own code","A vulnerability introduced through a third-party component or service","A vulnerability in the organization's physical security","A vulnerability in the organization's HR process"],
+a:1,
+e:"Supply chain vulnerabilities are introduced through third-party components or services.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not supply chain vulnerabilities.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to an organization's use of AI/ML models. Which of the following is the MOST significant threat?",
+o:["The AI model may be too slow","Data poisoning attacks that corrupt training data and degrade model accuracy","The AI vendor may go out of business","The AI model may use too much electricity"],
+a:1,
+e:"Data poisoning is a significant AI/ML threat.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the most significant security threats.</li></ul>"},
+
+{d:3,q:"Which of the following is the BEST example of a physical vulnerability?",
+o:["Unpatched server","Lack of security awareness","Unlocked data center door","Missing firewall rule"],
+a:2,
+e:"An unlocked data center door is a physical vulnerability.<ul><li><b>A</b>, <b>D</b> are technology vulnerabilities.</li><li><b>B</b> is a people vulnerability.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that the organization's disaster recovery plan has not been updated in 3 years. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A threat"],
+a:1,
+e:"An outdated DR plan is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes an insider threat?",
+o:["A threat originating from outside the organization","A threat originating from within the organization, such as an employee or contractor","A threat originating from a third-party vendor","A threat originating from a natural disaster"],
+a:1,
+e:"An insider threat originates from within the organization.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are external threats.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to an organization's use of IoT devices. Which of the following is the MOST significant threat?",
+o:["The IoT devices may be too expensive","Default credentials and unpatched firmware allowing attackers to compromise devices","The IoT vendor may go out of business","The IoT devices may use too much bandwidth"],
+a:1,
+e:"Default credentials and unpatched firmware are significant IoT threats.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the most significant security threats.</li></ul>"},
+
+{d:3,q:"Which of the following is the BEST example of a process vulnerability?",
+o:["Unpatched server","Lack of a formal change management process","Missing firewall rule","Weak encryption algorithm"],
+a:1,
+e:"Lack of a formal change management process is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are technology vulnerabilities.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that the organization's security policies are not enforced. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A threat"],
+a:1,
+e:"Lack of policy enforcement is a process vulnerability.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes a nation-state threat actor?",
+o:["An individual seeking financial gain","A group sponsored by a government to conduct cyber operations","A group protesting organizational policies","A negligent employee"],
+a:1,
+e:"A nation-state actor is sponsored by a government.<ul><li><b>A</b> is a cybercriminal.</li><li><b>C</b> is a hacktivist.</li><li><b>D</b> is an insider.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to an organization's use of cloud services. Which of the following is the MOST significant threat?",
+o:["The cloud provider may raise prices","Insufficient identity and access management controls leading to unauthorized access","The cloud provider may change its logo","The cloud provider may open a new data center"],
+a:1,
+e:"Insufficient IAM controls are a significant cloud threat.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not security threats.</li></ul>"},
+
+{d:3,q:"Which of the following is the BEST example of a technology vulnerability?",
+o:["Employees falling for phishing emails","Lack of a formal incident response plan","Use of end-of-life software with no vendor support","A disgruntled employee"],
+a:2,
+e:"End-of-life software is a technology vulnerability.<ul><li><b>A</b>, <b>D</b> are people threats/vulnerabilities.</li><li><b>B</b> is a process vulnerability.</li></ul>"},
+
+{d:3,q:"A risk practitioner identifies that the organization's privileged accounts are shared among multiple administrators. This is BEST classified as:",
+o:["A people vulnerability","A process vulnerability","A technology vulnerability","A threat"],
+a:1,
+e:"Shared privileged accounts represent a process vulnerability (lack of accountability).<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the correct classification.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes the purpose of threat intelligence?",
+o:["To replace risk assessment","To provide information about current and emerging threats to inform risk decisions","To eliminate all threats","To satisfy auditors"],
+a:1,
+e:"Threat intelligence informs risk decisions.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the purpose.</li></ul>"},
+
+{d:3,q:"A risk practitioner is assessing threats to an organization's use of third-party APIs. Which of the following is the MOST significant threat?",
+o:["The API may be too slow","Insufficient authentication and authorization allowing unauthorized access to data","The API vendor may change its pricing","The API may use too much bandwidth"],
+a:1,
+e:"Insufficient authentication/authorization is a significant API threat.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are not the most significant security threats.</li></ul>"},
+
+{d:3,q:"Which of the following BEST describes the relationship between threat intelligence and vulnerability management?",
+o:["Threat intelligence replaces vulnerability management","Threat intelligence informs vulnerability management by prioritizing vulnerabilities based on active threats","Vulnerability management replaces threat intelligence","They are unrelated"],
+a:1,
+e:"Threat intelligence informs vulnerability management by helping prioritize based on active threats.<ul><li><b>A</b>, <b>C</b>, <b>D</b> are incorrect relationships.</li></ul>"}
+];
+
+/* ============================================================
+   QUIZ LOGIC
+   ============================================================ */
+const container = document.getElementById('quiz-container');
+const scoreEl = document.getElementById('score');
+const correctEl = document.getElementById('correctDisplay');
+const wrongEl = document.getElementById('wrongDisplay');
+const totalQNumEl = document.getElementById('totalQNum');
+const currentQNumEl = document.getElementById('currentQNum');
+const progressPercentEl = document.getElementById('progressPercent');
+const progressFillEl = document.getElementById('progressFill');
+const nextBtn = document.getElementById('nextBtn');
+const resultScreen = document.getElementById('resultScreen');
+const navButtons = document.getElementById('navButtons');
+
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let current = 0;
+let answeredCurrent = false;
+
+totalQNumEl.textContent = questions.length;
+document.getElementById('finalTotal').textContent = questions.length;
+
+const letters = ['A','B','C','D'];
+
+function renderQuestions(){
+  container.innerHTML = '';
+
+  questions.forEach((q, idx) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question' + (idx === 0 ? ' active' : '');
+    qDiv.id = 'q' + idx;
+
+    const num = document.createElement('span');
+    num.className = 'q-num ' + (q.d === 2 ? 'd2' : 'd3');
+    num.textContent = 'Q' + (idx + 1) + ' · Domain ' + q.d;
+    qDiv.appendChild(num);
+
+    const qText = document.createElement('div');
+    qText.className = 'q-text';
+    qText.textContent = q.q;
+    qDiv.appendChild(qText);
+
+    const optDiv = document.createElement('div');
+    optDiv.className = 'options';
+
+    q.o.forEach((opt, oIdx) => {
+      const optEl = document.createElement('div');
+      optEl.className = 'option';
+      optEl.innerHTML = '<span class="letter">' + letters[oIdx] + '.</span><span>' + opt + '</span>';
+      optEl.onclick = () => selectOption(idx, oIdx, optEl);
+      optDiv.appendChild(optEl);
+    });
+
+    qDiv.appendChild(optDiv);
+
+    const exp = document.createElement('div');
+    exp.className = 'explanation';
+    exp.id = 'exp' + idx;
+    exp.innerHTML = '<strong>Correct Answer: ' + letters[q.a] + '</strong><br>' + q.e;
+    qDiv.appendChild(exp);
+
+    container.appendChild(qDiv);
+  });
+}
+
+function selectOption(qIdx, oIdx, optEl){
+  if (answeredCurrent) return;
+  answeredCurrent = true;
+
+  const q = questions[qIdx];
+  const parent = optEl.parentElement;
+  const options = parent.querySelectorAll('.option');
+
+  options.forEach((o, i) => {
+    o.classList.add('disabled');
+    o.onclick = null;
+    if (i === q.a) o.classList.add('correct');
+    if (i === oIdx && i !== q.a) o.classList.add('wrong');
+  });
+
+  const exp = document.getElementById('exp' + qIdx);
+  exp.classList.add('show');
+
+  if (oIdx === q.a) {
+    score++;
+    correctCount++;
+    scoreEl.textContent = score;
+    correctEl.textContent = correctCount;
+  } else {
+    wrongCount++;
+    wrongEl.textContent = wrongCount;
+  }
+
+  const progress = Math.round(((qIdx + 1) / questions.length) * 100);
+  progressFillEl.style.width = progress + '%';
+  progressPercentEl.textContent = progress + '%';
+
+  nextBtn.disabled = false;
+  nextBtn.textContent = (qIdx === questions.length - 1) ? 'Finish' : 'Next';
+}
+
+nextBtn.addEventListener('click', () => {
+  if (!answeredCurrent) return;
+
+  const currentQ = document.getElementById('q' + current);
+  currentQ.classList.remove('active');
+
+  current++;
+
+  if (current >= questions.length) {
+    // Show result screen
+    navButtons.style.display = 'none';
+    document.querySelector('.progress-wrap').style.display = 'none';
+    document.querySelector('.score-bar').style.display = 'none';
+    document.getElementById('finalScore').innerHTML = score + ' <small>/ ' + questions.length + '</small>';
+    document.getElementById('finalCorrect').textContent = correctCount;
+    document.getElementById('finalWrong').textContent = wrongCount;
+    resultScreen.classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+    return;
+  }
+
+  document.getElementById('q' + current).classList.add('active');
+  currentQNumEl.textContent = current + 1;
+  answeredCurrent = false;
+  nextBtn.disabled = true;
+  nextBtn.textContent = 'Next';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function resetQuiz(){
+  score = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  current = 0;
+  answeredCurrent = false;
+  scoreEl.textContent = 0;
+  correctEl.textContent = 0;
+  wrongEl.textContent = 0;
+  currentQNumEl.textContent = 1;
+  progressFillEl.style.width = '0%';
+  progressPercentEl.textContent = '0%';
+  nextBtn.disabled = true;
+  nextBtn.textContent = 'Next';
+  navButtons.style.display = 'flex';
+  document.querySelector('.progress-wrap').style.display = 'block';
+  document.querySelector('.score-bar').style.display = 'flex';
+  resultScreen.classList.remove('active');
+  renderQuestions();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+renderQuestions();
+</script>
+
+</body>
+</html>

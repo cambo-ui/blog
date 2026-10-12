@@ -1,0 +1,21 @@
+{{ define "main" }}
+<section class="panel">
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+  {{ $paginator := .Paginate $posts }}
+  {{ range $paginator.Pages }}
+  <article>
+    <header>
+      <h2 class="post-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <div class="post-meta">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 02, 2006" }}</time>
+        {{ with .Params.tags }}<ul aria-label="Post tags">
+          {{ range . }}<li><a href="{{ "/tags/" | relURL }}{{ . | urlize }}/">{{ . }}</a></li>{{ end }}
+        </ul>{{ end }}
+      </div>
+    </header>
+    <p class="post-descr">{{ .Params.description }}</p>
+  </article>
+  {{ end }}
+  {{ partial "pagination.html" . }}
+</section>
+{{ end }}

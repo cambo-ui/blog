@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>CRISC Practice: 30 Mixed Review Questions</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1a1a2e;
+            line-height: 1.65;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            word-wrap: break-word;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .crisc-quiz-wrap {
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 12px 10px 40px;
+            box-sizing: border-box;
+        }
+
+        .crisc-quiz-card {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 24px 20px 28px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 3px solid #e8edf3;
+        }
+
+        .quiz-header h1 {
+            font-size: clamp(1.15rem, 4.5vw, 1.7rem);
+            color: #0f3460;
+            margin-bottom: 6px;
+            letter-spacing: -0.4px;
+            line-height: 1.3;
+            font-weight: 800;
+        }
+
+        .quiz-header .subtitle {
+            font-size: clamp(0.78rem, 3vw, 0.98rem);
+            color: #5a6a7e;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .quiz-header .badge {
+            display: inline-block;
+            background: #0f3460;
+            color: #fff;
+            font-size: clamp(0.6rem, 2.4vw, 0.7rem);
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-wrap {
+            margin-bottom: 18px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(0.68rem, 2.6vw, 0.78rem);
+            font-weight: 700;
+            color: #5a6a7e;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #e4e9f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0f3460, #1e6fbf);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .score-tracker {
+            display: flex;
+            justify-content: center;
+            gap: clamp(8px, 3vw, 22px);
+            background: #0f3460;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: 700;
+            font-size: clamp(0.68rem, 2.8vw, 0.85rem);
+            margin-bottom: 22px;
+            box-shadow: 0 4px 14px rgba(15, 52, 96, 0.22);
+            flex-wrap: wrap;
+        }
+
+        .score-tracker .stat span {
+            color: #ffd54f;
+        }
+
+        .score-tracker .stat.correct-stat span {
+            color: #81c784;
+        }
+
+        .score-tracker .stat.wrong-stat span {
+            color: #ef9a9a;
+        }
+
+        .question-card {
+            background: #fafbfd;
+            border: 1px solid #e4e9f0;
+            border-radius: 12px;
+            padding: clamp(16px, 4vw, 26px);
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.35s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(16px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #0f3460;
+            color: #fff;
+            font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+            font-weight: 700;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            display: flex;
+            align-items: flex-start;
+            font-size: clamp(0.85rem, 3.2vw, 1.02rem);
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 8px 0;
+        }
+
+        .options li {
+            margin-bottom: 8px;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 11px 14px 11px 40px;
+            position: relative;
+            font-size: clamp(0.78rem, 3vw, 0.95rem);
+            color: #3a4a5e;
+            background: #ffffff;
+            border: 1.5px solid #dce3ec;
+            border-radius: 9px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+            line-height: 1.45;
+            word-break: break-word;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: #eef4fb;
+            border-color: #0f3460;
+            transform: translateX(2px);
+        }
+
+        .option-btn::before {
+            content: attr(data-letter);
+            position: absolute;
+            left: 14px;
+            font-weight: 800;
+            color: #0f3460;
+            font-size: clamp(0.72rem, 2.8vw, 0.88rem);
+        }
+
+        .option-btn.correct {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #1b5e20;
+            font-weight: 700;
+        }
+
+        .option-btn.correct::before {
+            color: #2e7d32;
+            content: 'OK';
+            left: 12px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .option-btn.incorrect {
+            background: #fdecea;
+            border-color: #c62828;
+            color: #b71c1c;
+            font-weight: 700;
+        }
+
+        .option-btn.incorrect::before {
+            color: #c62828;
+            content: 'X';
+            left: 14px;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .option-btn.disabled {
+            cursor: default;
+            opacity: 0.72;
+        }
+
+        .option-btn.disabled:hover {
+            transform: none;
+        }
+
+        .option-btn.reveal-correct {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #1b5e20;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .option-btn.reveal-correct::before {
+            color: #2e7d32;
+            content: 'OK';
+            left: 12px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .answer-reveal {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 12px 14px;
+            border-radius: 0 8px 8px 0;
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            color: #1b5e20;
+            margin-top: 14px;
+            display: none;
+            line-height: 1.55;
+            word-break: break-word;
+        }
+
+        .answer-reveal.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .answer-reveal.incorrect-feedback {
+            background: #fdecea;
+            border-left-color: #c62828;
+            color: #b71c1c;
+        }
+
+        .answer-reveal.incorrect-feedback strong {
+            color: #b71c1c;
+        }
+
+        .answer-reveal strong {
+            color: #1b5e20;
+        }
+
+        .answer-reveal .explanation {
+            color: inherit;
+            font-style: italic;
+            margin-top: 4px;
+            display: block;
+            opacity: 0.9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            font-family: inherit;
+            font-size: clamp(0.82rem, 3vw, 0.95rem);
+            font-weight: 700;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+            letter-spacing: 0.3px;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.97);
+        }
+
+        .nav-btn.next-btn {
+            background: #0f3460;
+            color: #ffffff;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .nav-btn.next-btn:hover:not(:disabled) {
+            background: #1e6fbf;
+        }
+
+        .nav-btn.next-btn:disabled {
+            background: #b0bec5;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .nav-btn.restart-btn {
+            background: #ffd54f;
+            color: #5a4a1a;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .nav-btn.restart-btn:hover {
+            background: #ffca28;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 24px 12px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-screen.active {
+            display: block;
+        }
+
+        .result-screen .trophy {
+            font-size: clamp(2.5rem, 10vw, 3.5rem);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .result-screen h2 {
+            color: #0f3460;
+            font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .result-screen .final-score {
+            font-size: clamp(2.2rem, 10vw, 3rem);
+            font-weight: 800;
+            color: #0f3460;
+            margin: 14px 0 4px;
+            line-height: 1.1;
+        }
+
+        .result-screen .final-score small {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-weight: 600;
+            color: #7a8a9e;
+        }
+
+        .result-screen .result-message {
+            font-size: clamp(0.82rem, 3.2vw, 1.02rem);
+            color: #5a6a7e;
+            margin-bottom: 22px;
+            line-height: 1.55;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: clamp(8px, 3vw, 28px);
+            margin: 20px 0 28px;
+            flex-wrap: wrap;
+        }
+
+        .result-breakdown .item {
+            background: #f4f6f9;
+            border-radius: 12px;
+            padding: 14px 18px;
+            min-width: clamp(80px, 25vw, 120px);
+            flex: 0 1 auto;
+        }
+
+        .result-breakdown .item .num {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .result-breakdown .item .lbl {
+            font-size: clamp(0.6rem, 2.4vw, 0.78rem);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #7a8a9e;
+            font-weight: 700;
+        }
+
+        .result-breakdown .item.correct .num { color: #2e7d32; }
+        .result-breakdown .item.wrong .num { color: #c62828; }
+        .result-breakdown .item.total .num { color: #0f3460; }
+
+        .section-divider {
+            text-align: center;
+            margin: 34px 0 22px;
+            position: relative;
+        }
+
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #dce3ec;
+        }
+
+        .section-divider span {
+            position: relative;
+            background: #fff;
+            padding: 0 14px;
+            font-weight: 800;
+            color: #0f3460;
+            font-size: clamp(0.85rem, 3.2vw, 1.05rem);
+            letter-spacing: 0.5px;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 18px 0 28px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(0.7rem, 2.7vw, 0.9rem);
+            min-width: 480px;
+        }
+
+        .reference-table thead {
+            background: #0f3460;
+            color: #fff;
+        }
+
+        .reference-table th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+            font-size: clamp(0.62rem, 2.5vw, 0.82rem);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .reference-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #e8edf3;
+            color: #2c3e50;
+            line-height: 1.45;
+        }
+
+        .reference-table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .reference-table tbody tr:hover {
+            background: #eef4fb;
+        }
+
+        .reference-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tips-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 24px 0 16px;
+        }
+
+        .tips-box h3 {
+            color: #b8860b;
+            margin-bottom: 10px;
+            font-size: clamp(0.9rem, 3.4vw, 1.05rem);
+            font-weight: 800;
+        }
+
+        .tips-box ol {
+            padding-left: 20px;
+            color: #5a4a1a;
+            font-size: clamp(0.75rem, 2.9vw, 0.92rem);
+            line-height: 1.6;
+        }
+
+        .tips-box ol li {
+            margin-bottom: 7px;
+        }
+
+        .tips-box ol li strong {
+            color: #8b6914;
+        }
+
+        .quiz-footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 2px solid #e8edf3;
+            color: #7a8a9e;
+            font-size: clamp(0.7rem, 2.7vw, 0.85rem);
+            line-height: 1.55;
+        }
+
+        .quiz-footer .good-luck {
+            font-size: clamp(0.85rem, 3.2vw, 1rem);
+            font-weight: 800;
+            color: #0f3460;
+            margin-bottom: 4px;
+        }
+
+        .quiz-footer a {
+            color: #1e6fbf;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .quiz-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 360px) {
+            .crisc-quiz-wrap { padding: 8px 6px 30px; }
+            .crisc-quiz-card { padding: 16px 12px 20px; border-radius: 10px; }
+            .score-tracker { font-size: 0.62rem; gap: 6px; padding: 8px 8px; }
+            .option-btn { padding: 10px 10px 10px 36px; font-size: 0.76rem; }
+            .option-btn::before { left: 11px; font-size: 0.7rem; }
+            .option-btn.correct::before,
+            .option-btn.incorrect::before,
+            .option-btn.reveal-correct::before { left: 11px; }
+            .result-breakdown .item { padding: 10px 12px; min-width: 70px; }
+        }
+
+        @media (min-width: 361px) and (max-width: 600px) {
+            .crisc-quiz-wrap { padding: 12px 10px 36px; }
+            .crisc-quiz-card { padding: 18px 14px 22px; }
+            .nav-btn.next-btn { width: 100%; }
+            .nav-btn.restart-btn { width: 100%; max-width: 100%; }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            .crisc-quiz-wrap { padding: 20px 16px 40px; }
+            .crisc-quiz-card { padding: 28px 24px 32px; }
+            .nav-btn.next-btn { width: auto; min-width: 140px; }
+        }
+
+        @media (min-width: 901px) {
+            .crisc-quiz-wrap { padding: 30px 20px 50px; }
+            .crisc-quiz-card { padding: 36px 32px 40px; }
+            .nav-btn.next-btn { width: auto; min-width: 160px; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .option-btn { padding-top: 13px; padding-bottom: 13px; }
+            .nav-btn { padding-top: 14px; padding-bottom: 14px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="crisc-quiz-wrap">
+    <div class="crisc-quiz-card">
+
+        <div class="quiz-header">
+            <h1>CRISC Practice Questions</h1>
+            <div class="subtitle">Mixed Review - 30 Questions</div>
+            <div class="badge">Interactive Quiz</div>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-info">
+                <span>Question <span id="currentQNum">1</span> of <span id="totalQNum">30</span></span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="score-tracker" id="scoreTracker">
+            <div class="stat">Score: <span id="scoreDisplay">0</span></div>
+            <div class="stat correct-stat">Correct: <span id="correctDisplay">0</span></div>
+            <div class="stat wrong-stat">Wrong: <span id="wrongDisplay">0</span></div>
+        </div>
+
+        <div id="quizArea">
+
+            <!-- Q1 -->
+            <div class="question-card" data-question="1" data-answer="A">
+                <div class="question-text"><span class="question-number">1</span> Shortly after performing the annual review and revision of corporate policies, a risk practitioner becomes aware that a new law may affect security requirements for the human resources system. The risk practitioner should:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Analyze in detail how the law may affect the enterprise</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Ensure that necessary adjustments are made during the next review cycle</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Initiate an ad hoc revision of the corporate policy</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Notify the system custodian to implement changes</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - Analyze in detail how the law may affect the enterprise</strong>
+                    <span class="explanation">Assessing how the law may affect the enterprise is the best course of action. The analysis must also determine whether existing controls already address the new requirements.</span>
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-card" data-question="2" data-answer="A">
+                <div class="question-text"><span class="question-number">2</span> Which of the following choices provides the BEST view of risk management?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">An interdisciplinary team</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">A third-party risk assessment service provider</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The enterprise's IT department</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The enterprise's internal compliance department</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - An interdisciplinary team</strong>
+                    <span class="explanation">Having an interdisciplinary team contribute to risk management ensures that all areas are adequately considered and included in the risk assessment processes to support an enterprise view of risk.</span>
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-card" data-question="3" data-answer="B">
+                <div class="question-text"><span class="question-number">3</span> Which of the following choices is a PRIMARY consideration when developing an IT risk awareness program?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Why technology risk is owned by IT</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">How technology risk can impact each attendee's area of business</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">How business process owners can transfer technology risk</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Why technology risk is more difficult to manage compared to other types of risk</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - How technology risk can impact each attendee's area of business</strong>
+                    <span class="explanation">Stakeholders must understand how the IT-related risk impacts the overall business.</span>
+                </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-card" data-question="4" data-answer="A">
+                <div class="question-text"><span class="question-number">4</span> It is MOST important that risk appetite is aligned with business objectives to ensure that:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Resources are directed toward areas of low risk tolerance</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Major risk is identified and eliminated</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">IT and business goals are aligned</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The risk strategy is adequately communicated</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - Resources are directed toward areas of low risk tolerance</strong>
+                    <span class="explanation">Risk appetite is the amount of risk that an enterprise is willing to take on in pursuit of value. Aligning it with business objectives allows an enterprise to evaluate and deploy valuable resources toward those objectives where the risk tolerance (for loss) is low.</span>
+                </div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-card" data-question="5" data-answer="B">
+                <div class="question-text"><span class="question-number">5</span> The risk to an information system that supports a critical business process is owned by:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">The IT director</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Senior management</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The risk management department</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The system users</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - Senior management</strong>
+                    <span class="explanation">Senior management is responsible for the acceptance and mitigation of all risk.</span>
+                </div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-card" data-question="6" data-answer="B">
+                <div class="question-text"><span class="question-number">6</span> Which of the following statements BEST describes the value of a risk register?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">It captures the risk inventory</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">It drives the risk response plan</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">It is a risk reporting tool</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">It lists internal risk and external risk</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - It drives the risk response plan</strong>
+                    <span class="explanation">Risk registers serve as the main reference for all risk-related information, supporting risk-related decisions such as risk response activities and their prioritization.</span>
+                </div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="question-card" data-question="7" data-answer="D">
+                <div class="question-text"><span class="question-number">7</span> The MOST significant drawback of using quantitative risk analysis instead of qualitative risk analysis is the:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Lower objectivity</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Greater reliance on expertise</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Less management buy-in</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Higher cost</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Higher cost</strong>
+                    <span class="explanation">Quantitative risk analysis is generally more complex and, therefore, more costly than qualitative risk analysis.</span>
+                </div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="question-card" data-question="8" data-answer="B">
+                <div class="question-text"><span class="question-number">8</span> Risk scenarios are analyzed to determine the:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Strength of controls</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Likelihood and impact</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Current risk profile</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Scenario root cause</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - Likelihood and impact</strong>
+                    <span class="explanation">Risk scenarios are descriptions of events that can lead to a business impact and are evaluated to determine the likelihood and impact should the event occur.</span>
+                </div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="question-card" data-question="9" data-answer="C">
+                <div class="question-text"><span class="question-number">9</span> The PRIMARY reason risk assessments should be repeated at regular intervals is:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Omissions in earlier assessments can be addressed</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Periodic assessments allow various methodologies</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Business threats are constantly changing</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">They help raise risk awareness among staff</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: C - Business threats are constantly changing</strong>
+                    <span class="explanation">As business objectives and methods change, the nature and relevance of threats also change. This is the primary reason to conduct periodic risk assessments.</span>
+                </div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="question-card" data-question="10" data-answer="A">
+                <div class="question-text"><span class="question-number">10</span> Which of the following choices BEST helps identify information systems control deficiencies?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Gap analysis</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">The current IT risk profile</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The IT controls framework</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Countermeasure analysis</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - Gap analysis</strong>
+                    <span class="explanation">Controls are deployed to achieve the desired control objectives based on risk assessments and business requirements. The gap between desired control objectives and actual IS control design and operational effectiveness identifies IS control deficiencies.</span>
+                </div>
+            </div>
+
+            <!-- Q11 -->
+            <div class="question-card" data-question="11" data-answer="A">
+                <div class="question-text"><span class="question-number">11</span> Which of the following choices BEST assists a risk practitioner in measuring the existing level of development of risk-management processes against their desired state?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">A capability maturity model</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Risk management audit reports</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">A balanced scorecard</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Enterprise security architecture</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - A capability maturity model</strong>
+                    <span class="explanation">A capability maturity model grades processes on a scale of 0 to 5, based on their maturity. It is commonly used by enterprises to measure their existing state and then to determine the desired one.</span>
+                </div>
+            </div>
+
+            <!-- Q12 -->
+            <div class="question-card" data-question="12" data-answer="A">
+                <div class="question-text"><span class="question-number">12</span> When a risk cannot be sufficiently mitigated through manual or automatic controls, which of the following options will BEST protect against the financial impact of the risk?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Insuring against the risk</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Updating the IT risk register</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Improving staff training in the risk area</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Outsourcing the related business process to a third party</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - Insuring against the risk</strong>
+                    <span class="explanation">An insurance policy can compensate the enterprise monetarily for the impact of the risk by transferring the risk to the insurance company.</span>
+                </div>
+            </div>
+
+            <!-- Q13 -->
+            <div class="question-card" data-question="13" data-answer="D">
+                <div class="question-text"><span class="question-number">13</span> When responding to an identified risk event, the MOST important stakeholders involved in reviewing risk response options to an IT risk are the:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Information security managers</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Internal auditors</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Incident response team members</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Business managers</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Business managers</strong>
+                    <span class="explanation">Business managers are accountable for managing the associated risk and will determine what actions to take based on the information provided by others.</span>
+                </div>
+            </div>
+
+            <!-- Q14 -->
+            <div class="question-card" data-question="14" data-answer="A">
+                <div class="question-text"><span class="question-number">14</span> Which of the following choices should be considered FIRST when designing information system controls?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">The organizational strategic plan</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">The existing IT environment</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The present IT budget</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The IT strategic plan</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - The organizational strategic plan</strong>
+                    <span class="explanation">Review of the enterprise's strategic plan is the first step in designing effective IS controls that fit the enterprise's long-term plans.</span>
+                </div>
+            </div>
+
+            <!-- Q15 -->
+            <div class="question-card" data-question="15" data-answer="A">
+                <div class="question-text"><span class="question-number">15</span> Which of the following choices is the BEST measure of the operational effectiveness of risk-management process capabilities?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Key performance indicators</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Key risk indicators</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Base practices</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Metric thresholds</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: A - Key performance indicators</strong>
+                    <span class="explanation">Key performance indicators (KPIs) are assessment indicators that support judgment regarding the performance of a specific process.</span>
+                </div>
+            </div>
+
+            <!-- Q16 -->
+            <div class="question-card" data-question="16" data-answer="D">
+                <div class="question-text"><span class="question-number">16</span> Which of the following business requirements BEST relates to the need for resilient business and information systems processes?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Effectiveness</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Confidentiality</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Integrity</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Availability</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Availability</strong>
+                    <span class="explanation">Availability relates to information being available when required by the business process - now and in the future. Resilience is the ability to provide and maintain an acceptable level of service during disasters or when facing operational challenges.</span>
+                </div>
+            </div>
+
+            <!-- Q17 -->
+            <div class="question-card" data-question="17" data-answer="C">
+                <div class="question-text"><span class="question-number">17</span> An information system that processes weather forecasts for public consumption is MOST likely to place its highest priority on:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Nonrepudiation</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Confidentiality</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Integrity</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Availability</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: C - Integrity</strong>
+                    <span class="explanation">A system that delivers weather forecasts is likely to place its highest priority on the integrity of the data. The risk practitioner should keep in mind that whether a forecast turns out to be accurate in its prediction is distinct from whether the data was accurately represented.</span>
+                </div>
+            </div>
+
+            <!-- Q18 -->
+            <div class="question-card" data-question="18" data-answer="D">
+                <div class="question-text"><span class="question-number">18</span> The BEST control to prevent unauthorized access to an enterprise's information is user:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Accountability</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Authentication</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Identification</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Access rules</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Access rules</strong>
+                    <span class="explanation">Access rules with the appropriate identification and authentication methods prevent unauthorized access.</span>
+                </div>
+            </div>
+
+            <!-- Q19 -->
+            <div class="question-card" data-question="19" data-answer="D">
+                <div class="question-text"><span class="question-number">19</span> Which of the following controls BEST protects an enterprise from unauthorized individuals gaining access to sensitive information?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Using a challenge response system</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Forcing periodic password changes</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Monitoring and recording unsuccessful logon attempts</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Providing access on a need-to-know basis</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Providing access on a need-to-know basis</strong>
+                    <span class="explanation">Physical or logical system access should be assigned on a need-to-know basis (legitimate business requirements) and in ways that incorporate the least privilege and segregation of duties (SoD).</span>
+                </div>
+            </div>
+
+            <!-- Q20 -->
+            <div class="question-card" data-question="20" data-answer="C">
+                <div class="question-text"><span class="question-number">20</span> Which of the following defenses is BEST to use against phishing attacks?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">An intrusion detection system</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Spam filters</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">End-user awareness</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Application hardening</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: C - End-user awareness</strong>
+                    <span class="explanation">Phishing attacks are a type of social engineering attack and are best defended by end-user awareness training.</span>
+                </div>
+            </div>
+
+            <!-- Q21 -->
+            <div class="question-card" data-question="21" data-answer="D">
+                <div class="question-text"><span class="question-number">21</span> Which of the following is MOST important to determine when defining risk management strategies?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Risk assessment criteria</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">IT architecture complexity</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Enterprise disaster recovery plan</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Business objectives and operations</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Business objectives and operations</strong>
+                    <span class="explanation">While defining risk management strategies, the risk practitioner needs to analyze the enterprise's objectives and risk tolerance and define a risk management framework based on this analysis. Some enterprises may accept known risk, while others may invest in and apply mitigating controls to reduce risk.</span>
+                </div>
+            </div>
+
+            <!-- Q22 -->
+            <div class="question-card" data-question="22" data-answer="C">
+                <div class="question-text"><span class="question-number">22</span> The GREATEST risk posed by an absence of strategic planning is:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Increase in the number of licensing violations</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Increase in the number of obsolete systems</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Improper oversight of IT investment</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Unresolved current and past problems</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: C - Improper oversight of IT investment</strong>
+                    <span class="explanation">Improper oversight of IT investment is the greatest risk. Without proper oversight from management, IT investment may fail to align with business strategy, and IT expenditures may not support business objectives.</span>
+                </div>
+            </div>
+
+            <!-- Q23 -->
+            <div class="question-card" data-question="23" data-answer="C">
+                <div class="question-text"><span class="question-number">23</span> Which of the following risk management roles is part of first line of defense?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Chief risk officer</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Risk steering committee</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Risk owner</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Board of directors</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: C - Risk owner</strong>
+                    <span class="explanation">The first line of defense is operational management, and risk owners are part of operational management.</span>
+                </div>
+            </div>
+
+            <!-- Q24 -->
+            <div class="question-card" data-question="24" data-answer="B">
+                <div class="question-text"><span class="question-number">24</span> According to the three lines of defense model, where would the data ethics function MOST likely reside in an enterprise?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">The first line of defense</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">The second line of defense</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The third line of defense</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The board of directors</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - The second line of defense</strong>
+                    <span class="explanation">The second line of defense includes compliance, ethics and risk management and is intended to provide guidance.</span>
+                </div>
+            </div>
+
+            <!-- Q25 -->
+            <div class="question-card" data-question="25" data-answer="D">
+                <div class="question-text"><span class="question-number">25</span> Which of the following is MOST relevant to include in a cost-benefit analysis of a two-factor authentication system?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">The approved budget of the project</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">The frequency of incidents</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The annual loss expectancy of security incidents</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The total cost of ownership</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - The total cost of ownership</strong>
+                    <span class="explanation">Total cost of ownership is the most relevant piece of information to be included in the cost-benefit analysis because it establishes a cost baseline that must be considered for the full life cycle of the control.</span>
+                </div>
+            </div>
+
+            <!-- Q26 -->
+            <div class="question-card" data-question="26" data-answer="D">
+                <div class="question-text"><span class="question-number">26</span> Which of the following BEST ensures that appropriate mitigation occurs on identified information systems vulnerabilities?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Presenting root cause analysis to the management of the enterprise</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Implementing software to input the action points</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Incorporating the findings into the annual report to shareholders</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Assigning action plans with deadlines to responsible personnel</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - Assigning action plans with deadlines to responsible personnel</strong>
+                    <span class="explanation">Assigning mitigation to personnel establishes responsibility for its completion within the deadline.</span>
+                </div>
+            </div>
+
+            <!-- Q27 -->
+            <div class="question-card" data-question="27" data-answer="B">
+                <div class="question-text"><span class="question-number">27</span> What is the MOST important control that should be in place to safeguard against the misuse of the corporate social media account?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Social media account monitoring</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Two-factor authentication</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Awareness training</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Strong passwords</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - Two-factor authentication</strong>
+                    <span class="explanation">Two-factor authentication is a preventive control, whereas awareness training is primarily a deterrent and supports legitimate users.</span>
+                </div>
+            </div>
+
+            <!-- Q28 -->
+            <div class="question-card" data-question="28" data-answer="D">
+                <div class="question-text"><span class="question-number">28</span> A business case developed to support risk mitigation efforts for a complex application development project should be retained until:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">The project is approved</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">User acceptance of the application</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">The application is deployed</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">The application's end of life</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: D - The application's end of life</strong>
+                    <span class="explanation">All documentation related to the system should be updated and retained until the system is no longer in service. Documentation may be retained longer to meet the enterprise's record retention period requirement.</span>
+                </div>
+            </div>
+
+            <!-- Q29 -->
+            <div class="question-card" data-question="29" data-answer="B">
+                <div class="question-text"><span class="question-number">29</span> Which of the following factors should be assessed after the likelihood of a loss event has been determined?</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Risk tolerance</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Magnitude of impact</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Residual risk</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Compensating controls</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: B - Magnitude of impact</strong>
+                    <span class="explanation">Once likelihood has been determined, the next step is to determine magnitude of impact.</span>
+                </div>
+            </div>
+
+            <!-- Q30 -->
+            <div class="question-card" data-question="30" data-answer="C">
+                <div class="question-text"><span class="question-number">30</span> If risk has been identified, but not yet mitigated, the enterprise would:</div>
+                <ul class="options">
+                    <li><button class="option-btn" data-option="A" data-letter="A.">Record and mitigate serious risk and disregard low-level risk</button></li>
+                    <li><button class="option-btn" data-option="B" data-letter="B.">Obtain management commitment to mitigate all identified risk within a reasonable time frame</button></li>
+                    <li><button class="option-btn" data-option="C" data-letter="C.">Document identified risk in the risk register and maintain the remediation status</button></li>
+                    <li><button class="option-btn" data-option="D" data-letter="D.">Conduct an annual risk assessment, but disregard previous assessments to prevent risk bias</button></li>
+                </ul>
+                <div class="answer-reveal">
+                    <strong>Answer: C - Document identified risk in the risk register and maintain the remediation status</strong>
+                    <span class="explanation">All identified risk should be included in the risk register. The register should capture the proposed remediation plan, the risk owner, and the anticipated date of completion.</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="nav-buttons" id="navButtons">
+            <button class="nav-btn next-btn" id="nextBtn" disabled>Next</button>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <div class="trophy" id="trophyIcon">&#127942;</div>
+            <h2 id="resultTitle">Quiz Complete!</h2>
+            <div class="final-score" id="finalScore">0 <small>/ 30</small></div>
+            <div class="result-message" id="resultMessage"></div>
+
+            <div class="result-breakdown">
+                <div class="item correct">
+                    <div class="num" id="finalCorrect">0</div>
+                    <div class="lbl">Correct</div>
+                </div>
+                <div class="item wrong">
+                    <div class="num" id="finalWrong">0</div>
+                    <div class="lbl">Wrong</div>
+                </div>
+                <div class="item total">
+                    <div class="num" id="finalTotal">30</div>
+                    <div class="lbl">Total</div>
+                </div>
+            </div>
+
+            <button class="nav-btn restart-btn" id="restartBtn">Restart Quiz</button>
+        </div>
+
+        <div class="section-divider"><span>Quick Reference Summary</span></div>
+
+        <div class="table-scroll">
+            <table class="reference-table">
+                <thead>
+                    <tr>
+                        <th>Topic</th>
+                        <th>Key Point</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>New Laws / Regulations</strong></td>
+                        <td>Analyze impact first before making changes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Management View</strong></td>
+                        <td>Best provided by an interdisciplinary team</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Awareness</strong></td>
+                        <td>Focus on business impact to each attendee</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Appetite</strong></td>
+                        <td>Align with business objectives to direct resources</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Ownership</strong></td>
+                        <td>Senior management owns all risk</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Register</strong></td>
+                        <td>Drives the risk response plan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quantitative Analysis</strong></td>
+                        <td>More costly but more objective</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Scenarios</strong></td>
+                        <td>Analyzed for likelihood and impact</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Assessment Frequency</strong></td>
+                        <td>Threats are constantly changing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Control Deficiencies</strong></td>
+                        <td>Identified via gap analysis</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Maturity Measurement</strong></td>
+                        <td>Capability maturity model (0-5 scale)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Transfer</strong></td>
+                        <td>Insurance compensates for financial impact</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Response</strong></td>
+                        <td>Business managers are the key decision-makers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS Control Design</strong></td>
+                        <td>Start with the organizational strategic plan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Process Effectiveness</strong></td>
+                        <td>Measured by KPIs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resilience</strong></td>
+                        <td>Relates to availability</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Weather Forecast System</strong></td>
+                        <td>Highest priority on integrity</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prevent Unauthorized Access</strong></td>
+                        <td>Access rules are the best control</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sensitive Information Access</strong></td>
+                        <td>Need-to-know basis with least privilege</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phishing Defense</strong></td>
+                        <td>End-user awareness is best</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Management Strategy</strong></td>
+                        <td>Driven by business objectives and operations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Absence of Strategic Planning</strong></td>
+                        <td>Greatest risk is improper oversight of IT investment</td>
+                    </tr>
+                    <tr>
+                        <td><strong>First Line of Defense</strong></td>
+                        <td>Operational management; risk owners sit here</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Three Lines of Defense</strong></td>
+                        <td>Data ethics resides in the second line</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cost-Benefit Analysis</strong></td>
+                        <td>Use total cost of ownership as the baseline</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vulnerability Mitigation</strong></td>
+                        <td>Assign action plans with deadlines</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Social Media Misuse</strong></td>
+                        <td>Two-factor authentication is the best preventive control</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Business Case Retention</strong></td>
+                        <td>Retain until the application's end of life</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Assessing Loss Events</strong></td>
+                        <td>Determine magnitude of impact after likelihood</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Unmitigated Risk</strong></td>
+                        <td>Document in the risk register and track remediation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tips-box">
+            <h3>Exam Tips</h3>
+            <ol>
+                <li><strong>New regulations</strong> - Always analyze impact before acting.</li>
+                <li><strong>Risk management</strong> - Best done by interdisciplinary teams, not a single department.</li>
+                <li><strong>Risk appetite</strong> - Must align with business objectives to direct resources effectively.</li>
+                <li><strong>Risk ownership</strong> - Senior management owns all risk.</li>
+                <li><strong>Risk register</strong> - Drives the risk response plan; it is more than just an inventory.</li>
+                <li><strong>Quantitative vs. qualitative</strong> - Quantitative is more costly but more objective.</li>
+                <li><strong>Risk assessments</strong> - Repeat regularly because threats constantly change.</li>
+                <li><strong>Gap analysis</strong> - Best tool for identifying control deficiencies.</li>
+                <li><strong>Capability maturity model</strong> - Measures current vs. desired state of processes.</li>
+                <li><strong>Risk transfer</strong> - Insurance is the best option for financial impact.</li>
+                <li><strong>Risk response</strong> - Business managers are the key decision-makers.</li>
+                <li><strong>Control design</strong> - Start with the organizational strategic plan.</li>
+                <li><strong>KPIs</strong> - Measure process performance and operational effectiveness.</li>
+                <li><strong>Availability</strong> - Supports resilience and business continuity.</li>
+                <li><strong>Integrity</strong> - Critical for data accuracy (e.g., weather forecasts).</li>
+                <li><strong>Access rules</strong> - Best control to prevent unauthorized access.</li>
+                <li><strong>Need-to-know</strong> - Best control for sensitive information access.</li>
+                <li><strong>Phishing</strong> - Best defense is end-user awareness training.</li>
+                <li><strong>Risk management strategy</strong> - Base it on business objectives and operations.</li>
+                <li><strong>Strategic planning</strong> - Its absence risks improper oversight of IT investment.</li>
+                <li><strong>First line of defense</strong> - Operational management; risk owners sit here.</li>
+                <li><strong>Second line of defense</strong> - Ethics, compliance, and risk management functions.</li>
+                <li><strong>Cost-benefit analysis</strong> - Use total cost of ownership as the baseline.</li>
+                <li><strong>Vulnerability mitigation</strong> - Assign action plans with deadlines.</li>
+                <li><strong>Social media</strong> - Two-factor authentication is the strongest preventive control.</li>
+                <li><strong>Business case retention</strong> - Keep until the application reaches end of life.</li>
+                <li><strong>Loss events</strong> - Assess magnitude of impact after likelihood.</li>
+                <li><strong>Unmitigated risk</strong> - Log it in the risk register and track remediation.</li>
+            </ol>
+        </div>
+
+        <div class="quiz-footer">
+            <div class="good-luck">Good luck on your CRISC exam!</div>
+            <div>30 practice questions covering mixed CRISC review and risk management topics.</div>
+            <div style="margin-top:6px;">From <a href="https://shelteracademy.blogspot.com/" target="_blank" rel="noopener">Shelter Academy</a></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        var currentIndex = 0;
+        var score = 0;
+        var correctCount = 0;
+        var wrongCount = 0;
+        var answeredCurrent = false;
+        var totalQuestions = 0;
+
+        var cards = [];
+        var nextBtn, restartBtn, resultScreen, quizArea, navButtons;
+        var progressWrap, scoreTracker, currentQNumEl, totalQNumEl;
+        var progressFill, progressPercent, scoreDisplay, correctDisplay, wrongDisplay;
+        var finalScore, finalCorrect, finalWrong, finalTotal;
+        var resultMessage, resultTitle, trophyIcon;
+
+        function initElements() {
+            cards = Array.prototype.slice.call(document.querySelectorAll('.question-card'));
+            totalQuestions = cards.length;
+
+            nextBtn = document.getElementById('nextBtn');
+            restartBtn = document.getElementById('restartBtn');
+            resultScreen = document.getElementById('resultScreen');
+            quizArea = document.getElementById('quizArea');
+            navButtons = document.getElementById('navButtons');
+            progressWrap = document.getElementById('progressWrap');
+            scoreTracker = document.getElementById('scoreTracker');
+
+            currentQNumEl = document.getElementById('currentQNum');
+            totalQNumEl = document.getElementById('totalQNum');
+            progressFill = document.getElementById('progressFill');
+            progressPercent = document.getElementById('progressPercent');
+
+            scoreDisplay = document.getElementById('scoreDisplay');
+            correctDisplay = document.getElementById('correctDisplay');
+            wrongDisplay = document.getElementById('wrongDisplay');
+
+            finalScore = document.getElementById('finalScore');
+            finalCorrect = document.getElementById('finalCorrect');
+            finalWrong = document.getElementById('finalWrong');
+            finalTotal = document.getElementById('finalTotal');
+            resultMessage = document.getElementById('resultMessage');
+            resultTitle = document.getElementById('resultTitle');
+            trophyIcon = document.getElementById('trophyIcon');
+        }
+
+        function updateProgress() {
+            var pct = Math.round((currentIndex / totalQuestions) * 100);
+            if (currentIndex === totalQuestions - 1 && answeredCurrent) {
+                pct = 100;
+            }
+            if (progressFill) progressFill.style.width = pct + '%';
+            if (progressPercent) progressPercent.textContent = pct + '%';
+        }
+
+        function updateScore() {
+            if (scoreDisplay) scoreDisplay.textContent = score;
+            if (correctDisplay) correctDisplay.textContent = correctCount;
+            if (wrongDisplay) wrongDisplay.textContent = wrongCount;
+        }
+
+        function scrollToTop() {
+            var wrap = document.querySelector('.crisc-quiz-wrap');
+            if (wrap) {
+                try {
+                    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } catch (e) {
+                    wrap.scrollIntoView();
+                }
+            }
+        }
+
+        function showQuestion(index) {
+            cards.forEach(function(card, i) {
+                if (i === index) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+
+            if (currentQNumEl) currentQNumEl.textContent = index + 1;
+            updateProgress();
+
+            var card = cards[index];
+            var wasAnswered = card.getAttribute('data-answered') === 'true';
+            answeredCurrent = wasAnswered;
+
+            if (nextBtn) {
+                nextBtn.disabled = !wasAnswered;
+                if (index === totalQuestions - 1) {
+                    nextBtn.textContent = 'Finish';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+
+            scrollToTop();
+        }
+
+        function attachAnswerHandlers() {
+            cards.forEach(function(card) {
+                var correctAnswer = card.getAttribute('data-answer');
+                var buttons = card.querySelectorAll('.option-btn');
+                var revealBox = card.querySelector('.answer-reveal');
+
+                buttons.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        if (card.getAttribute('data-answered') === 'true') return;
+
+                        card.setAttribute('data-answered', 'true');
+                        answeredCurrent = true;
+
+                        var selected = btn.getAttribute('data-option');
+                        var isCorrect = (selected === correctAnswer);
+
+                        buttons.forEach(function(b) {
+                            b.classList.add('disabled');
+                        });
+
+                        if (isCorrect) {
+                            btn.classList.add('correct');
+                            score++;
+                            correctCount++;
+                            if (revealBox) revealBox.classList.add('show');
+                        } else {
+                            btn.classList.add('incorrect');
+                            wrongCount++;
+
+                            buttons.forEach(function(b) {
+                                if (b.getAttribute('data-option') === correctAnswer) {
+                                    b.classList.add('reveal-correct');
+                                }
+                            });
+
+                            if (revealBox) revealBox.classList.add('show', 'incorrect-feedback');
+                        }
+
+                        updateScore();
+
+                        if (nextBtn) nextBtn.disabled = false;
+
+                        if (currentIndex === totalQuestions - 1) {
+                            if (progressFill) progressFill.style.width = '100%';
+                            if (progressPercent) progressPercent.textContent = '100%';
+                        }
+                    });
+                });
+            });
+        }
+
+        function finishQuiz() {
+            if (quizArea) quizArea.style.display = 'none';
+            if (navButtons) navButtons.style.display = 'none';
+            if (progressWrap) progressWrap.style.display = 'none';
+            if (scoreTracker) scoreTracker.style.display = 'none';
+
+            if (finalScore) finalScore.innerHTML = score + ' <small>/ ' + totalQuestions + '</small>';
+            if (finalCorrect) finalCorrect.textContent = correctCount;
+            if (finalWrong) finalWrong.textContent = wrongCount;
+            if (finalTotal) finalTotal.textContent = totalQuestions;
+
+            var pct = (score / totalQuestions) * 100;
+            var message = '';
+            var trophy = '&#127942;';
+            var title = 'Quiz Complete!';
+
+            if (pct === 100) {
+                trophy = '&#127942;';
+                title = 'Perfect Score!';
+                message = 'Outstanding! You have mastered these CRISC concepts. You are well prepared for the exam.';
+            } else if (pct >= 80) {
+                trophy = '&#127881;';
+                title = 'Excellent Work!';
+                message = 'Great job! You have a strong grasp of these concepts. Review the ones you missed and you are ready.';
+            } else if (pct >= 60) {
+                trophy = '&#128214;';
+                title = 'Good Effort!';
+                message = 'You are on the right track. Review the explanations for the questions you missed and try again.';
+            } else {
+                trophy = '&#128218;';
+                title = 'Keep Studying!';
+                message = 'Review the Quick Reference table and Exam Tips below, then retake the quiz to reinforce your understanding.';
+            }
+
+            if (trophyIcon) trophyIcon.innerHTML = trophy;
+            if (resultTitle) resultTitle.textContent = title;
+            if (resultMessage) resultMessage.textContent = message;
+
+            if (resultScreen) resultScreen.classList.add('active');
+
+            if (resultScreen) {
+                try {
+                    resultScreen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (e) {
+                    resultScreen.scrollIntoView();
+                }
+            }
+        }
+
+        function restartQuiz() {
+            currentIndex = 0;
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            answeredCurrent = false;
+
+            cards.forEach(function(card) {
+                card.removeAttribute('data-answered');
+                card.classList.remove('active');
+
+                var buttons = card.querySelectorAll('.option-btn');
+                buttons.forEach(function(b) {
+                    b.classList.remove('correct', 'incorrect', 'disabled', 'reveal-correct');
+                });
+
+                var revealBox = card.querySelector('.answer-reveal');
+                if (revealBox) {
+                    revealBox.classList.remove('show', 'incorrect-feedback');
+                }
+            });
+
+            if (quizArea) quizArea.style.display = '';
+            if (navButtons) navButtons.style.display = '';
+            if (progressWrap) progressWrap.style.display = '';
+            if (scoreTracker) scoreTracker.style.display = '';
+
+            if (resultScreen) resultScreen.classList.remove('active');
+
+            updateScore();
+            showQuestion(0);
+
+            scrollToTop();
+        }
+
+        function attachNavHandlers() {
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    if (!answeredCurrent) return;
+
+                    if (currentIndex < totalQuestions - 1) {
+                        currentIndex++;
+                        showQuestion(currentIndex);
+                    } else {
+                        finishQuiz();
+                    }
+                });
+            }
+
+            if (restartBtn) {
+                restartBtn.addEventListener('click', restartQuiz);
+            }
+        }
+
+        function boot() {
+            initElements();
+
+            if (totalQNumEl) totalQNumEl.textContent = totalQuestions;
+
+            attachAnswerHandlers();
+            attachNavHandlers();
+
+            updateScore();
+            showQuestion(0);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', boot);
+        } else {
+            boot();
+        }
+
+    })();
+</script>
+
+</body>
+</html>
