@@ -1,4 +1,4 @@
-baseURL = 'https://pushthescript.vercel.app/'
+baseURL = 'https://blog-cambo-ui.vercel.app/'
 
 title = 'Push The Script'
 enableRobotsTXT = true
