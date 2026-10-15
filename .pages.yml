@@ -1,0 +1,55 @@
+# Pages CMS configuration — https://pagescms.org
+#
+# A browser-based editor for this Hugo blog. Sign in at
+# https://app.pagescms.org, pick the "cambo-ui/blog" repository, and you can
+# write/edit posts and upload images from any browser. Every save commits to
+# GitHub, which triggers a Vercel rebuild (live in ~30s).
+
+# Uploaded images are stored in the repo under static/images and served by
+# Hugo at /images/...
+media:
+  - name: images
+    label: Images
+    input: static/images
+    output: /images
+    categories: [image]
+    rename: true
+
+content:
+  - name: posts
+    label: Blog posts
+    type: collection
+    path: content/posts
+    format: yaml-frontmatter
+    delimiters: "---"
+    filename: "{title}.md"
+    view:
+      primary: title
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        options:
+          format: "yyyy-MM-dd"
+      - name: description
+        label: Description
+        type: string
+        description: Short summary shown in previews and used for SEO.
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        description: Press Enter after each tag.
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+          switcher: true

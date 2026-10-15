@@ -82,3 +82,27 @@ The plugin in `.opencode/plugins/blog/` exposes two tools:
 - **`blog_publish`** — commit + push pending changes (`message`, `push`).
 
 Both shell out to `scripts/new-post.sh` / `scripts/publish.sh`.
+
+## Post from a browser (Pages CMS)
+
+The site ships a [Pages CMS](https://pagescms.org) config (`.pages.yml`) so you
+can write and publish posts from any browser, no code required — similar to
+WordPress/Blogger.
+
+One-time setup:
+
+1. Go to <https://app.pagescms.org> and sign in with GitHub.
+2. Install the **Pages CMS** GitHub App for the account that owns the repo
+   (`cambo-ui`), granting it access to `blog`.
+3. Open the **`blog`** repository.
+
+Then, any time:
+
+1. Pick **Blog posts** → **New** (or open an existing post).
+2. Fill in Title, Date, Description, Tags and write the Body in the rich-text
+   editor. Images you insert are uploaded to `static/images/`.
+3. Click **Save**. This commits to `main`, and Vercel rebuilds the site
+   (live in ~30s).
+
+The editor maps to the same YAML front matter the scripts use
+(`title`, `date`, `description`, `tags`) and writes files to `content/posts/`.
