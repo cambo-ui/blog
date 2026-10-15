@@ -1,4 +1,3 @@
-import { Plugin } from "@opencode/plugin"
 import { execFile } from "node:child_process"
 import { existsSync } from "node:fs"
 import { mkdtemp, rm, writeFile } from "node:fs/promises"
@@ -58,9 +57,13 @@ async function runScript(
   }
 }
 
-export default Plugin.define({
+// `Plugin.define` from "@opencode/plugin" is an identity helper, but OpenCode's
+// compiled runtime cannot resolve that bare specifier from a local plugin dir
+// (it does not search the plugin's node_modules). Exporting the definition
+// directly is equivalent and avoids the unresolvable import.
+export default {
   id: "blog",
-  async setup(ctx) {
+  async setup(ctx: any) {
     let siteRoot: string | undefined
     let resolveError = ""
     try {
@@ -158,4 +161,4 @@ export default Plugin.define({
       })
     })
   },
-})
+}
