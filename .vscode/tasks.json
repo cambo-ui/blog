@@ -1,0 +1,84 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "hugo server",
+      "type": "shell",
+      "command": "hugo server",
+      "problemMatcher": [],
+      "isBackground": true,
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "New Post",
+      "detail": "Scaffold a new post in content/posts/ (not committed)",
+      "type": "shell",
+      "command": "printf 'Write your post here.\\n' | ./scripts/new-post.sh --no-commit --title \"${input:postTitle}\" --slug \"${input:postSlug}\" --tags \"${input:postTags}\" --description \"${input:postDescription}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    },
+    {
+      "label": "Publish (commit + push)",
+      "detail": "Commit and push all pending changes -> Vercel deploys",
+      "type": "shell",
+      "command": "./scripts/publish.sh -m \"${input:commitMessage}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    },
+    {
+      "label": "Open live site",
+      "detail": "Open the deployed blog in your browser",
+      "type": "shell",
+      "command": "open https://blog-cambo-ui.vercel.app/",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "postTitle",
+      "type": "promptString",
+      "description": "Post title"
+    },
+    {
+      "id": "postSlug",
+      "type": "promptString",
+      "description": "URL slug (leave blank to auto-generate from the title)",
+      "default": ""
+    },
+    {
+      "id": "postTags",
+      "type": "promptString",
+      "description": "Tags, comma-separated (e.g. security,ai)",
+      "default": ""
+    },
+    {
+      "id": "postDescription",
+      "type": "promptString",
+      "description": "Short summary / SEO description (optional)",
+      "default": ""
+    },
+    {
+      "id": "commitMessage",
+      "type": "promptString",
+      "description": "Commit message",
+      "default": "Update content"
+    }
+  ]
+}

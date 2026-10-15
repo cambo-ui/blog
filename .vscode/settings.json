@@ -1,0 +1,13 @@
+{
+  "files.associations": {
+    "*.html": "html",
+    "layouts/**/*.html": "gohtml"
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": false
+  },
+  "markdown.preview.html": true,
+  "editor.fontSize": 14,
+  "files.autoSave": "onFocusChange"
+}

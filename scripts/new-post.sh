@@ -4,7 +4,7 @@
 # Usage:
 #   scripts/new-post.sh --title "My Post" [--slug my-post] [--date 2026-10-12] \
 #     [--tags "security,ai"] [--description "..."] [--body-file FILE] \
-#     [--draft] [--no-push] [-m "commit message"]
+#     [--draft] [--no-commit] [--no-push] [-m "commit message"]
 #
 # If --body-file is omitted the body is read from stdin.
 set -euo pipefail
@@ -20,6 +20,7 @@ TAGS=""
 DESC=""
 BODY_FILE=""
 DRAFT=0
+NO_COMMIT=0
 PUSH=1
 COMMIT_MSG=""
 
@@ -37,6 +38,7 @@ while [ $# -gt 0 ]; do
     --description|--desc) DESC="${2:-}"; shift 2 ;;
     --body-file) BODY_FILE="${2:-}"; shift 2 ;;
     --draft) DRAFT=1; shift ;;
+    --no-commit) NO_COMMIT=1; shift ;;
     --no-push) PUSH=0; shift ;;
     -m|--message) COMMIT_MSG="${2:-}"; shift 2 ;;
     -h|--help) usage 0 ;;
@@ -107,6 +109,11 @@ if command -v hugo >/dev/null 2>&1; then
   else
     echo "warning: hugo build failed; run 'hugo' in $ROOT to see why" >&2
   fi
+fi
+
+if [ "$NO_COMMIT" = 1 ]; then
+  echo "saved (not committed); run scripts/publish.sh or the Publish task when ready"
+  exit 0
 fi
 
 if [ "$DRAFT" = 1 ]; then
