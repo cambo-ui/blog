@@ -1,7 +1,6 @@
 baseURL = 'https://pushthescript.vercel.app/'
 
 title = 'Push The Script'
-theme = ''
 enableRobotsTXT = true
 
 [params]
