@@ -68,3 +68,18 @@ h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; }
 .read-more { margin: .5rem 0 0; }
 .read-more a { font-weight: 600; }
 
+/* Back home button */
+.back-home-row { margin: 0 0 1.25rem; }
+.back-home-row--bottom { margin: 2rem 0 0; }
+.back-home {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: color-mix(in srgb, var(--link) 12%, var(--card));
+  color: var(--link); border: 1px solid var(--border);
+  border-radius: 999px; padding: .35rem .9rem; font-size: .85rem;
+  font-weight: 600;
+}
+.back-home:hover {
+  text-decoration: none;
+  background: color-mix(in srgb, var(--link) 20%, var(--card));
+}
+

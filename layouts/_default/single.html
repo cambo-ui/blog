@@ -1,6 +1,7 @@
 {{ define "title" }}{{ .Title }} — {{ .Site.Title }}{{ end }}
 {{ define "main" }}
 <article>
+  <div class="back-home-row">{{ partial "back-home.html" . }}</div>
   <h1>{{ .Title }}</h1>
   <div class="post-meta">
     {{ with .Site.Params.author }}<span class="post-author">By {{ . }}</span>{{ end }}
@@ -10,6 +11,7 @@
     </ul>{{ end }}
   </div>
   {{ .Content }}
+  <div class="back-home-row back-home-row--bottom">{{ partial "back-home.html" . }}</div>
 </article>
 <script>
 document.querySelectorAll('iframe').forEach(f => {
