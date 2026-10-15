@@ -3,8 +3,9 @@
   "tasks": [
     {
       "label": "hugo server",
+      "detail": "Local preview at http://localhost:1313 (includes drafts)",
       "type": "shell",
-      "command": "hugo server",
+      "command": "hugo server -D",
       "problemMatcher": [],
       "isBackground": true,
       "group": "build",

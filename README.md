@@ -101,7 +101,9 @@ Then, any time:
 1. Pick **Blog posts** → **New** (or open an existing post).
 2. Fill in Title, Date, Description, Tags and write the Body in the rich-text
    editor. Images you insert are uploaded to `static/images/`.
-3. Click **Save**. This commits to `main`, and Vercel rebuilds the site
+3. Turn on **Draft** to save a post without publishing it — it still commits to
+   the repo but stays hidden from the live site until you switch Draft off.
+4. Click **Save**. This commits to `main`, and Vercel rebuilds the site
    (live in ~30s).
 
 The editor maps to the same YAML front matter the scripts use

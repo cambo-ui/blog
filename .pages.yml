@@ -24,9 +24,12 @@ content:
     delimiters: "---"
     filename: "{title}.md"
     view:
+      fields: [title, draft, date]
       primary: title
-      sort: date
-      order: desc
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
     fields:
       - name: title
         label: Title
@@ -37,6 +40,11 @@ content:
         type: date
         options:
           format: "yyyy-MM-dd"
+      - name: draft
+        label: Draft (save without publishing)
+        type: boolean
+        default: false
+        description: On = saved to the repo but hidden from the live site.
       - name: description
         label: Description
         type: string
